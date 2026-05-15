@@ -1,0 +1,4 @@
+include:
+  - path: ./banking/compose.yaml
+  - path: ./roulette/compose.yaml
+  - path: ./slots/compose.yaml

@@ -1,1 +1,34 @@
-services: {}
+services:
+
+  roulette-db:
+    container_name: Roulette-PostgresDB
+    profiles: [full, db]
+    image: postgres
+    environment:
+      - POSTGRES_DB=roulette
+      - POSTGRES_USER=postgresUser
+      - POSTGRES_PASSWORD=postgresPW
+    ports:
+      - "55433:5432"
+    restart: unless-stopped
+    volumes:
+      - db-data:/var/lib/backup/data
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U postgresUser -d roulette" ]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+
+  roulette-backend:
+    profiles: [full]
+    container_name: Roulette-backend
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://roulette-db:5432/roulette
+    build: .
+    ports:
+      - "8081:8081"
+    depends_on:
+      - roulette-db
+
+volumes:
+  db-data:

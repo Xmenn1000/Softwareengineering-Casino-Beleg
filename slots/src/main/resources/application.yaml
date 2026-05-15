@@ -1,3 +1,14 @@
+server:
+  port: 8082
 spring:
   application:
-    name: slots
+    name: Slots
+  datasource:
+    url: jdbc:postgresql://localhost:55432/slots
+    username: postgresUser
+    password: postgresPW
+  jpa:
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+    show-sql: true
+    hibernate:
+      ddl-auto: update
