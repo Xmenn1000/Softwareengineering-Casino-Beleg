@@ -2,6 +2,29 @@
 
 The goal of this project is to build a RESTful microservice architecture as a group project. The application models an online casino where users can create accounts via the provided APIs and play the available games risk-free.
 
+## Conventions
+Commit messages:
+**Format:** `<type>(<scope>): <description>`
+
+**Types:**
+- `feat` – new feature
+- `fix` – bug fix
+- `chore` – tooling, dependencies, build config
+- `refactor` – code change that neither fixes a bug nor adds a feature
+- `docs` – documentation only
+- `test` – adding or adjusting tests
+- `style` – formatting, no code change
+
+**Scopes:** `banking`, `roulette`, `slots`, `root` (repo-wide)
+
+**Examples:**
+```
+feat(banking): add withdrawal endpoint
+fix(roulette): correct payout for split bets
+refactor(banking, slots): extract SpinHandler
+chore(root): update docker-compose
+```
+
 ## Getting started
 
 1. Open the project in the root folder (`Softwareengineering-Casino-Beleg`).
