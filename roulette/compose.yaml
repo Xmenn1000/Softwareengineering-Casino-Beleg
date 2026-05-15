@@ -3,7 +3,7 @@ services:
   roulette-db:
     container_name: Roulette-PostgresDB
     profiles: [full, db]
-    image: postgres
+    image: postgres:17
     environment:
       - POSTGRES_DB=roulette
       - POSTGRES_USER=postgresUser
@@ -12,12 +12,13 @@ services:
       - "55433:5432"
     restart: unless-stopped
     volumes:
-      - db-data:/var/lib/backup/data
+      - roulette-db-data:/var/lib/postgresql/data
     healthcheck:
       test: [ "CMD-SHELL", "pg_isready -U postgresUser -d roulette" ]
-      interval: 30s
+      interval: 20s
       timeout: 10s
       retries: 5
+      start_period: 30s
 
   roulette-backend:
     profiles: [full]
@@ -28,7 +29,8 @@ services:
     ports:
       - "8081:8081"
     depends_on:
-      - roulette-db
+      roulette-db:
+        condition: service_healthy
 
 volumes:
-  db-data:
+  roulette-db-data:

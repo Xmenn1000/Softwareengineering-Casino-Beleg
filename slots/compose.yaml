@@ -3,7 +3,7 @@ services:
   slots-db:
     container_name: Slots-PostgresDB
     profiles: [full, db]
-    image: postgres
+    image: postgres:17
     environment:
       - POSTGRES_DB=slots
       - POSTGRES_USER=postgresUser
@@ -12,12 +12,13 @@ services:
       - "55434:5432"
     restart: unless-stopped
     volumes:
-      - db-data:/var/lib/backup/data
+      - slots-db-data:/var/lib/postgresql/data
     healthcheck:
       test: [ "CMD-SHELL", "pg_isready -U postgresUser -d slots" ]
-      interval: 30s
+      interval: 20s
       timeout: 10s
       retries: 5
+      start_period: 30s
 
   slots-backend:
     profiles: [full]
@@ -28,7 +29,8 @@ services:
     ports:
       - "8082:8082"
     depends_on:
-      - slots-db
+      slots-db:
+        condition: service_healthy
 
 volumes:
-  db-data:
+  slots-db-data:
