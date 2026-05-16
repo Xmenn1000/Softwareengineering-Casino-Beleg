@@ -63,3 +63,21 @@ If you also want to wipe the database data, add `-v`:
 ```bash
 docker compose --profile full down -v
 ```
+
+## Important Links
+
+### Services
+
+| Service  | Swagger UI                                          | OpenAPI Spec                            | 
+|----------|-----------------------------------------------------|-----------------------------------------|
+| Banking  | http://localhost:8080/swagger-ui/index.html         | http://localhost:8080/v3/api-docs       | 
+| Roulette | http://localhost:8081/swagger-ui/index.html         | http://localhost:8081/v3/api-docs       |
+| Slots    | http://localhost:8082/swagger-ui/index.html         | http://localhost:8082/v3/api-docs       | 
+
+### Databases
+
+| Service  | Host:Port         | DB Name  | User         | Password     |
+|----------|-------------------|----------|--------------|--------------|
+| Banking  | localhost:55432   | banking  | postgresUser | postgresPW   |
+| Roulette | localhost:55433   | roulette | postgresUser | postgresPW   |
+| Slots    | localhost:55434   | slots    | postgresUser | postgresPW   |

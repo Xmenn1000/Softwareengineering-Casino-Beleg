@@ -4,7 +4,7 @@ spring:
   application:
     name: Roulette
   datasource:
-    url: jdbc:postgresql://localhost:55432/roulette
+    url: jdbc:postgresql://localhost:55433/roulette
     username: postgresUser
     password: postgresPW
   jpa:
