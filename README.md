@@ -2,6 +2,12 @@
 
 The goal of this project is to build a RESTful microservice architecture as a group project. The application models an online casino where users can create accounts via the provided APIs and play the available games risk-free.
 
+## Prerequisites
+- Docker Desktop (Windows/macOS) or Docker Engine + Docker Compose (Linux)
+- Java 21 (only required if you want to run services from IntelliJ)
+- Maven 3.9+ (only required if you want to build outside Docker)
+- IntelliJ IDEA (recommended for local development)
+
 ## Conventions
 Commit messages:
 **Format:** `<type>(<scope>): <description>`
@@ -21,7 +27,7 @@ Commit messages:
 ```
 feat(banking): add withdrawal endpoint
 fix(roulette): correct payout for split bets
-refactor(banking, slots): extract SpinHandler
+refactor(root): extract shared SpinHandler
 chore(root): update docker-compose
 ```
 
@@ -64,7 +70,17 @@ If you also want to wipe the database data, add `-v`:
 docker compose --profile full down -v
 ```
 
+### Common startup errors
+
+```bash
+unable to get image 'postgres:17': error during connect: Get "http://%2F%2F.%2Fpipe%2FdockerDesktopLinuxEngine/v1.48/images/postgres:17/json": open //./pipe/dockerDesktopLinuxEngine: The system cannot find the file specified.
+```
+
+This just means you forgot to start Docker Desktop first.
+
 ## Important Links
+
+[Swagger Annotations](https://github.com/swagger-api/swagger-core/wiki/Swagger-2.X---Annotations)
 
 ### Services
 
