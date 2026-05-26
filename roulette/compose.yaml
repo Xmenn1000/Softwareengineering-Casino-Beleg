@@ -9,7 +9,7 @@ services:
       - POSTGRES_USER=postgresUser
       - POSTGRES_PASSWORD=postgresPW
     ports:
-      - "55433:5432"
+      - "15433:5432"
     restart: unless-stopped
     volumes:
       - roulette-db-data:/var/lib/postgresql/data

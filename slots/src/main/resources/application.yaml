@@ -4,7 +4,7 @@ spring:
   application:
     name: Slots
   datasource:
-    url: jdbc:postgresql://localhost:55432/slots
+    url: jdbc:postgresql://localhost:15434/slots
     username: postgresUser
     password: postgresPW
   jpa:

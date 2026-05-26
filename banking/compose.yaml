@@ -9,7 +9,7 @@ services:
       - POSTGRES_USER=postgresUser
       - POSTGRES_PASSWORD=postgresPW
     ports:
-      - "55432:5432"
+      - "15432:5432"
     restart: unless-stopped
     volumes:
       - banking-db-data:/var/lib/postgresql/data

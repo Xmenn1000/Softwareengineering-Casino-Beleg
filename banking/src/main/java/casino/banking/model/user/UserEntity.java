@@ -1,5 +1,6 @@
 package casino.banking.model.user;
 
+import casino.banking.handler.user.ModelValidityBreachException;
 import casino.banking.view.user.response.UserDTO;
 import casino.banking.view.user.response.UserDeleteDTO;
 import jakarta.persistence.Column;
@@ -47,11 +48,34 @@ public class UserEntity {
         return true;
     }
 
+    public void setFirstName(String firstName) {
+        if(!isValidName(firstName)) {
+            throw new IllegalArgumentException("First and last name are invalid");
+        }
+        this.firstName = firstName;
+    }
+
+    public void setLastName(String firstName) {
+        if(!isValidName(firstName)) {
+            throw new IllegalArgumentException("First and last name are invalid");
+        }
+        this.firstName = firstName;
+    }
+
+    public void addBalance(BigDecimal amount) {
+        try {
+            this.balance = this.balance.add(amount);
+        }
+        catch(NullPointerException ex) {
+            throw new ModelValidityBreachException(amount.toString(), ex);
+        }
+    }
+
     public UserDTO toUserDTO() {
         return new UserDTO(this.id, this.firstName, this.lastName, this.balance);
     }
 
-    public UserDeleteDTO UserDeleteDTO() {
+    public UserDeleteDTO toUserDeleteDTO() {
         return new UserDeleteDTO(this.firstName, this.lastName, this.balance);
     }
 

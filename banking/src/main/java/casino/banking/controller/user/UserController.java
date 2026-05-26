@@ -23,7 +23,6 @@ public class UserController implements UserApi {
         this.userService = userService;
     }
 
-
     @Override
     public ResponseEntity<UserDTO> findById(Long id) {
         return ResponseEntity.ok(userService.findById(id));

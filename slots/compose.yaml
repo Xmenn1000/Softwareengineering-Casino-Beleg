@@ -9,7 +9,7 @@ services:
       - POSTGRES_USER=postgresUser
       - POSTGRES_PASSWORD=postgresPW
     ports:
-      - "55434:5432"
+      - "15434:5432"
     restart: unless-stopped
     volumes:
       - slots-db-data:/var/lib/postgresql/data

@@ -3,6 +3,7 @@ package casino.banking.services.user;
 import casino.banking.handler.user.UserNotFoundExeption;
 import casino.banking.model.user.UserEntity;
 import casino.banking.repository.user.UserRepository;
+import casino.banking.util.MoneyHelper;
 import casino.banking.view.user.request.UserRequestDTO;
 import casino.banking.view.user.response.UserDTO;
 import casino.banking.view.user.response.UserDeleteDTO;
@@ -45,17 +46,23 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserDTO replaceById(Long id, UserRequestDTO userRequest) {
         UserEntity userEntity = userRepository.findById(id).orElseThrow(() -> new UserNotFoundExeption(id));
-        UserEntity user = UserEntity.createUserEntity(userRequest.firstName(), userRequest.lastName());
-        return null;
+        userEntity.setFirstName(userRequest.firstName());
+        userEntity.setLastName(userRequest.lastName());
+        return userEntity.toUserDTO();
     }
 
     @Override
     public UserDeleteDTO deleteById(Long id) {
-        return null;
+        UserEntity userToDelete = userRepository.findById(id).orElseThrow(() -> new UserNotFoundExeption(id));
+        userRepository.delete(userToDelete);
+        return userToDelete.toUserDeleteDTO();
     }
 
     @Override
-    public UserDTO depositBalanceById(Long userId, BigDecimal amount, int decimals) {
-        return null;
+    public UserDTO depositBalanceById(Long id, BigDecimal amount, int decimals) {
+        UserEntity user = userRepository.findById(id).orElseThrow(() -> new UserNotFoundExeption(id));
+        BigDecimal toAdd = MoneyHelper.createBigDecimal(amount, decimals);
+        user.addBalance(toAdd);
+        return user.toUserDTO();
     }
 }
