@@ -1,6 +1,6 @@
 package casino.banking.model.user;
 
-import casino.banking.handler.user.ModelValidityBreachException;
+import casino.banking.exceptions.ModelValidityBreachException;
 import casino.banking.view.user.response.UserDTO;
 import casino.banking.view.user.response.UserDeleteDTO;
 import jakarta.persistence.Column;

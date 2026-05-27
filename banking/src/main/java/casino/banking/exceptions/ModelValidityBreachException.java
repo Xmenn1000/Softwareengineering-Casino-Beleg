@@ -1,4 +1,4 @@
-package casino.banking.handler.user;
+package casino.banking.exceptions;
 
 public class ModelValidityBreachException extends RuntimeException {
   public ModelValidityBreachException(String message, Throwable cause) {

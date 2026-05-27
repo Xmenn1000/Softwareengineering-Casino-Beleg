@@ -1,4 +1,4 @@
-package casino.banking.handler.user;
+package casino.banking.exceptions;
 
 import org.springframework.http.HttpStatus;
 

@@ -1,6 +1,6 @@
 package casino.banking.controller.user;
 
-import casino.banking.handler.user.UserNotFoundExeption;
+import casino.banking.exceptions.UserNotFoundExeption;
 import jakarta.validation.ConstraintViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ProblemDetail;

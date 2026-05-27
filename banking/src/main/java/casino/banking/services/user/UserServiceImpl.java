@@ -1,6 +1,6 @@
 package casino.banking.services.user;
 
-import casino.banking.handler.user.UserNotFoundExeption;
+import casino.banking.exceptions.UserNotFoundExeption;
 import casino.banking.model.user.UserEntity;
 import casino.banking.repository.user.UserRepository;
 import casino.banking.util.MoneyHelper;
@@ -39,15 +39,15 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserDTO create(UserRequestDTO userRequest) {
-        UserEntity user = UserEntity.createUserEntity(userRequest.firstName(), userRequest.lastName());
+        UserEntity user = UserEntity.createUserEntity(userRequest.getFirstName(), userRequest.getLastName());
         return userRepository.save(user).toUserDTO();
     }
 
     @Override
     public UserDTO replaceById(Long id, UserRequestDTO userRequest) {
         UserEntity userEntity = userRepository.findById(id).orElseThrow(() -> new UserNotFoundExeption(id));
-        userEntity.setFirstName(userRequest.firstName());
-        userEntity.setLastName(userRequest.lastName());
+        userEntity.setFirstName(userRequest.getFirstName());
+        userEntity.setLastName(userRequest.getLastName());
         return userEntity.toUserDTO();
     }
 

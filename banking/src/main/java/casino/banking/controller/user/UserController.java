@@ -1,20 +1,16 @@
 package casino.banking.controller.user;
 
-import casino.banking.handler.user.UserNotFoundExeption;
 import casino.banking.services.user.UserService;
 import casino.banking.view.user.request.UserRequestDTO;
 import casino.banking.view.user.response.UserDTO;
 import casino.banking.view.user.response.UserDeleteDTO;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.math.BigDecimal;
 import java.util.List;
 
 @RestController
-@RequestMapping("/casino/bank/api")
 public class UserController implements UserApi {
 
     private final UserService userService;

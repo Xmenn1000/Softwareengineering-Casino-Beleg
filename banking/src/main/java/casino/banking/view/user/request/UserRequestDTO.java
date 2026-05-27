@@ -1,3 +1,12 @@
 package casino.banking.view.user.request;
 
-public record UserRequestDTO(String firstName, String lastName) {}
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import org.hibernate.boot.internal.Abstract;
+
+@Getter
+@AllArgsConstructor
+public class UserRequestDTO {
+    String firstName;
+    String lastName;
+}
