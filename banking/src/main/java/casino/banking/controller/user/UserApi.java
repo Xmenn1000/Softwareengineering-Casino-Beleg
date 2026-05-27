@@ -10,7 +10,11 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.Positive;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -23,6 +27,7 @@ import java.math.BigDecimal;
 import java.util.List;
 
 @Tag(name = "User", description = "Manage user accounts")
+@Validated
 @RequestMapping("/casino/bank/api")
 public interface UserApi {
 
@@ -105,6 +110,6 @@ public interface UserApi {
             @Parameter(description = "Deposit amount", example = "100")
             @PathVariable BigDecimal amount,
             @Parameter(description = "Number of decimals (max 2)", example = "2")
-            @PathVariable int decimals
+            @Positive @Max(99) @PathVariable int decimals
     );
 }

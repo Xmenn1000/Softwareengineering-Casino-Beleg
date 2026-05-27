@@ -92,8 +92,8 @@ This just means you forgot to start Docker Desktop first.
 
 ### Databases
 
-| Service  | Host:Port         | DB Name  | User         | Password     |
-|----------|-------------------|----------|--------------|--------------|
-| Banking  | localhost:55432   | banking  | postgresUser | postgresPW   |
-| Roulette | localhost:55433   | roulette | postgresUser | postgresPW   |
-| Slots    | localhost:55434   | slots    | postgresUser | postgresPW   |
+| Service  | Host:Port       | DB Name  | User         | Password     |
+|----------|-----------------|----------|--------------|--------------|
+| Banking  | localhost:15432 | banking  | postgresUser | postgresPW   |
+| Roulette | localhost:15433 | roulette | postgresUser | postgresPW   |
+| Slots    | localhost:15434 | slots    | postgresUser | postgresPW   |
