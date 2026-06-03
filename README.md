@@ -90,10 +90,68 @@ This just means you forgot to start Docker Desktop first.
 | Roulette | http://localhost:8081/swagger-ui/index.html         | http://localhost:8081/v3/api-docs       |
 | Slots    | http://localhost:8082/swagger-ui/index.html         | http://localhost:8082/v3/api-docs       | 
 
-### Databases
 
-| Service  | Host:Port       | DB Name  | User         | Password     |
-|----------|-----------------|----------|--------------|--------------|
-| Banking  | localhost:15432 | banking  | postgresUser | postgresPW   |
-| Roulette | localhost:15433 | roulette | postgresUser | postgresPW   |
-| Slots    | localhost:15434 | slots    | postgresUser | postgresPW   |
+## See Databases in IntelliJ IDEA
+
+After starting the databases as described in [Getting started](#getting-started), you can connect IntelliJ IDEA directly to the local PostgreSQL databases.
+
+### Open the Database tool window
+
+In IntelliJ IDEA, open:
+
+```text
+View > Tool Windows > Database
+```
+
+Then create a new PostgreSQL data source:
+
+```text
++ > Data Source > PostgreSQL
+```
+
+### Connection settings
+
+| Service  | Host      | Port  | Database | User         | Password   | JDBC URL                                   |
+|----------|-----------|-------|----------|--------------|------------|--------------------------------------------|
+| Banking  | localhost | 15432 | banking  | postgresUser | postgresPW | jdbc:postgresql://localhost:15432/banking  |
+| Roulette | localhost | 15433 | roulette | postgresUser | postgresPW | jdbc:postgresql://localhost:15433/roulette |
+| Slots    | localhost | 15434 | slots    | postgresUser | postgresPW | jdbc:postgresql://localhost:15434/slots    |
+
+Click **Test Connection**.
+
+If IntelliJ asks to download the PostgreSQL driver, confirm it.
+
+Then click **OK** or **Apply**.
+
+### Using copied IntelliJ data source settings
+
+If someone gives you copied IntelliJ database settings, you can paste them directly into IntelliJ.
+
+1. Open the **Database** tool window.
+2. Click inside the database panel.
+3. Paste the copied data source settings with `Ctrl + V`.
+4. IntelliJ should create the data source automatically.
+5. Check the password field, because passwords are often not included when data sources are copied.
+6. Click **Test Connection** to verify that the connection works.
+
+#### Banking DB Connection 
+#DataSourceSettings#
+#LocalDataSource: banking@localhost
+#BEGIN#
+<data-source source="LOCAL" name="banking@localhost" uuid="91e74f3f-06d9-4dd0-9dec-9528afa2bc1b"><database-info product="PostgreSQL" version="17.10 (Debian 17.10-1.pgdg13+1)" jdbc-version="4.2" driver-name="PostgreSQL JDBC Driver" driver-version="42.7.3" dbms="POSTGRES" exact-version="17.10" exact-driver-version="42.7"><identifier-quote-string>&quot;</identifier-quote-string></database-info><case-sensitivity plain-identifiers="lower" quoted-identifiers="exact"/><driver-ref>postgresql</driver-ref><synchronize>true</synchronize><jdbc-driver>org.postgresql.Driver</jdbc-driver><jdbc-url>jdbc:postgresql://localhost:15432/banking</jdbc-url><jdbc-additional-properties><property name="com.intellij.clouds.kubernetes.db.host.port"/><property name="com.intellij.clouds.kubernetes.db.enabled" value="false"/><property name="com.intellij.clouds.kubernetes.db.container.port"/></jdbc-additional-properties><secret-storage>master_key</secret-storage><user-name>postgresUser</user-name><schema-mapping><introspection-scope><node kind="database" qname="@"><node kind="schema" qname="@"/></node></introspection-scope></schema-mapping><working-dir>$ProjectFileDir$</working-dir></data-source>
+#END#
+
+#### Roulette DB Connection
+#DataSourceSettings#
+#LocalDataSource: roulette@localhost
+#BEGIN#
+<data-source source="LOCAL" name="roulette@localhost" uuid="74130337-8014-4eb5-b8a3-4a0729fbf7d7"><database-info product="PostgreSQL" version="17.10 (Debian 17.10-1.pgdg13+1)" jdbc-version="4.2" driver-name="PostgreSQL JDBC Driver" driver-version="42.7.3" dbms="POSTGRES" exact-version="17.10" exact-driver-version="42.7"><identifier-quote-string>&quot;</identifier-quote-string></database-info><case-sensitivity plain-identifiers="lower" quoted-identifiers="exact"/><driver-ref>postgresql</driver-ref><synchronize>true</synchronize><jdbc-driver>org.postgresql.Driver</jdbc-driver><jdbc-url>jdbc:postgresql://localhost:15433/roulette</jdbc-url><jdbc-additional-properties><property name="com.intellij.clouds.kubernetes.db.host.port"/><property name="com.intellij.clouds.kubernetes.db.enabled" value="false"/><property name="com.intellij.clouds.kubernetes.db.container.port"/></jdbc-additional-properties><secret-storage>master_key</secret-storage><user-name>postgresUser</user-name><schema-mapping><introspection-scope><node kind="database" qname="@"><node kind="schema" qname="@"/></node></introspection-scope></schema-mapping><working-dir>$ProjectFileDir$</working-dir></data-source>
+#END#
+
+#### Slots DB Connection
+#DataSourceSettings#
+#LocalDataSource: slots@localhost
+#BEGIN#
+<data-source source="LOCAL" name="slots@localhost " uuid="ae30f66b-c6df-4881-ae5a-9c6c87a33799"><database-info product="PostgreSQL" version="17.10 (Debian 17.10-1.pgdg13+1)" jdbc-version="4.2" driver-name="PostgreSQL JDBC Driver" driver-version="42.7.3" dbms="POSTGRES" exact-version="17.10" exact-driver-version="42.7"><identifier-quote-string>&quot;</identifier-quote-string></database-info><case-sensitivity plain-identifiers="lower" quoted-identifiers="exact"/><driver-ref>postgresql</driver-ref><synchronize>true</synchronize><jdbc-driver>org.postgresql.Driver</jdbc-driver><jdbc-url>jdbc:postgresql://localhost:15434/slots</jdbc-url><jdbc-additional-properties><property name="com.intellij.clouds.kubernetes.db.host.port"/><property name="com.intellij.clouds.kubernetes.db.enabled" value="false"/><property name="com.intellij.clouds.kubernetes.db.container.port"/></jdbc-additional-properties><secret-storage>master_key</secret-storage><user-name>postgresUser</user-name><schema-mapping><introspection-scope><node kind="database" qname="@"><node kind="schema" qname="@"/></node></introspection-scope></schema-mapping><working-dir>$ProjectFileDir$</working-dir></data-source>
+#END#
+
