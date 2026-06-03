@@ -4,6 +4,7 @@ import casino.banking.exceptions.UserNotFoundExeption;
 import casino.banking.services.user.UserService;
 import casino.banking.view.user.request.UserRequestDTO;
 import casino.banking.view.user.response.UserDTO;
+import casino.banking.view.user.response.UserDeleteDTO;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
@@ -17,8 +18,7 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.fail;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -83,7 +83,7 @@ class UserControllerIntegrationTest {
         mockMvc.perform(get("/casino/bank/api/users"))
                 .andDo(print())
                 .andExpect(status().isOk());
-                //TODO: Liste abgleichen
+        //TODO: Liste abgleichen
 
         verify(userService, times(1)).findAll();
 
@@ -97,7 +97,7 @@ class UserControllerIntegrationTest {
         mockMvc.perform(get("/casino/bank/api/users"))
                 .andDo(print())
                 .andExpect(status().isOk());
-                //TODO: check List empty
+        //TODO: check List empty
 
         verify(userService, times(1)).findAll();
     }
@@ -110,7 +110,7 @@ class UserControllerIntegrationTest {
         mockMvc.perform(post("/casino/bank/api/user"))
                 .andDo(print())
                 .andExpect(status().isCreated());
-                //TODO: checks that its the user
+        //TODO: checks that its the user
 
         verify(userService, times(1)).create(any());
     }
@@ -141,6 +141,7 @@ class UserControllerIntegrationTest {
 
     @Test
     void create_nullBody_returns400() throws Exception {
+//        when(userService.create(any())).thenReturn(new UserDTO(1L, "firstName", "", BigDecimal.ZERO));
 
         mockMvc.perform(post("/casino/bank/api/user"))
                 .andDo(print())
@@ -168,12 +169,26 @@ class UserControllerIntegrationTest {
     // ---------- deleteById ----------
     @Test
     void deleteById_existingId_returns200WithoutId() throws Exception {
-        fail();
+        Long id = 1L;
+        when(userService.deleteById(id)).thenReturn(new UserDeleteDTO("firstName", "lastName", BigDecimal.ONE));
+
+        mockMvc.perform(delete("/casino/bank/api/user/{userId}", id))
+                .andDo(print())
+                .andExpect(status().isOk());
+
+        verify(userService, times(1)).deleteById(id);
     }
 
     @Test
     void deleteById_unknownId_returns404() throws Exception {
-        fail();
+        Long id = 1L;
+        when(userService.deleteById(id)).thenThrow(new UserNotFoundExeption(id));
+
+        mockMvc.perform(delete("/casino/bank/api/user/{userId}", id))
+                .andDo(print())
+                .andExpect(status().isNotFound());
+
+        verify(userService, times(1)).deleteById(id);
     }
 
     // ---------- depositBalanceById ----------
@@ -182,7 +197,7 @@ class UserControllerIntegrationTest {
         Long id = 1L;
 //        when(userService.depositBalanceById(any(), any(), any())).thenReturn()
 
-        mockMvc.perform(post("/user/{userId}/deposit/{amount}/{decimals}", 1L, new BigDecimal(-20), 20))
+        mockMvc.perform(post("/casino/bank/api/user/{userId}/deposit/{amount}/{decimals}", 1L, new BigDecimal(-20), 20))
                 .andDo(print())
                 .andExpect(status().isBadRequest());
 
@@ -191,14 +206,15 @@ class UserControllerIntegrationTest {
 
     @Test
     void deposit_minValues_zeroAmountZeroDecimals_returns200() throws Exception {
-        mockMvc.perform(post("/user/{userId}/deposit/{amount}/{decimals}", 1L, new BigDecimal(0), 0))
+        mockMvc.perform(post("/casino/bank/api/user/{userId}/deposit/{amount}/{decimals}", 1L, new BigDecimal(0), 0))
                 .andDo(print())
                 .andExpect(status().isOk());
     }
 
     @Test
     void deposit_maxDecimals_twoDecimals_returns200() throws Exception {
-        mockMvc.perform(post("/user/{userId}/deposit/{amount}/{decimals}", 1L, new BigDecimal(20), 99))
+        Long id = 1L;
+        mockMvc.perform(post("/casino/bank/api/user/{userId}/deposit/{amount}/{decimals}", id))
                 .andDo(print())
                 .andExpect(status().isOk());
     }
@@ -213,11 +229,11 @@ class UserControllerIntegrationTest {
         Long id = 1L;
         when(userService.findById(id)).thenThrow(new UserNotFoundExeption(id));
 
-        mockMvc.perform(post("/casino/bank/api/user/{userId}/deposit/{amount}/{decimals}", 1L, new BigDecimal(20), 20))
+        mockMvc.perform(delete("/casino/bank/api/user/{userId}/deposit/{amount}/{decimals}", 1L, new BigDecimal(20), 20))
                 .andDo(print())
                 .andExpect(status().isNotFound());
 
-        verify(userService, times(1)).findById(id);
+        verify(userService, times(1)).deleteById(id);
     }
 
     @Test
