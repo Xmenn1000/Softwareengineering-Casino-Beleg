@@ -1,8 +1,6 @@
 package casino.banking.model.user;
 
 import casino.banking.exceptions.ModelValidityBreachException;
-import casino.banking.view.user.UserDTO;
-import casino.banking.view.user.UserDeleteDTO;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -69,14 +67,6 @@ public class UserEntity implements User{
         catch(NullPointerException ex) {
             throw new ModelValidityBreachException(amount.toString(), ex);
         }
-    }
-
-    public UserDTO toUserDTO() {
-        return new UserDTO(this.id, this.firstName, this.lastName, this.balance);
-    }
-
-    public UserDeleteDTO toUserDeleteDTO() {
-        return new UserDeleteDTO(this.firstName, this.lastName, this.balance);
     }
 
 }

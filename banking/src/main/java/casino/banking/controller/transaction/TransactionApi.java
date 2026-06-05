@@ -28,7 +28,7 @@ public interface TransactionApi {
     @ApiResponse(responseCode = "400", description = "Invalid Request Body or unknown userId")
     @ApiResponse(responseCode = "201", description = "Transaction found")
     @PostMapping("/transactions/user/{userId}")
-        ResponseEntity<UserTransactionRequestDTO> createForUserId(
+        ResponseEntity<UserTransactionDTO> createForUserId(
             @PathVariable Long userId,
             @RequestBody TransactionRequestDTO transactionRequestDTO);
 
@@ -36,13 +36,13 @@ public interface TransactionApi {
     @ApiResponse(responseCode = "400", description = "Bad Request")
     @ApiResponse(responseCode = "200", description = "User  found")
     @PutMapping("/transactions/{transactionId}")
-        ResponseEntity<UserTransactionRequestDTO> replaceById(
+        ResponseEntity<UserTransactionDTO> replaceById(
             @PathVariable Long transactionId,
             @RequestBody UserGameTransactionRequestDTO userGameTransactionRequestDTO
     );
 
     @DeleteMapping("/transactions/{transactionId}")
-        ResponseEntity<UserGameTransactionRequestDTO> deleteById(
+        ResponseEntity<UserTransactionDTO> deleteById(
             @PathVariable Long transactionId,
             @RequestBody UserTransactionRequestDTO userGameTransactionRequestDTO
     );

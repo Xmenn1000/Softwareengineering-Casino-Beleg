@@ -1,9 +1,10 @@
 package casino.banking.model.transaction;
 
-import casino.banking.model.user.UserEntity;
 import casino.banking.util.GameService;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.EnumType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -22,6 +23,7 @@ public class TransactionEntity {
     @Column(name = "id", nullable = false, updatable = false)
     private Long id;
 
+    @Enumerated(EnumType.STRING)
     @Column(name = "invoicingParty", nullable = false)
     private GameService invoicingParty;
 
@@ -34,7 +36,7 @@ public class TransactionEntity {
     protected TransactionEntity() {
     }
 
-    static public TransactionEntity createTransaction(GameService service, Long userId, BigDecimal amount) {
+    public static TransactionEntity createTransaction(GameService service, Long userId, BigDecimal amount) {
         TransactionEntity entity = new TransactionEntity();
         entity.invoicingParty = service;
         entity.userId = userId;
@@ -43,4 +45,9 @@ public class TransactionEntity {
         return entity;
     }
 
+    public void replace(GameService service, Long userId, BigDecimal amount) {
+        this.invoicingParty = service;
+        this.userId = userId;
+        this.amount = amount;
+    }
 }

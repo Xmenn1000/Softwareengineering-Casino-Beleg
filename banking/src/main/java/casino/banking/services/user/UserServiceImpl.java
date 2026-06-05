@@ -1,6 +1,7 @@
 package casino.banking.services.user;
 
 import casino.banking.exceptions.UserNotFoundExeption;
+import casino.banking.mapper.UserMapper;
 import casino.banking.model.user.UserEntity;
 import casino.banking.repository.user.UserRepository;
 import casino.banking.util.MoneyHelper;
@@ -28,19 +29,19 @@ public class UserServiceImpl implements UserService {
     @Transactional(readOnly = true)
     public UserDTO findById(Long id) {
         UserEntity user = userRepository.findById(id).orElseThrow(() -> new UserNotFoundExeption(id));
-        return user.toUserDTO();
+        return UserMapper.toDto(user);
     }
 
     @Override
     public List<UserDTO> findAll() {
         List<UserEntity> users = userRepository.findAll();
-        return users.stream().map(UserEntity::toUserDTO).collect(Collectors.toList());
+        return users.stream().map(UserMapper::toDto).collect(Collectors.toList());
     }
 
     @Override
     public UserDTO create(UserRequestDTO userRequest) {
         UserEntity user = UserEntity.createUserEntity(userRequest.getFirstName(), userRequest.getLastName());
-        return userRepository.save(user).toUserDTO();
+        return UserMapper.toDto(userRepository.save(user));
     }
 
     @Override
@@ -49,14 +50,14 @@ public class UserServiceImpl implements UserService {
         userEntity.setFirstName(userRequest.getFirstName());
         userEntity.setLastName(userRequest.getLastName());
         userRepository.save(userEntity);
-        return userEntity.toUserDTO();
+        return UserMapper.toDto(userEntity);
     }
 
     @Override
     public UserDeleteDTO deleteById(Long id) {
         UserEntity userToDelete = userRepository.findById(id).orElseThrow(() -> new UserNotFoundExeption(id));
         userRepository.delete(userToDelete);
-        return userToDelete.toUserDeleteDTO();
+        return UserMapper.toDeleteDto(userToDelete);
     }
 
     @Override
@@ -64,6 +65,6 @@ public class UserServiceImpl implements UserService {
         UserEntity user = userRepository.findById(id).orElseThrow(() -> new UserNotFoundExeption(id));
         BigDecimal toAdd = MoneyHelper.createBigDecimal(amount, decimals);
         user.addBalance(toAdd);
-        return user.toUserDTO();
+        return UserMapper.toDto(user);
     }
 }

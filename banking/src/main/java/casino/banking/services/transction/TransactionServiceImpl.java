@@ -1,37 +1,49 @@
 package casino.banking.services.transction;
 
+import casino.banking.mapper.TransactionMapper;
+import casino.banking.model.transaction.TransactionEntity;
+import casino.banking.repository.transaction.TransactionRepository;
 import casino.banking.request.transaction.TransactionRequestDTO;
 import casino.banking.request.transaction.UserGameTransactionRequestDTO;
 import casino.banking.request.transaction.UserTransactionRequestDTO;
 import casino.banking.view.transaction.TransactionDTO;
 import casino.banking.view.transaction.UserTransactionDTO;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
-public class TransactionServiceImpl {
+@Service
+public class TransactionServiceImpl implements TransactionService {
 
+    private final TransactionRepository transactionRepository;
+
+    TransactionServiceImpl(TransactionRepository transactionRepository) {
+        this.transactionRepository = transactionRepository;
+    }
+
+    @Override
+    public UserTransactionDTO createForUserId(Long userId, TransactionRequestDTO transactionRequestDTO) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public UserTransactionDTO replaceById(Long transactionId, UserGameTransactionRequestDTO userGameTransactionRequestDTO) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public UserTransactionDTO deleteById(Long transactionId, UserTransactionRequestDTO userTransactionRequestDTO) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
     public List<UserTransactionDTO> findAll() {
-        throw new UnsupportedOperationException("Not implemented yet");
+        throw new UnsupportedOperationException();
     }
 
-    public TransactionDTO findById(Long transactionId) {
-        throw new UnsupportedOperationException("Not implemented yet");
+    @Override
+    public List<TransactionDTO> findByUserId(Long userId) {
+        throw new UnsupportedOperationException();
     }
-
-    public List<TransactionDTO> findAllByUserId(Long userId) {
-        throw new UnsupportedOperationException("Not implemented yet");
-    }
-
-    public UserTransactionRequestDTO create(Long userId, TransactionRequestDTO request) {
-        throw new UnsupportedOperationException("Not implemented yet");
-    }
-
-    public UserTransactionRequestDTO update(Long transactionId, UserGameTransactionRequestDTO request) {
-        throw new UnsupportedOperationException("Not implemented yet");
-    }
-
-    public UserGameTransactionRequestDTO delete(Long transactionId, UserTransactionRequestDTO request) {
-        throw new UnsupportedOperationException("Not implemented yet");
-    }
-
 }

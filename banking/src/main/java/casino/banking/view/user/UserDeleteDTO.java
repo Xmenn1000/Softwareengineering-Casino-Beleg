@@ -8,7 +8,7 @@ import java.math.BigDecimal;
 @Getter
 @AllArgsConstructor
 public class UserDeleteDTO {
-    String fistName;
+    String firstName;
     String lastName;
     BigDecimal balance;
 }
