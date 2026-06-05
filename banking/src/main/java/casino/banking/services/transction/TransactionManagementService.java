@@ -18,7 +18,6 @@ public interface TransactionManagementService {
     );
 
     UserTransactionDTO deleteById(
-            Long transactionId,
-            UserTransactionRequestDTO userTransactionRequestDTO
+            Long transactionId
     );
 }

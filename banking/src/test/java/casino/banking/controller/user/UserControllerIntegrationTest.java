@@ -1,6 +1,6 @@
 package casino.banking.controller.user;
 
-import casino.banking.exceptions.UserNotFoundExeption;
+import casino.banking.exceptions.UserNotFoundException;
 import casino.banking.request.user.UserRequestDTO;
 import casino.banking.services.user.UserService;
 import casino.banking.view.user.UserDTO;
@@ -63,7 +63,7 @@ class UserControllerIntegrationTest {
     void findById_unknownId_returns404() throws Exception {
 
         Long id = 1L;
-        when(userService.findById(id)).thenThrow(new UserNotFoundExeption(id));
+        when(userService.findById(id)).thenThrow(new UserNotFoundException(id));
 
         mockMvc.perform(get("/casino/bank/api/user/{id}", id))
                 .andDo(print())
@@ -182,7 +182,7 @@ class UserControllerIntegrationTest {
     @Test
     void deleteById_unknownId_returns404() throws Exception {
         Long id = 1L;
-        when(userService.deleteById(id)).thenThrow(new UserNotFoundExeption(id));
+        when(userService.deleteById(id)).thenThrow(new UserNotFoundException(id));
 
         mockMvc.perform(delete("/casino/bank/api/user/{userId}", id))
                 .andDo(print())
@@ -227,7 +227,7 @@ class UserControllerIntegrationTest {
     @Test
     void deposit_unknownUser_returns404() throws Exception {
         Long id = 1L;
-        when(userService.findById(id)).thenThrow(new UserNotFoundExeption(id));
+        when(userService.findById(id)).thenThrow(new UserNotFoundException(id));
 
         mockMvc.perform(delete("/casino/bank/api/user/{userId}/deposit/{amount}/{decimals}", 1L, new BigDecimal(20), 20))
                 .andDo(print())

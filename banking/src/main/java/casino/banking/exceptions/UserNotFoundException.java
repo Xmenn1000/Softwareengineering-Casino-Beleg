@@ -2,14 +2,14 @@ package casino.banking.exceptions;
 
 import org.springframework.http.HttpStatus;
 
-public class UserNotFoundExeption extends RuntimeException implements HttpStatusProvider {
+public class UserNotFoundException extends RuntimeException implements ServiceExceptions {
 
     private final HttpStatus status =  HttpStatus.NOT_FOUND;
 
-    public UserNotFoundExeption(Long id) {
+    public UserNotFoundException(Long id) {
         super("User with id " + id + " not found");
     }
-    public UserNotFoundExeption(String message, Throwable cause) {
+    public UserNotFoundException(String message, Throwable cause) {
         super(message, cause);
     }
 

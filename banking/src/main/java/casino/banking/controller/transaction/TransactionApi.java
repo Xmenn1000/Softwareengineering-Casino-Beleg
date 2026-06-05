@@ -50,7 +50,6 @@ public interface TransactionApi {
 
     @DeleteMapping("/transactions/{transactionId}")
         ResponseEntity<UserTransactionDTO> deleteById(
-            @PathVariable Long transactionId,
-            @RequestBody UserTransactionRequestDTO userGameTransactionRequestDTO
+            @PathVariable Long transactionId
     );
 }

@@ -43,8 +43,8 @@ public class TransactionController implements TransactionApi {
     }
 
     @Override
-    public ResponseEntity<UserTransactionDTO> deleteById(Long transactionId, UserTransactionRequestDTO userGameTransactionRequestDTO) {
-        return ResponseEntity.ok(transactionService.deleteById(transactionId, userGameTransactionRequestDTO));
+    public ResponseEntity<UserTransactionDTO> deleteById(Long transactionId) {
+        return ResponseEntity.ok(transactionService.deleteById(transactionId));
     }
 
 }

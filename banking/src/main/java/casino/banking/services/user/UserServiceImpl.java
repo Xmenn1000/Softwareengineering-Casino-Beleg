@@ -1,6 +1,6 @@
 package casino.banking.services.user;
 
-import casino.banking.exceptions.UserNotFoundExeption;
+import casino.banking.exceptions.UserNotFoundException;
 import casino.banking.mapper.UserMapper;
 import casino.banking.model.user.UserEntity;
 import casino.banking.repository.user.UserRepository;
@@ -28,7 +28,7 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional(readOnly = true)
     public UserDTO findById(Long id) {
-        UserEntity user = userRepository.findById(id).orElseThrow(() -> new UserNotFoundExeption(id));
+        UserEntity user = userRepository.findById(id).orElseThrow(() -> new UserNotFoundException(id));
         return UserMapper.toDto(user);
     }
 
@@ -46,7 +46,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserDTO replaceById(Long id, UserRequestDTO userRequest) {
-        UserEntity userEntity = userRepository.findById(id).orElseThrow(() -> new UserNotFoundExeption(id));
+        UserEntity userEntity = userRepository.findById(id).orElseThrow(() -> new UserNotFoundException(id));
         userEntity.setFirstName(userRequest.getFirstName());
         userEntity.setLastName(userRequest.getLastName());
         userRepository.save(userEntity);
@@ -55,14 +55,14 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserDeleteDTO deleteById(Long id) {
-        UserEntity userToDelete = userRepository.findById(id).orElseThrow(() -> new UserNotFoundExeption(id));
+        UserEntity userToDelete = userRepository.findById(id).orElseThrow(() -> new UserNotFoundException(id));
         userRepository.delete(userToDelete);
         return UserMapper.toDeleteDto(userToDelete);
     }
 
     @Override
     public UserDTO depositBalanceById(Long id, BigDecimal amount, int decimals) {
-        UserEntity user = userRepository.findById(id).orElseThrow(() -> new UserNotFoundExeption(id));
+        UserEntity user = userRepository.findById(id).orElseThrow(() -> new UserNotFoundException(id));
         BigDecimal toAdd = MoneyHelper.createBigDecimal(amount, decimals);
         user.addBalance(toAdd);
         return UserMapper.toDto(user);

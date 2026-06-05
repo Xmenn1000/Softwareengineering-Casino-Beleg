@@ -1,6 +1,6 @@
 package casino.banking.requestClients;
 
-import casino.banking.exceptions.UserNotFoundExeption;
+import casino.banking.exceptions.UserNotFoundException;
 import casino.banking.view.user.UserDTO;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -22,7 +22,7 @@ public class UserRestClient {
                 .uri("/user/{id}", id)
                 .retrieve()
                 .onStatus(status -> status.value() == 404, (request, reponse) -> {
-                    throw new UserNotFoundExeption(id);
+                    throw new UserNotFoundException(id);
                 })
                 .body(UserDTO.class);
     }
