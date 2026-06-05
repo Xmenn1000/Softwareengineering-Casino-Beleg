@@ -1,4 +1,4 @@
-package casino.banking.view.transaction.request;
+package casino.banking.request.transaction;
 
 import casino.banking.util.GameService;
 import lombok.AllArgsConstructor;

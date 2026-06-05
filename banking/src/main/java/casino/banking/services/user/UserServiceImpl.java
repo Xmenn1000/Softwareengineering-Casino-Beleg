@@ -4,9 +4,9 @@ import casino.banking.exceptions.UserNotFoundExeption;
 import casino.banking.model.user.UserEntity;
 import casino.banking.repository.user.UserRepository;
 import casino.banking.util.MoneyHelper;
-import casino.banking.view.user.request.UserRequestDTO;
-import casino.banking.view.user.response.UserDTO;
-import casino.banking.view.user.response.UserDeleteDTO;
+import casino.banking.request.user.UserRequestDTO;
+import casino.banking.view.user.UserDTO;
+import casino.banking.view.user.UserDeleteDTO;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -48,6 +48,7 @@ public class UserServiceImpl implements UserService {
         UserEntity userEntity = userRepository.findById(id).orElseThrow(() -> new UserNotFoundExeption(id));
         userEntity.setFirstName(userRequest.getFirstName());
         userEntity.setLastName(userRequest.getLastName());
+        userRepository.save(userEntity);
         return userEntity.toUserDTO();
     }
 

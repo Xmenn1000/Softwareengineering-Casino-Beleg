@@ -2,9 +2,9 @@ package casino.banking.controller.user;
 
 import casino.banking.exceptions.UserNotFoundExeption;
 import casino.banking.services.user.UserService;
-import casino.banking.view.user.request.UserRequestDTO;
-import casino.banking.view.user.response.UserDTO;
-import casino.banking.view.user.response.UserDeleteDTO;
+import casino.banking.request.user.UserRequestDTO;
+import casino.banking.view.user.UserDTO;
+import casino.banking.view.user.UserDeleteDTO;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;

@@ -1,6 +1,6 @@
 package casino.banking.services.user;
 
-import casino.banking.view.user.response.UserDTO;
+import casino.banking.view.user.UserDTO;
 
 import java.math.BigDecimal;
 

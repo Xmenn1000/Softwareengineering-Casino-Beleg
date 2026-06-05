@@ -1,8 +1,8 @@
 package casino.banking.controller.user;
 
-import casino.banking.view.user.request.UserRequestDTO;
-import casino.banking.view.user.response.UserDTO;
-import casino.banking.view.user.response.UserDeleteDTO;
+import casino.banking.request.user.UserRequestDTO;
+import casino.banking.view.user.UserDTO;
+import casino.banking.view.user.UserDeleteDTO;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -11,7 +11,6 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Max;
-import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.Positive;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -31,14 +30,6 @@ import java.util.List;
 @RequestMapping("/casino/bank/api")
 public interface UserApi {
 
-    @Operation(
-            summary = "Get a user by ID",
-            description = "Returns the user with their current balance."
-    )
-    @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "User found"),
-            @ApiResponse(responseCode = "404", description = "User not found", content = @Content)
-    })
     @GetMapping("/user/{id}")
     ResponseEntity<UserDTO> findById(
             @Parameter(description = "User ID", example = "42")

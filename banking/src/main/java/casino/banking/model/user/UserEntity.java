@@ -1,8 +1,8 @@
 package casino.banking.model.user;
 
 import casino.banking.exceptions.ModelValidityBreachException;
-import casino.banking.view.user.response.UserDTO;
-import casino.banking.view.user.response.UserDeleteDTO;
+import casino.banking.view.user.UserDTO;
+import casino.banking.view.user.UserDeleteDTO;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -16,7 +16,7 @@ import java.math.BigDecimal;
 @Entity
 @Getter
 @Table(name = "users")
-public class UserEntity {
+public class UserEntity implements User{
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "id", nullable = false, updatable = false)
@@ -59,7 +59,7 @@ public class UserEntity {
         if(!isValidName(firstName)) {
             throw new IllegalArgumentException("First and last name are invalid");
         }
-        this.firstName = firstName;
+        this.lastName = firstName;
     }
 
     public void addBalance(BigDecimal amount) {

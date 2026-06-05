@@ -1,8 +1,8 @@
 package casino.banking.services.user;
 
-import casino.banking.view.user.request.UserRequestDTO;
-import casino.banking.view.user.response.UserDTO;
-import casino.banking.view.user.response.UserDeleteDTO;
+import casino.banking.request.user.UserRequestDTO;
+import casino.banking.view.user.UserDTO;
+import casino.banking.view.user.UserDeleteDTO;
 
 public interface UserManagementService {
     UserDTO create(UserRequestDTO userRequest);

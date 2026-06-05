@@ -1,4 +1,4 @@
-package casino.banking.view.transaction.response;
+package casino.banking.view.transaction;
 
 import com.fasterxml.jackson.annotation.JsonUnwrapped;
 import lombok.AllArgsConstructor;

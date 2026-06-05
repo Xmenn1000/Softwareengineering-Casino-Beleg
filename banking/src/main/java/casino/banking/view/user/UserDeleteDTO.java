@@ -1,4 +1,4 @@
-package casino.banking.view.user.response;
+package casino.banking.view.user;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

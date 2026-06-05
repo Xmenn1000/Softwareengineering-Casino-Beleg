@@ -1,4 +1,4 @@
-package casino.banking.view.transaction.request;
+package casino.banking.request.transaction;
 
 import com.fasterxml.jackson.annotation.JsonUnwrapped;
 import lombok.AllArgsConstructor;
@@ -6,10 +6,10 @@ import lombok.Getter;
 
 @AllArgsConstructor
 @Getter
-public class UserTransactionRequestDTO {
+public class UserGameTransactionRequestDTO {
     Long userId;
-    Long transactionId;
 
     @JsonUnwrapped
     TransactionRequestDTO transactionRequestDTO;
+
 }
