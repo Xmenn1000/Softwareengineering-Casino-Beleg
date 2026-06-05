@@ -1,8 +1,8 @@
 package casino.banking.controller.user;
 
 import casino.banking.exceptions.UserNotFoundExeption;
-import casino.banking.services.user.UserService;
 import casino.banking.request.user.UserRequestDTO;
+import casino.banking.services.user.UserService;
 import casino.banking.view.user.UserDTO;
 import casino.banking.view.user.UserDeleteDTO;
 import org.junit.jupiter.api.Test;

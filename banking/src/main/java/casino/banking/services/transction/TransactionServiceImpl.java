@@ -11,7 +11,6 @@ import casino.banking.view.transaction.UserTransactionDTO;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 public class TransactionServiceImpl implements TransactionService {
@@ -39,11 +38,11 @@ public class TransactionServiceImpl implements TransactionService {
 
     @Override
     public List<UserTransactionDTO> findAll() {
-        throw new UnsupportedOperationException();
+        return transactionRepository.findAll().stream().map(TransactionMapper::toUserTransactionDto).toList();
     }
 
     @Override
     public List<TransactionDTO> findByUserId(Long userId) {
-        throw new UnsupportedOperationException();
+        return transactionRepository.findByUserId(userId);
     }
 }

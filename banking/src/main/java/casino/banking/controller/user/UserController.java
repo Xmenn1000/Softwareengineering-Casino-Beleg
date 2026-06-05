@@ -1,7 +1,7 @@
 package casino.banking.controller.user;
 
-import casino.banking.services.user.UserService;
 import casino.banking.request.user.UserRequestDTO;
+import casino.banking.services.user.UserService;
 import casino.banking.view.user.UserDTO;
 import casino.banking.view.user.UserDeleteDTO;
 import org.springframework.http.ResponseEntity;
