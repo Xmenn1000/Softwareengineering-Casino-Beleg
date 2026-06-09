@@ -1,0 +1,36 @@
+@startuml
+
+actor Player
+
+package "Banking Service : 8080" as Banking {
+
+package "User Slice" as UserServicePackage {
+component "User Controller" as UserController
+component "User Service" as UserService
+component "User Repo" as UserRepo
+
+
+UserController --> UserService
+UserService --> UserRepo: persist User
+}
+
+package "Transaction Slice" as TransactionServicePackage {
+
+component "Transaction Controller" as TransactionController
+component "Transaction Service" as TransactionService
+component "Transaction Repo" as TransactionRepo
+
+TransactionController --> TransactionService
+TransactionService --> TransactionRepo : persist Transactions
+}
+
+TransactionService --> UserController : HTTP \n deposit
+
+}
+
+node GameServices
+
+GameServices -> TransactionController : HTTP \ncreate Transactions
+Player --> UserController : HTTP \n manage User
+
+@enduml
