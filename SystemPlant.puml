@@ -1,0 +1,51 @@
+@startuml
+
+actor Player
+
+package "Banking : 8080" {
+  node "Banking Service : 8080" as banking {
+    [UserSliceService]
+    [TransactionsSliceService]
+  }
+
+  database "Postgres Banking" {
+    [User]
+    [Transactions]
+  }
+}
+
+package "Roulette : 8081" as Roulette {
+  node "Roulette Service" as RouletteService {
+    [Games] as RouletteGames
+  }
+
+  database "Postgres Roulette" {
+    [Games] as RouletteGameTable
+  }
+
+  RouletteGames --> RouletteGameTable : Persist Games
+}
+
+package "Slot : 8082" as Slots {
+  node "Slots Service" as SlotService {
+  }
+
+  database "Postgres Slots" {
+    [Games] as SlotGame
+  }
+
+  SlotService --> SlotGame : Persist Games
+}
+
+Player --> [UserSliceService] : HTTP\nmanage user
+Player --> SlotService : HTTP\nplay slots
+Player --> RouletteGames : HTTP\nplay roulette
+
+[UserSliceService] --> [User] : Manage
+TransactionsSliceService --> [Transactions]
+[TransactionsSliceService] --> [UserSliceService] : REST/HTTP POST deposit
+
+SlotService --> [TransactionsSliceService] : HTTP\ncreate transaction
+RouletteGames --> [TransactionsSliceService] : HTTP\ncreate transaction
+
+@enduml
