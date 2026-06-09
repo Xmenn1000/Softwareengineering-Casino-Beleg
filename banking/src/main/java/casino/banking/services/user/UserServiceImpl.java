@@ -67,7 +67,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserDTO depositBalanceById(Long id, BigInteger amount, int decimals) {
         UserEntity user = userRepository.findById(id).orElseThrow(() -> new UserNotFoundException(id));
-        BigDecimal toAdd = MoneyHelper.createBigDecimal(amount, decimals);
+        BigDecimal toAdd = MoneyHelper.createBigDecimal2Decimals(amount, decimals);
         user.addBalance(toAdd);
         return UserMapper.toDto(user);
     }

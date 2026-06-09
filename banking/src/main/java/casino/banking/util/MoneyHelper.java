@@ -4,7 +4,7 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 
 public class MoneyHelper {
-    public static BigDecimal createBigDecimal(BigInteger amount, int decimals) {
+    public static BigDecimal createBigDecimal2Decimals(BigInteger amount, int decimals) {
         return new BigDecimal(amount).add(BigDecimal.valueOf(decimals, 2));
     }
 

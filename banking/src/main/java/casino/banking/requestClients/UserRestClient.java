@@ -1,8 +1,7 @@
 package casino.banking.requestClients;
 
-import casino.banking.exceptions.user.BadDepositRequestException;
 import casino.banking.exceptions.transaction.BadTransactionRequestException;
-import casino.banking.exceptions.user.UserNotFoundException;
+import casino.banking.exceptions.user.BadDepositRequestException;
 import casino.banking.view.user.UserDTO;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -31,7 +30,7 @@ public class UserRestClient {
 //                .body(UserDTO.class);
 //    }
 
-    public UserDTO depositBalanceById(Long userId, BigInteger amount, int decimals) throws UserNotFoundException, BadDepositRequestException {
+    public UserDTO depositBalanceById(Long userId, BigInteger amount, int decimals) throws BadDepositRequestException {
         return restClient.post()
                 .uri("/user/{userId}/deposit/{amount}/{decimals}", userId, amount, decimals)
                 .retrieve()

@@ -2,7 +2,6 @@ package casino.banking.controller.transaction;
 
 import casino.banking.request.transaction.TransactionRequestDTO;
 import casino.banking.request.transaction.UserGameTransactionRequestDTO;
-import casino.banking.request.transaction.UserTransactionRequestDTO;
 import casino.banking.services.transction.TransactionService;
 import casino.banking.view.transaction.TransactionDTO;
 import casino.banking.view.transaction.UserTransactionDTO;

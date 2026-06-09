@@ -45,7 +45,10 @@ Player --> RouletteGames : HTTP\nplay roulette
 TransactionsSliceService --> [Transactions]
 [TransactionsSliceService] --> [UserSliceService] : REST/HTTP POST deposit
 
-SlotService --> [TransactionsSliceService] : HTTP\ncreate transaction
-RouletteGames --> [TransactionsSliceService] : HTTP\ncreate transaction
+SlotService --> [TransactionsSliceService] : HTTP\n create transaction
+RouletteGames --> [TransactionsSliceService] : HTTP\n create transaction
+
+SlotService --> [UserSliceService] : HTTP\n look up User
+RouletteGames --> [UserSliceService] : HTTP\n look up User
 
 @enduml

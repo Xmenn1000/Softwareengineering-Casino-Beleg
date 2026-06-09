@@ -2,7 +2,6 @@ package casino.banking.services.transction;
 
 import casino.banking.request.transaction.TransactionRequestDTO;
 import casino.banking.request.transaction.UserGameTransactionRequestDTO;
-import casino.banking.request.transaction.UserTransactionRequestDTO;
 import casino.banking.view.transaction.UserTransactionDTO;
 
 public interface TransactionManagementService {

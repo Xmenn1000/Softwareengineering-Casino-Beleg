@@ -7,6 +7,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInfo;
 
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.Random;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -41,26 +42,26 @@ class MoneyHelperTest {
     }
 
     @Test
-    void createBigDecimal_validNumberTwoDigitDecimal_returnCorrect() {
-        BigDecimal number = new BigDecimal(20);
+    void createBigDecimal_validNumberTwoDigitDecimal_2Decimals_returnCorrect() {
+        BigInteger number = BigInteger.valueOf(20L);
         int decimals = 10;
-        BigDecimal result = MoneyHelper.createBigDecimal(number, decimals);
+        BigDecimal result = MoneyHelper.createBigDecimal2Decimals(number, decimals);
         assertTrue(new BigDecimal("20.10").equals(result));
     }
 
     @Test
-    void createBigDecimal_validNumberOneDigitDecimal_returnCorrect() {
-        BigDecimal number = new BigDecimal(20);
+    void createBigDecimal_validNumberOneDigitDecimal_2Decimals_returnCorrect() {
+        BigInteger number = BigInteger.valueOf(20L);
         int decimals = 2;
-        BigDecimal result = MoneyHelper.createBigDecimal(number, decimals);
+        BigDecimal result = MoneyHelper.createBigDecimal2Decimals(number, decimals);
         assertTrue(new BigDecimal("20.02").equals(result));
     }
 
     @Test
-    void createBigDecimal_minDecimals_returnCorrect() {
-        BigDecimal number = new BigDecimal(10);
+    void createBigDecimal_2Decimals_minDecimals_returnCorrect() {
+        BigInteger number = BigInteger.valueOf(10L);
         int decimals = 0;
-        BigDecimal result = MoneyHelper.createBigDecimal(number, decimals);
+        BigDecimal result = MoneyHelper.createBigDecimal2Decimals(number, decimals);
         assertEquals(new BigDecimal("10.00"), result);
     }
 
