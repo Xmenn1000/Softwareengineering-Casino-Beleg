@@ -1,6 +1,6 @@
 package casino.banking.util;
 
-import casino.banking.exceptions.GameServiceNotKnownException;
+import casino.banking.exceptions.transaction.GameServiceNotKnownException;
 
 public enum GameService {
     SLOTS,

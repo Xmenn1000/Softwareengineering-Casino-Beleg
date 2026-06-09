@@ -8,10 +8,5 @@ import org.springframework.data.repository.query.Param;
 import java.util.List;
 
 public interface TransactionRepository extends JpaRepository<TransactionEntity, Long> {
-
-
-    @Query("""
-            select t from TransactionEntity t where t.userId = :userId
-            """)
-    List<TransactionEntity> findByUserId(@Param("userId") Long userId);
+    List<TransactionEntity> findByUserId(Long userId);
 }

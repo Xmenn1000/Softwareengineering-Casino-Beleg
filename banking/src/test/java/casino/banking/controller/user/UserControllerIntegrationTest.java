@@ -1,6 +1,6 @@
 package casino.banking.controller.user;
 
-import casino.banking.exceptions.UserNotFoundException;
+import casino.banking.exceptions.user.UserNotFoundException;
 import casino.banking.request.user.UserRequestDTO;
 import casino.banking.services.user.UserService;
 import casino.banking.view.user.UserDTO;

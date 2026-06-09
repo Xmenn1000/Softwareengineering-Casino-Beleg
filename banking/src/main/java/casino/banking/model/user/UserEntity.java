@@ -1,6 +1,6 @@
 package casino.banking.model.user;
 
-import casino.banking.exceptions.ModelValidityBreachException;
+import casino.banking.exceptions.user.ModelValidityBreachException;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -33,8 +33,8 @@ public class UserEntity implements User{
     }
 
     static public UserEntity createUserEntity(String firstName, String lastName) {
-        if(!isValidName(firstName) && !isValidName(lastName)) {
-            throw new IllegalArgumentException("First and last name are invalid");
+        if(isValidName(firstName) && isValidName(lastName)) {
+            throw new ModelValidityBreachException("First or last name are invalid");
         }
         UserEntity entity = new UserEntity();
         entity.firstName = firstName;
@@ -43,21 +43,22 @@ public class UserEntity implements User{
     }
 
     static public boolean isValidName(String name) {
-        return true;
+        return name != null && !name.isBlank();
     }
+
 
     public void setFirstName(String firstName) {
         if(!isValidName(firstName)) {
-            throw new IllegalArgumentException("First and last name are invalid");
+            throw new ModelValidityBreachException(String.format("FirstName: %s is invalid", firstName));
         }
         this.firstName = firstName;
     }
 
-    public void setLastName(String firstName) {
-        if(!isValidName(firstName)) {
-            throw new IllegalArgumentException("First and last name are invalid");
+    public void setLastName(String lastName) {
+        if(!isValidName(lastName)) {
+            throw new ModelValidityBreachException(String.format("LastName: %s is invalid", lastName));
         }
-        this.lastName = firstName;
+        this.lastName = lastName;
     }
 
     public void addBalance(BigDecimal amount) {

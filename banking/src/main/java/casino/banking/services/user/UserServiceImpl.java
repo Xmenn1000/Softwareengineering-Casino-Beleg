@@ -1,8 +1,9 @@
 package casino.banking.services.user;
 
-import casino.banking.exceptions.UserNotFoundException;
+import casino.banking.exceptions.user.UserNotFoundException;
 import casino.banking.mapper.UserMapper;
 import casino.banking.model.user.UserEntity;
+import casino.banking.model.user.UserFactory;
 import casino.banking.repository.user.UserRepository;
 import casino.banking.request.user.UserRequestDTO;
 import casino.banking.util.MoneyHelper;
@@ -12,6 +13,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -20,9 +22,11 @@ import java.util.stream.Collectors;
 public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
+    private final UserFactory userFactory;
 
-    public UserServiceImpl(UserRepository userRepository) {
+    public UserServiceImpl(UserRepository userRepository, UserFactory userFactory) {
         this.userRepository = userRepository;
+        this.userFactory = userFactory;
     }
 
     @Override
@@ -40,7 +44,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserDTO create(UserRequestDTO userRequest) {
-        UserEntity user = UserEntity.createUserEntity(userRequest.getFirstName(), userRequest.getLastName());
+        UserEntity user = userFactory.createUser(userRequest.getFirstName(), userRequest.getLastName());
         return UserMapper.toDto(userRepository.save(user));
     }
 
@@ -61,7 +65,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserDTO depositBalanceById(Long id, BigDecimal amount, int decimals) {
+    public UserDTO depositBalanceById(Long id, BigInteger amount, int decimals) {
         UserEntity user = userRepository.findById(id).orElseThrow(() -> new UserNotFoundException(id));
         BigDecimal toAdd = MoneyHelper.createBigDecimal(amount, decimals);
         user.addBalance(toAdd);

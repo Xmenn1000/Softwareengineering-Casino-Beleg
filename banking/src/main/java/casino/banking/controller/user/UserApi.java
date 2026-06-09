@@ -11,6 +11,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.Positive;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -23,6 +24,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.List;
 
 @Tag(name = "User", description = "Manage user accounts")
@@ -68,7 +70,7 @@ public interface UserApi {
     ResponseEntity<UserDTO> replaceById(
             @Parameter(description = "User ID", example = "42")
             @PathVariable Long id,
-            @Valid @RequestBody UserRequestDTO userRequest
+            @RequestBody UserRequestDTO userRequest
     );
 
     @Operation(
@@ -99,8 +101,8 @@ public interface UserApi {
             @Parameter(description = "User ID", example = "42")
             @PathVariable Long userId,
             @Parameter(description = "Deposit amount", example = "100")
-            @PathVariable BigDecimal amount,
-            @Parameter(description = "Number of decimals (max 2)", example = "2")
-            @Positive @Max(99) @PathVariable int decimals
+            @PathVariable BigInteger amount,
+            @Parameter(description = "Positiv Number of decimals (max 2)", example = "2")
+            @Min(0) @Max(99) @PathVariable int decimals
     );
 }

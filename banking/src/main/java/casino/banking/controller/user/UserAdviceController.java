@@ -1,8 +1,6 @@
 package casino.banking.controller.user;
 
-import casino.banking.exceptions.UserNotFoundException;
-import jakarta.validation.ConstraintViolationException;
-import org.springframework.http.HttpStatus;
+import casino.banking.exceptions.HttpException;
 import org.springframework.http.ProblemDetail;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -12,17 +10,9 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 @RestControllerAdvice(assignableTypes = UserController.class)
 public class UserAdviceController {
 
-    @ExceptionHandler(UserNotFoundException.class)
-    public ResponseEntity<ProblemDetail> handle(UserNotFoundException ex) {
-        ProblemDetail detail = ProblemDetail.forStatusAndDetail(ex.getStatus(), ex.getMessage());
+    @ExceptionHandler(HttpException.class)
+    public ResponseEntity<ProblemDetail> handle(HttpException ex) {
+        ProblemDetail detail = ProblemDetail.forStatusAndDetail(ex.getHTTPStatus(), ex.getMessage());
         return ResponseEntity.status(detail.getStatus()).body(detail);
-    }
-
-    @ExceptionHandler(ConstraintViolationException.class)
-    public ResponseEntity<ProblemDetail> handle(ConstraintViolationException ex) {
-
-        ProblemDetail detail = ProblemDetail.forStatusAndDetail(HttpStatus.BAD_REQUEST, ex.getMessage());
-
-        return ResponseEntity.badRequest().body(detail);
     }
 }

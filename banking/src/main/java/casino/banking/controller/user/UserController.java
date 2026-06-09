@@ -8,6 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.List;
 
 @RestController
@@ -45,7 +46,7 @@ public class UserController implements UserApi {
     }
 
     @Override
-    public ResponseEntity<UserDTO> depositBalanceById(Long userId, BigDecimal amount, int decimals) {
+    public ResponseEntity<UserDTO> depositBalanceById(Long userId, BigInteger amount, int decimals) {
         return ResponseEntity.ok(userService.depositBalanceById(userId, amount, decimals));
     }
 }
