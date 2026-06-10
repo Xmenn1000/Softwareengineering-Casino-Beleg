@@ -16,7 +16,7 @@ package "Banking : 8080" {
 
 package "Roulette : 8081" as Roulette {
   node "Roulette Service" as RouletteService {
-    [Games] as RouletteGames
+    [Game] as RouletteGames
   }
 
   database "Postgres Roulette" {
@@ -28,27 +28,28 @@ package "Roulette : 8081" as Roulette {
 
 package "Slot : 8082" as Slots {
   node "Slots Service" as SlotService {
+      [Game] as SlotGames
   }
 
   database "Postgres Slots" {
     [Games] as SlotGame
   }
 
-  SlotService --> SlotGame : Persist Games
+  SlotGames --> SlotGame : Persist Games
 }
 
-Player --> [UserSliceService] : HTTP\nmanage user
-Player --> SlotService : HTTP\nplay slots
-Player --> RouletteGames : HTTP\nplay roulette
+Player --> [UserSliceService] : HTTP\n CRUD
+Player --> SlotGames : HTTP\n play slots
+Player --> RouletteGames : HTTP\n play roulette
 
-[UserSliceService] --> [User] : Manage
-TransactionsSliceService --> [Transactions]
+[UserSliceService] --> [User] : CRUD
+TransactionsSliceService --> [Transactions] : CRUD
 [TransactionsSliceService] --> [UserSliceService] : REST/HTTP POST deposit
 
-SlotService --> [TransactionsSliceService] : HTTP\n create transaction
+SlotGames --> [TransactionsSliceService] : HTTP\n create transaction
 RouletteGames --> [TransactionsSliceService] : HTTP\n create transaction
 
-SlotService --> [UserSliceService] : HTTP\n look up User
+SlotGames --> [UserSliceService] : HTTP\n look up User
 RouletteGames --> [UserSliceService] : HTTP\n look up User
 
 @enduml

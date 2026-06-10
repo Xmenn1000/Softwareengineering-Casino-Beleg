@@ -1,12 +1,12 @@
 package casino.banking.services.transction;
 
 import casino.banking.exceptions.transaction.TransactionNotKnownException;
-import casino.banking.mapper.TransactionMapper;
+import casino.banking.mapper.transaction.TransactionMapper;
 import casino.banking.model.transaction.TransactionEntity;
 import casino.banking.repository.transaction.TransactionRepository;
 import casino.banking.request.transaction.TransactionRequestDTO;
 import casino.banking.request.transaction.UserGameTransactionRequestDTO;
-import casino.banking.requestClients.UserRestClient;
+import casino.banking.requestClients.transaction.UserRestClient;
 import casino.banking.util.MoneyHelper;
 import casino.banking.view.transaction.TransactionDTO;
 import casino.banking.view.transaction.UserTransactionDTO;

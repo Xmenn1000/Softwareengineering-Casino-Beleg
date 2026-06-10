@@ -1,4 +1,4 @@
-package casino.banking.mapper;
+package casino.banking.mapper.transaction;
 
 import casino.banking.model.transaction.TransactionEntity;
 import casino.banking.view.transaction.TransactionDTO;

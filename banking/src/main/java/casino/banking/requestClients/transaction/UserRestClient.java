@@ -1,4 +1,4 @@
-package casino.banking.requestClients;
+package casino.banking.requestClients.transaction;
 
 import casino.banking.exceptions.transaction.BadTransactionRequestException;
 import casino.banking.exceptions.user.BadDepositRequestException;

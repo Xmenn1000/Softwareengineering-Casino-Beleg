@@ -1,4 +1,4 @@
-package casino.banking.mapper;
+package casino.banking.mapper.user;
 
 import casino.banking.model.user.UserEntity;
 import casino.banking.view.user.UserDTO;

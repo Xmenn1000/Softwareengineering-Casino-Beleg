@@ -1,7 +1,7 @@
 package casino.banking.services.user;
 
 import casino.banking.exceptions.user.UserNotFoundException;
-import casino.banking.mapper.UserMapper;
+import casino.banking.mapper.user.UserMapper;
 import casino.banking.model.user.UserEntity;
 import casino.banking.model.user.UserFactory;
 import casino.banking.repository.user.UserRepository;
