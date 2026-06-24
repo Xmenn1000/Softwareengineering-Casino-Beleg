@@ -4,8 +4,12 @@ import casino.banking.model.user.UserEntity;
 import casino.banking.model.user.UserFactory;
 import casino.banking.repository.user.UserRepository;
 import casino.banking.view.user.UserDTO;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 
 import java.math.BigDecimal;
@@ -20,14 +24,12 @@ class UserServiceImplTest {
     @InjectMocks
     private UserServiceImpl userService;
 
-    @MockitoBean
+    @Mock
     private UserRepository userRepository;
 
-    @MockitoBean
-    private UserEntity userEntity;
-
-    @MockitoBean
+    @Mock
     private UserFactory userFactory;
+
 
     @Test
     void findById_idExists_returnsValidDTO() {
@@ -38,7 +40,7 @@ class UserServiceImplTest {
 
         when(userRepository.findById(id)).thenReturn(Optional.of(user));
 
-        UserDTO expect = new UserDTO(1L, "firstName", "lastName", BigDecimal.ZERO);
+        UserDTO expect = new UserDTO(null, "firstName", "lastName", BigDecimal.ZERO);
 
         UserDTO result = userService.findById(id);
 

@@ -33,7 +33,7 @@ public class UserEntity implements User{
     }
 
     static public UserEntity createUserEntity(String firstName, String lastName) {
-        if(isValidName(firstName) && isValidName(lastName)) {
+        if(!isValidName(firstName) || !isValidName(lastName)) {
             throw new ModelValidityBreachException("First or last name are invalid");
         }
         UserEntity entity = new UserEntity();

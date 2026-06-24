@@ -13,6 +13,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import tools.jackson.databind.ObjectMapper;
 
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.fail;
@@ -229,7 +230,7 @@ class UserControllerIntegrationTest {
         Long id = 1L;
         when(userService.findById(id)).thenThrow(new UserNotFoundException(id));
 
-        mockMvc.perform(delete("/casino/bank/api/user/{userId}/deposit/{amount}/{decimals}", 1L, new BigDecimal(20), 20))
+        mockMvc.perform(delete("/casino/bank/api/user/{userId}/deposit/{amount}/{decimals}", 1L, BigInteger.valueOf(20), 20))
                 .andDo(print())
                 .andExpect(status().isNotFound());
 
@@ -238,21 +239,21 @@ class UserControllerIntegrationTest {
 
     @Test
     void deposit_negativeAmount_returns400() throws Exception {
-        mockMvc.perform(post("/casino/bank/api/user/{userId}/deposit/{amount}/{decimals}", 1L, new BigDecimal(-20), 20))
+        mockMvc.perform(post("/casino/bank/api/user/{userId}/deposit/{amount}/{decimals}", 1L, BigInteger.valueOf(-20), 20))
                 .andDo(print())
                 .andExpect(status().isBadRequest());
     }
 
     @Test
     void deposit_negativeDecimals_returns400() throws Exception {
-        mockMvc.perform(post("/casino/bank/api/user/{userId}/deposit/{amount}/{decimals}", 1L, new BigDecimal(20), -20))
+        mockMvc.perform(post("/casino/bank/api/user/{userId}/deposit/{amount}/{decimals}", 1L, BigInteger.valueOf(20), -20))
                 .andDo(print())
                 .andExpect(status().isBadRequest());
     }
 
     @Test
     void deposit_decimalsGreaterThanTwo_returns400() throws Exception {
-        mockMvc.perform(post("/casino/bank/api/user/{userId}/deposit/{amount}/{decimals}", 1L, new BigDecimal(20), 200))
+        mockMvc.perform(post("/casino/bank/api/user/{userId}/deposit/{amount}/{decimals}", 1L, BigInteger.valueOf(20), 200))
                 .andDo(print())
                 .andExpect(status().isBadRequest());
     }
@@ -266,7 +267,7 @@ class UserControllerIntegrationTest {
 
     @Test
     void deposit_decimalsNotANumber_returns400() throws Exception {
-        mockMvc.perform(post("/user/{userId}/deposit/{amount}/{decimals}", 1L, new BigDecimal(20), "test"))
+        mockMvc.perform(post("/user/{userId}/deposit/{amount}/{decimals}", 1L, BigInteger.valueOf(20), "test"))
                 .andDo(print())
                 .andExpect(status().isBadRequest());
     }
