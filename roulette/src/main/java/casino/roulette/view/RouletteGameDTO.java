@@ -1,20 +1,20 @@
-package casino.roulette.request;
+package casino.roulette.view;
 
 import casino.roulette.util.BetType;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 import java.math.BigDecimal;
 
 @Getter
-@Setter
-@NoArgsConstructor
 @AllArgsConstructor
-public class RoulettePlayRequestDTO {
+public class RouletteGameDTO {
+    private Long id;
     private Long user;
+    private boolean winning;
+    private BigDecimal amount;
+    private BigDecimal betAmount;
     private BetType betType;
     private String betValue;
-    private BigDecimal amount;
+    private int ballPosition;
 }

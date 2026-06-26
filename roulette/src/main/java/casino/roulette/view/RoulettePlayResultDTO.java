@@ -1,8 +1,9 @@
-package casino.roulette.request;
+package casino.roulette.view;
 
 import casino.roulette.util.BetType;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+
 import java.math.BigDecimal;
 
 @Getter

@@ -8,6 +8,8 @@ import casino.roulette.view.RouletteUserStatsDTO;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RequestMapping("/casino/roulette/api")
 public interface RouletteApi {
 
