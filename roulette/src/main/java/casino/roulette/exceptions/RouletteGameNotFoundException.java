@@ -1,8 +1,10 @@
 package casino.roulette.exceptions;
 
-public class RouletteGameNotFoundException extends RuntimeException {
+import org.springframework.http.HttpStatus;
+
+public class RouletteGameNotFoundException extends HttpException {
 
     public RouletteGameNotFoundException(Long id) {
-        super("Roulette game with id " + id + " not found");
+        super(HttpStatus.NOT_FOUND, "Roulette game with id " + id + " not found");
     }
 }
