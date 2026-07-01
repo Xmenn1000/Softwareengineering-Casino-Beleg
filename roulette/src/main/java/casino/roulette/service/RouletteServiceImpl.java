@@ -1,5 +1,7 @@
 package casino.roulette.service;
 
+import casino.roulette.requestClients.banking.BankingRestClient;
+import casino.roulette.game.RouletteEngine;
 import casino.roulette.request.RoulettePlayRequestDTO;
 import casino.roulette.util.BetType;
 import casino.roulette.view.RouletteGameDTO;
@@ -7,6 +9,7 @@ import casino.roulette.view.RoulettePlayResultDTO;
 import casino.roulette.view.RouletteStatsDTO;
 import casino.roulette.view.RouletteUserStatsDTO;
 import casino.roulette.exceptions.RouletteGameNotFoundException;
+import casino.roulette.exceptions.BadRouletteRequestException;
 import casino.roulette.mapper.RouletteGameMapper;
 import casino.roulette.model.RouletteGameEntity;
 import casino.roulette.repository.RouletteGameRepository;
@@ -19,22 +22,30 @@ import java.util.List;
 public class RouletteServiceImpl implements RouletteService {
 
     private final RouletteGameRepository rouletteGameRepository;
+    private final RouletteEngine rouletteEngine;
+    private final BankingRestClient bankingRestClient;
 
-    public RouletteServiceImpl(RouletteGameRepository rouletteGameRepository) {
+    public RouletteServiceImpl(
+            RouletteGameRepository rouletteGameRepository,
+            RouletteEngine rouletteEngine,
+            BankingRestClient bankingRestClient
+    ) {
         this.rouletteGameRepository = rouletteGameRepository;
+        this.rouletteEngine = rouletteEngine;
+        this.bankingRestClient = bankingRestClient;
     }
 
     @Override
     public RoulettePlayResultDTO play(RoulettePlayRequestDTO request) {
-        RouletteGameEntity game = RouletteGameEntity.create(
-                request.getUser(),
-                false,
-                request.getAmount().negate(),
-                request.getAmount(),
-                request.getBetType(),
-                request.getBetValue(),
-                0
-        );
+        if (request == null || request.getUser() == null) {
+            throw new BadRouletteRequestException("User must not be empty");
+        }
+
+        bankingRestClient.findUserById(request.getUser());
+
+        RouletteGameEntity game = rouletteEngine.play(request);
+
+        bankingRestClient.createRouletteTransaction(game.getUser(), game.getAmount());
 
         RouletteGameEntity savedGame = rouletteGameRepository.save(game);
 

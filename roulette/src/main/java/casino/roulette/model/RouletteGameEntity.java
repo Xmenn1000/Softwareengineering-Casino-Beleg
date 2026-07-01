@@ -1,5 +1,6 @@
 package casino.roulette.model;
 
+import casino.roulette.exceptions.BadRouletteRequestException;
 import casino.roulette.util.BetType;
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -50,14 +51,57 @@ public class RouletteGameEntity {
             String betValue,
             int ballPosition
     ) {
+        validateUser(user);
+        validateAmount(amount);
+        validateBetAmount(betAmount);
+        validateBetType(betType);
+        validateBetValue(betValue);
+        validateBallPosition(ballPosition);
+
         RouletteGameEntity entity = new RouletteGameEntity();
         entity.user = user;
         entity.winning = winning;
         entity.amount = amount;
         entity.betAmount = betAmount;
         entity.betType = betType;
-        entity.betValue = betValue;
+        entity.betValue = betValue.trim().toUpperCase();
         entity.ballPosition = ballPosition;
         return entity;
+    }
+
+    private static void validateUser(Long user) {
+        if (user == null) {
+            throw new BadRouletteRequestException("User must not be empty");
+        }
+    }
+
+    private static void validateAmount(BigDecimal amount) {
+        if (amount == null) {
+            throw new BadRouletteRequestException("Amount must not be empty");
+        }
+    }
+
+    private static void validateBetAmount(BigDecimal betAmount) {
+        if (betAmount == null || betAmount.compareTo(BigDecimal.ZERO) <= 0) {
+            throw new BadRouletteRequestException("Bet amount must be greater than 0");
+        }
+    }
+
+    private static void validateBetType(BetType betType) {
+        if (betType == null) {
+            throw new BadRouletteRequestException("Bet type must not be empty");
+        }
+    }
+
+    private static void validateBetValue(String betValue) {
+        if (betValue == null || betValue.isBlank()) {
+            throw new BadRouletteRequestException("Bet value must not be empty");
+        }
+    }
+
+    private static void validateBallPosition(int ballPosition) {
+        if (ballPosition < 0 || ballPosition > 36) {
+            throw new BadRouletteRequestException("Ball position must be between 0 and 36");
+        }
     }
 }

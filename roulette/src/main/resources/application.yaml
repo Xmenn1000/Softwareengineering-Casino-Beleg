@@ -12,3 +12,8 @@ spring:
     show-sql: true
     hibernate:
       ddl-auto: update
+
+casino:
+  services:
+    bank:
+      baseURL: ${CASINO_BANK_BASE_URL:http://localhost:8080/casino/bank/api}
