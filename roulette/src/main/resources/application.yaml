@@ -17,3 +17,10 @@ casino:
   services:
     bank:
       baseURL: ${CASINO_BANK_BASE_URL:http://localhost:8080/casino/bank/api}
+
+  roulette:
+    betting:
+      minAmount: "1.00"
+      maxAmount: "1000.00"
+    banking:
+      invoicingParty: ROULETTE

@@ -2,6 +2,9 @@ package casino.roulette.util;
 
 import casino.roulette.exceptions.BadRouletteRequestException;
 
+import java.math.BigDecimal;
+import java.math.MathContext;
+
 public final class RouletteRules {
 
     private RouletteRules() {
@@ -144,6 +147,17 @@ public final class RouletteRules {
         };
     }
 
+    public static BigDecimal houseEdge(BetType betType) {
+        return BigDecimal.ONE.subtract(returnToPlayer(betType));
+    }
+
+    public static BigDecimal returnToPlayer(BetType betType) {
+        int totalReturnMultiplier = payoutMultiplier(betType) + 1;
+
+        return hitProbability(betType)
+                .multiply(BigDecimal.valueOf(totalReturnMultiplier));
+    }
+
     public static int payoutMultiplier(BetType betType) {
         if (betType == BetType.STRAIGHT_NUMBER) {
             return 35;
@@ -158,5 +172,22 @@ public final class RouletteRules {
         }
 
         throw new BadRouletteRequestException("Bet type is not supported yet: " + betType);
+    }
+
+    public static BigDecimal hitProbability(BetType betType) {
+        return BigDecimal.valueOf(winningOutcomes(betType))
+                .divide(BigDecimal.valueOf(totalOutcomes()), MathContext.DECIMAL64);
+    }
+
+    public static int winningOutcomes(BetType betType) {
+        return switch (betType) {
+            case STRAIGHT_NUMBER -> 1;
+            case COLOR, PARITY, RANGE -> 18;
+            case DOZEN -> 12;
+        };
+    }
+
+    public static int totalOutcomes() {
+        return 37;
     }
 }

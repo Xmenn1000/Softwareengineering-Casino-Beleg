@@ -1,2 +1,32 @@
 @startuml
+
+actor Player
+
+package "Roulette Service : 8081" as Roulette {
+
+    component "Roulette Controller" as RouletteController
+    component "Roulette Service" as RouletteService
+    component "Roulette Engine" as RouletteEngine
+    component "Info Service" as InfoService
+    component "Stats Calculator" as StatsCalculator
+    component "Roulette Repository" as RouletteRepo
+    database "Roulette DB" as RouletteDB
+    component "Banking Rest Client" as BankingClient
+
+    RouletteController --> RouletteService
+
+    RouletteService --> RouletteEngine : play round
+    RouletteService --> InfoService : rules / chances
+    RouletteService --> StatsCalculator : stats
+    RouletteService --> RouletteRepo : persist games
+    RouletteRepo --> RouletteDB
+
+    RouletteService --> BankingClient : verify user\ncreate transaction
+}
+
+cloud "Banking Service : 8080" as BankingService
+
+Player --> RouletteController : HTTP\nplay / info / stats
+BankingClient --> BankingService : HTTP\nuser / transaction
+
 @enduml
