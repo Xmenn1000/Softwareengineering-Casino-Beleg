@@ -1,18 +1,20 @@
 package casino.slots.view;
 
+import casino.slots.machine.enums.Symbol;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 @Getter
-@NoArgsConstructor
+@AllArgsConstructor
 public class SlotsGameResultDTO {
 
-  private long id;
-  private long user;
+  private long userId;
   private boolean winning;
   private BigDecimal amount;
-  // var slot_states --> landing symbol of the slots missing
+  private List<Symbol> SlotStates;
 
 }
