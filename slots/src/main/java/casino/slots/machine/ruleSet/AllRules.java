@@ -1,6 +1,7 @@
 package casino.slots.machine.ruleSet;
 
 import casino.slots.machine.OutCome;
+import org.springframework.context.annotation.Bean;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -26,6 +27,6 @@ public class AllRules implements Rule {
             result = result.add(r.payOut(symbols, amount));
         }
 
-        return result;
+        return result.subtract(amount);
     }
 }

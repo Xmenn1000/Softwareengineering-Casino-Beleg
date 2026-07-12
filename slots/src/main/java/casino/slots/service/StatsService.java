@@ -1,12 +1,11 @@
-package casino.slots.service.interfaces;
+package casino.slots.service;
 
 import casino.slots.view.SlotsStatsDTO;
 import casino.slots.view.SlotsStatsUserDTO;
 
-public interface StatService {
+public interface StatsService {
 
     SlotsStatsDTO getStats();
 
-    SlotsStatsUserDTO getStats(long userId);
-
+    SlotsStatsUserDTO getStatsByUserId(Long userId);
 }

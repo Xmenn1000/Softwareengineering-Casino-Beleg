@@ -9,7 +9,4 @@ import java.util.List;
 @Repository
 public interface SlotsGameRepository extends JpaRepository<SlotsGameEntity, Long> {
   List<SlotsGameEntity> findByUserId(long userId);
-
-  // restlichen Methoden werden durch JpaRepository geerbt
-
 }

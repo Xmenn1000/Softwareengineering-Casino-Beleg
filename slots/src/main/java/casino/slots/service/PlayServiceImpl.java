@@ -3,16 +3,15 @@ package casino.slots.service;
 import casino.slots.machine.GameResult;
 import casino.slots.machine.SlotMachine;
 import casino.slots.request.SlotsPlayRequest;
-import casino.slots.service.interfaces.SlotsGameService;
 import casino.slots.view.SlotsGameResultDTO;
 import org.springframework.stereotype.Service;
 
 @Service
-public class SlotPlayService implements SlotsGameService {
+public class PlayServiceImpl implements PlayService {
 
     private final SlotMachine slotMachine;
 
-    public SlotPlayService(SlotMachine slotMachine) {
+    public PlayServiceImpl(SlotMachine slotMachine) {
         this.slotMachine = slotMachine;
     }
 

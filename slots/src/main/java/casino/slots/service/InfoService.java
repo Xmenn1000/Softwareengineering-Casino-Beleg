@@ -1,4 +1,4 @@
-package casino.slots.service.interfaces;
+package casino.slots.service;
 
 public interface InfoService {
 

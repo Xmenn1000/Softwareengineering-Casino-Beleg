@@ -12,9 +12,8 @@ public class ExactCountRule implements Rule {
 
     private final int exactCount;
     private final ResultPattern pattern;
-    private CashOutMultiplier calcuator;
+    private CashOutMultiplier calculator;
 
-    CashOutMultiplier calculator;
     public ExactCountRule(int exactCount, ResultPattern pattern, CashOutMultiplier calculator) {
         this.calculator = calculator;
         this.exactCount = exactCount;
