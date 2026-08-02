@@ -17,5 +17,4 @@ public class SlotsGameResultDTO {
   private List<Symbol> SlotStates;
   private BigDecimal betAmount;
 
-
 }

@@ -21,6 +21,6 @@ public class PlayServiceImpl implements PlayService {
         //TODO: VALIDATE USER
 
         GameResult result = slotMachine.play(playRequest.getAmount());
-        return new SlotsGameResultDTO(playRequest.getUserId(), result.isWinning(), result.getAmount(), result.getSlotStates());
+        return new SlotsGameResultDTO(playRequest.getUserId(), result.isWinning(), result.getAmount(), result.getSlotStates(), playRequest.getAmount());
     }
 }
