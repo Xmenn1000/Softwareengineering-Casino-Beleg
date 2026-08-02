@@ -1,4 +1,4 @@
-package casino.slots.machine.enums;
+package casino.slots.domain.enums;
 
 public enum ResultPattern {
     THREE_OF_A_KIND,

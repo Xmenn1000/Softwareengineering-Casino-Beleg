@@ -1,7 +1,7 @@
 package casino.slots.service;
 
-import casino.slots.machine.GameResult;
-import casino.slots.machine.SlotMachine;
+import casino.slots.domain.dto.GameResult;
+import casino.slots.domain.machine.SlotEngine;
 import casino.slots.request.SlotsPlayRequest;
 import casino.slots.view.SlotsGameResultDTO;
 import org.springframework.stereotype.Service;
@@ -9,9 +9,9 @@ import org.springframework.stereotype.Service;
 @Service
 public class PlayServiceImpl implements PlayService {
 
-    private final SlotMachine slotMachine;
+    private final SlotEngine slotMachine;
 
-    public PlayServiceImpl(SlotMachine slotMachine) {
+    public PlayServiceImpl(SlotEngine slotMachine) {
         this.slotMachine = slotMachine;
     }
 

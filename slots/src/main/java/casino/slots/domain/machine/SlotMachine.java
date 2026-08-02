@@ -1,34 +1,33 @@
-package casino.slots.machine;
+package casino.slots.domain.machine;
 
-import casino.slots.machine.enums.ResultPattern;
-import casino.slots.machine.enums.Symbol;
-import casino.slots.machine.ruleSet.AllRules;
-import casino.slots.machine.ruleSet.ExactCountRule;
-import org.springframework.stereotype.Service;
+import casino.slots.domain.dto.GameResult;
+import casino.slots.domain.dto.OutCome;
+import casino.slots.domain.enums.Symbol;
+import casino.slots.domain.ruleSet.Rule;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Formatter;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
 
-@Service
-public class SlotMachine {
+public class SlotMachine implements SlotEngine {
 
     CashOutMultiplier calculator;
     List<SlotField> fields = new ArrayList<>();
-    AllRules allRules = new AllRules();
-    private final int numberOfFields = 3;
-    private final SlotConfigClass weightsProvider = new SlotConfigClass();
+    Rule allRules;
+    private final Map<Symbol, Integer> weights;
+    private final int numberOfFields;
 
-    public SlotMachine(CashOutMultiplier calculator) {
+    public SlotMachine(CashOutMultiplier calculator, int numberOfFields, Map<Symbol, Integer> weights, Rule rules) {
         this.calculator = calculator;
         for(int i = 0; i < numberOfFields; i++) {
-            fields.add(new SlotField(weightsProvider.getWeights(), new Random()));
+            fields.add(new SlotField(weights, new Random()));
         }
-        allRules.addRule(new ExactCountRule(1, ResultPattern.ONE_OF_A_KIND, calculator));
-        allRules.addRule(new ExactCountRule(2, ResultPattern.TWO_OF_A_KIND, calculator));
-        allRules.addRule(new ExactCountRule(3, ResultPattern.THREE_OF_A_KIND, calculator));
+        this.weights = weights;
+        this.numberOfFields = numberOfFields;
+        this.allRules = rules;
     }
 
 

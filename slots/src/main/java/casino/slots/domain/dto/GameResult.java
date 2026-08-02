@@ -1,6 +1,6 @@
-package casino.slots.machine;
+package casino.slots.domain.dto;
 
-import casino.slots.machine.enums.Symbol;
+import casino.slots.domain.enums.Symbol;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 

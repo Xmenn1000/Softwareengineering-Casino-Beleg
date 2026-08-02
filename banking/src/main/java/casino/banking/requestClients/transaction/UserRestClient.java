@@ -20,16 +20,6 @@ public class UserRestClient {
         this.restClient = restClient;
     }
 
-//    public UserDTO findById(Long id) {
-//        return restClient.get()
-//                .uri("/user/{id}", id)
-//                .retrieve()
-//                .onStatus(status -> status.value() == 404, (request, reponse) -> {
-//                    throw new UserNotFoundException(id);
-//                })
-//                .body(UserDTO.class);
-//    }
-
     public UserDTO depositBalanceById(Long userId, BigInteger amount, int decimals) throws BadDepositRequestException {
         return restClient.post()
                 .uri("/user/{userId}/deposit/{amount}/{decimals}", userId, amount, decimals)

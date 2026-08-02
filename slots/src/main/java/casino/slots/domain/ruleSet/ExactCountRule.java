@@ -1,9 +1,9 @@
-package casino.slots.machine.ruleSet;
+package casino.slots.domain.ruleSet;
 
-import casino.slots.machine.CashOutMultiplier;
-import casino.slots.machine.OutCome;
-import casino.slots.machine.enums.ResultPattern;
-import casino.slots.machine.enums.Symbol;
+import casino.slots.domain.machine.CashOutMultiplier;
+import casino.slots.domain.dto.OutCome;
+import casino.slots.domain.enums.ResultPattern;
+import casino.slots.domain.enums.Symbol;
 
 import java.math.BigDecimal;
 import java.util.EnumSet;
@@ -25,7 +25,7 @@ public class ExactCountRule implements Rule {
         BigDecimal payOut = BigDecimal.valueOf(0);
         for(Symbol s : EnumSet.allOf(Symbol.class)) {
             if(result.numberOfSymbols(s) == exactCount) {
-                BigDecimal newAmount = amount.multiply(calculator.multiplier(pattern, s));
+                BigDecimal newAmount = amount.multiply(calculator.getMultiplierForPattern(pattern, s));
                 payOut = payOut.add(newAmount);
             }
         }

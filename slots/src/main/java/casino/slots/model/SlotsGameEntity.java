@@ -1,11 +1,11 @@
 package casino.slots.model;
 
+import casino.slots.domain.dto.OutCome;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -26,6 +26,6 @@ public class SlotsGameEntity {
   private long userId;
   private boolean winning;
   private BigDecimal amount;
-  //private slotState slotStates;
+  private OutCome slotStates;
 
 }

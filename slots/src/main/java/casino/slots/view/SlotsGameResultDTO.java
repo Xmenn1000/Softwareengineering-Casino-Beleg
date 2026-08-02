@@ -1,9 +1,8 @@
 package casino.slots.view;
 
-import casino.slots.machine.enums.Symbol;
+import casino.slots.domain.enums.Symbol;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
 import java.util.List;

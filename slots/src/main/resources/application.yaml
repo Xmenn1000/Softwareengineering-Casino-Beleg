@@ -12,3 +12,29 @@ spring:
     show-sql: true
     hibernate:
       ddl-auto: update
+
+slots:
+  machine:
+    numberOfFields: 3
+    rules: "Test"
+    weights:
+      CHERRY: 8
+      LEMON: 5
+      ORANGE: 3
+      PLUM: 2
+      GOLDBAR: 1
+      SEVEN: 1
+    payout:
+      THREE_OF_A_KIND:
+        CHERRY: 8
+        LEMON: 25
+        ORANGE: 40
+        PLUM: 50
+        GOLDBAR: 600
+        SEVEN: 1500
+      TWO_OF_A_KIND:
+        GOLDBAR: 8
+        SEVEN: 10
+      ONE_OF_A_KIND:
+        SEVEN: 2
+

@@ -1,6 +1,6 @@
-package casino.slots.machine.ruleSet;
+package casino.slots.domain.ruleSet;
 
-import casino.slots.machine.OutCome;
+import casino.slots.domain.dto.OutCome;
 
 import java.math.BigDecimal;
 

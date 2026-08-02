@@ -1,6 +1,6 @@
-package casino.slots.machine;
+package casino.slots.domain.machine;
 
-import casino.slots.machine.enums.Symbol;
+import casino.slots.domain.enums.Symbol;
 
 import java.util.ArrayList;
 import java.util.List;
