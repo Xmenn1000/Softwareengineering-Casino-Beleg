@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Formatter;
 import java.util.List;
 import java.util.Random;
 
@@ -36,8 +37,7 @@ public class SlotMachine {
         BigDecimal amount =  calculateWinningAmount(result, betAmount);
         boolean isWinning = true;
 
-
-        if(amount.compareTo(BigDecimal.ZERO) == 0) {
+        if(amount.compareTo(BigDecimal.ZERO) <= 0) {
             isWinning = false;
             amount = BigDecimal.ZERO.subtract(betAmount);
         }
