@@ -1,6 +1,7 @@
 package casino.slots.model;
 
 import casino.slots.domain.dto.OutCome;
+import casino.slots.domain.enums.Symbol;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -11,6 +12,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 @Getter
 @Setter
@@ -26,6 +28,6 @@ public class SlotsGameEntity {
   private long userId;
   private boolean winning;
   private BigDecimal amount;
-  private OutCome slotStates;
+  private List<Symbol> slotStates;
 
 }

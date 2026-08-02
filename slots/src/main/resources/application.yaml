@@ -13,7 +13,13 @@ spring:
     hibernate:
       ddl-auto: update
 
+casino:
+  services:
+    bank:
+      baseURL: ${CASINO_BANK_BASE_URL:http://localhost:8080/casino/bank/api}
+
 slots:
+  invoicingParty: "SLOTS"
   machine:
     numberOfFields: 3
     rules: "Test"
