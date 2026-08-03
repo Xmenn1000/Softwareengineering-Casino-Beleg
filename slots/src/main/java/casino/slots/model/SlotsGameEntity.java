@@ -19,7 +19,7 @@ import java.util.List;
 @NoArgsConstructor
 @Table(name = "slotGame")
 @Entity
-public class SlotsGameEntity {
+public class  SlotsGameEntity {
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -28,6 +28,7 @@ public class SlotsGameEntity {
   private long userId;
   private boolean winning;
   private BigDecimal amount;
+  private BigDecimal betAmount;
   private List<Symbol> slotStates;
 
 }

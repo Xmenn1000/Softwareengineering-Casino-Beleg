@@ -2,12 +2,18 @@ package casino.slots.request;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.math.BigDecimal;
 
-@AllArgsConstructor
+@NoArgsConstructor
 @Getter
+@Setter
 public class SlotsPlayRequest {
-    Long userId;
-    BigDecimal amount;
+    private Long userId;
+    private BigDecimal amount;
+    private String betAmount;
 }
+
+

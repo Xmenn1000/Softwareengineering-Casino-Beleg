@@ -32,7 +32,7 @@ public class BankingRestClient {
                 .body(BankingUserDTO.class);
     }
 
-    public void createRouletteTransaction(Long userId, BigDecimal amount) {
+    public void createSlotsTransaction(Long userId, BigDecimal amount) {
         BankingTransactionRequestDTO body = new BankingTransactionRequestDTO(
                 invoicingParty,
                 amount

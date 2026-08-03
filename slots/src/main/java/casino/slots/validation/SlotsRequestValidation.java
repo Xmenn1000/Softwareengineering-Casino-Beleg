@@ -12,19 +12,18 @@ import java.util.List;
 @Component
 public class SlotsRequestValidation {
 
-    public void validatePlayRequest(SlotsGameDTO gameDTO) {
-        if (gameDTO == null) {
+    public void validatePlayRequest(SlotsPlayRequest gameRequest) {
+        if (gameRequest == null) {
             throw new BadSlotsRequestException("RequestBody was null");
         }
 
-        validateUserId(gameDTO.getUser());
-        validateSymbols(gameDTO.getSymbols());
-        validateBetAmount(gameDTO.getBetAmount());
-        validateResultingAmount(gameDTO.getResultingAmount());
+        validateUserId(gameRequest.getUserId());
+        validateBetAmount(gameRequest.getBetAmount());
+        validateResultingAmount(gameRequest.getAmount());
 
     }
 
-    public void validateUserId(Long userId) {
+    private void validateUserId(Long userId) {
         if (userId == null) {
             throw new BadSlotsRequestException("User Id was null");
         }
@@ -34,25 +33,20 @@ public class SlotsRequestValidation {
         }
     }
 
-    public void validateResultingAmount(BigDecimal resultingAmount) {
+    private void validateResultingAmount(BigDecimal resultingAmount) {
         if (resultingAmount == null) {
             throw new BadSlotsRequestException("There is no outcome amount of the game");
         }
     }
 
-    public void validateBetAmount(BigDecimal betAmount) {
+    private void validateBetAmount(String betAmount) {
         if (betAmount == null) {
             throw new BadSlotsRequestException("Bet amount was null");
         }
 
-        if (betAmount.compareTo(BigDecimal.ZERO) <= 0) {
+        if (BigDecimal.valueOf(Long.parseLong(betAmount)).compareTo(BigDecimal.ZERO) <= 0) {
             throw new BadSlotsRequestException("Bet amount has to be positive and grater than 0 but was: " + betAmount);
         }
     }
 
-    public void validateSymbols(List<Symbol> symbols) {
-        if (symbols == null) {
-            throw new BadSlotsRequestException("SlotsSymbols are null");
-        }
-    }
 }

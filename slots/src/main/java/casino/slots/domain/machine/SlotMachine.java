@@ -4,6 +4,8 @@ import casino.slots.domain.dto.GameResult;
 import casino.slots.domain.dto.OutCome;
 import casino.slots.domain.enums.Symbol;
 import casino.slots.domain.ruleSet.Rule;
+import casino.slots.model.SlotsGameEntity;
+import casino.slots.request.SlotsPlayRequest;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -57,4 +59,19 @@ public class SlotMachine implements SlotEngine {
     }
 
 
+    @Override
+    public SlotsGameEntity play(SlotsPlayRequest request) {
+        SlotsGameEntity finishedGame = new SlotsGameEntity();
+
+        BigDecimal betAmount = BigDecimal.valueOf(Long.parseLong(request.getBetAmount()));
+        GameResult result = play(betAmount);
+
+        finishedGame.setUserId(request.getUserId());
+        finishedGame.setWinning(result.isWinning());
+        finishedGame.setAmount(result.getAmount());
+        finishedGame.setBetAmount(betAmount);
+        finishedGame.setSlotStates(result.getSlotStates());
+
+        return finishedGame;
+    }
 }

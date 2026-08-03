@@ -15,7 +15,7 @@ public class SlotsGameDTO {
   private long id;
   private boolean winning;
   private BigDecimal resultingAmount;
-  private BigDecimal betAmount;
+  private String betAmount;
   private List<Symbol> symbols;
 
 }
