@@ -22,7 +22,6 @@ slots:
   invoicingParty: "SLOTS"
   machine:
     numberOfFields: 3
-    rules: "Test"
     weights:
       CHERRY: 8
       LEMON: 5
