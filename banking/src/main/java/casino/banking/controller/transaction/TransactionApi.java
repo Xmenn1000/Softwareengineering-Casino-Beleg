@@ -5,6 +5,7 @@ import casino.banking.request.transaction.UserGameTransactionRequestDTO;
 import casino.banking.view.transaction.TransactionDTO;
 import casino.banking.view.transaction.UserTransactionDTO;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -17,7 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
-//TODO: add Description
+@Tag(name = "Transaction", description = "Manage Game Service Transactions")
 @RequestMapping("/casino/bank/api")
 @RestController
 public interface TransactionApi {

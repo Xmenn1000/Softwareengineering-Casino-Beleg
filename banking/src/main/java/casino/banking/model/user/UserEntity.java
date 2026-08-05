@@ -14,7 +14,7 @@ import java.math.BigDecimal;
 @Entity
 @Getter
 @Table(name = "users")
-public class UserEntity implements User{
+public class UserEntity implements User {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "id", nullable = false, updatable = false)
@@ -62,12 +62,10 @@ public class UserEntity implements User{
     }
 
     public void addBalance(BigDecimal amount) {
-        try {
-            this.balance = this.balance.add(amount);
+        if (amount == null) {
+            throw new ModelValidityBreachException("Balance amount must not be null");
         }
-        catch(NullPointerException ex) {
-            throw new ModelValidityBreachException(amount.toString(), ex);
-        }
+        this.balance = this.balance.add(amount);
     }
 
 }

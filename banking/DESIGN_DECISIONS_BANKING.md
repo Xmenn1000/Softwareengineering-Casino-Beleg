@@ -36,3 +36,32 @@ fractional cents part and put the two together as `amount + decimals/100`. So `.
 tenths (0.50). Anything longer than two digits gets a 400, exactly as the assignment asks.
 
 We ran this past the lecturer in the exercise session and got the go-ahead.
+
+### 4. Editing or deleting a transaction is a ledger correction, not a re-booking
+
+`POST` a transaction applies it to the user's balance (via the deposit endpoint). `PUT` and `DELETE` on
+a transaction, though, only touch the ledger row — they deliberately **don't** reverse the old amount or
+apply the new one to the balance. So after a `PUT`/`DELETE` the ledger and the balances can diverge on
+purpose.
+
+We treat these two endpoints as admin-side corrections of the *record*, not as money movements. Doing it
+the other way — re-booking the balance on every edit — would mean an edit silently moves real money, and
+a delete would have to refund, which turns a "fix a typo in the log" action into a financial transaction
+with its own failure modes. The assignment specs `PUT`/`DELETE` purely in terms of the returned
+transaction object and never mentions a balance effect, so we kept the balance side out of them
+(**Single Responsibility** / **Principle of Least Surprise**: an edit edits the record, a booking books
+money — not both at once). If real re-booking were wanted, it'd be a separate, explicit reversal flow.
+
+### 5. Creating a transaction isn't atomic across the self-call — and that's an accepted limit
+
+`createForUserId` does two things in sequence: it calls the deposit endpoint (an HTTP call the service
+makes against itself) and then saves the transaction row. Those two steps aren't wrapped in one
+transaction — the deposit already committed in its own request by the time we `save`. So if the `save`
+fails after a successful deposit, the balance has moved but no ledger entry exists.
+
+This falls straight out of the assignment's "solve cross-slice logic with a call against yourself"
+approach: an HTTP boundary can't share a database transaction, so no local `@Transactional` can span it.
+A real system would need a compensating action (a reversing deposit) or an outbox/saga to close the gap.
+For this scope we accept the window as a known limitation rather than build distributed-transaction
+machinery the assignment doesn't ask for (**KISS / YAGNI**). We'd rather have it written down than
+pretend the self-call is atomic.
