@@ -1,99 +1,86 @@
 # Design Decisions – Global
 
-This file documents design decisions that apply to the **entire project** (all services).
-Service-specific decisions are documented in the `DESIGN_DECISIONS_<SERVICE>.md` file inside each service.
+This file collects the decisions that apply to the whole project. Anything that's only about a single
+service lives in that service's own `DESIGN_DECISIONS_<SERVICE>.md`.
 
 ## Decisions
 
-Our overall approach was to follow the path of least resistance: at the start we scanned the
-assignment thoroughly and translated the requirements into a single global UML diagram. That diagram
-let us see clearly which service has to communicate with which, and it drove the decisions below.
+We kicked things off by reading the assignment properly and turning it into one big UML diagram. That
+made it pretty obvious which service has to talk to which, and honestly most of the decisions below just
+grew out of that.
 
-### 1. Transactions are modelled from the game services' perspective
+### 1. Transactions are seen from the game services' side
 
-The banking transaction endpoints always require a *known game service* as the invoicing party
-(enforced through a fixed `GameService` enum). We took this as the guiding constraint and modelled
-transactions purely from the services' point of view: a transaction always represents money moving
-between a game service and a user.
+The bank's transaction endpoints always want a known game service as the invoicing party (we pin that
+down with a `GameService` enum). So we treated transactions as a game-service thing from the start: a
+transaction is always money moving between a game service and a user.
 
-We therefore separate the *real money flow* (a user topping up their balance) from the *played money*
-(the flow driven by the game services). A user has a single balance; a direct deposit changes that
-balance but creates **no** transaction entry, whereas every money movement initiated by a game service
-is recorded as a transaction. The transaction ledger thus tracks only game-service money movements,
-never the user's own deposits.
+One thing we did on purpose because of that: a user topping up their own balance doesn't create a
+transaction. There's a single balance — a deposit just moves that number, and only money coming from a
+game service ends up in the transaction ledger. So the ledger is really a "what did the games do" log,
+not a record of deposits.
 
-We are aware that in a real system a user deposit would normally be recorded as a transaction as well
-(typically in a separate cash/payments ledger, for auditing and reconciliation). The assignment,
-however, only defines transaction endpoints tied to a game service and does not require deposits to be
-tracked as transactions — so we deliberately did not model them that way. This keeps the architecture
-aligned with the assignment's requirements, as a conscious and documented simplification.
+In the real world a deposit would obviously get logged somewhere too (a separate cash ledger, for
+auditing and all that). But the assignment only asks for game-service transactions and never for deposit
+tracking, so we left it out. Conscious simplification, not something we forgot.
 
-This decision was discussed and agreed upon with the lecturer during the exercise session.
+We ran this past the lecturer in the exercise session and got the go-ahead.
 
-### 2. Repository entities do not get a separate interface
+### 2. Entities don't get their own interface
 
-We do not put a separate interface on top of our JPA entities. Such an interface would have only one
-implementation and no polymorphism to gain, and JPA-specific code would keep casting back to the
-concrete type anyway — so it is just an unnecessary abstraction. That goes against **YAGNI** and
-**KISS** (*E-06 Designprinzipien*, lecture).
+We don't slap an interface on top of our JPA entities. It would only ever have one implementation, gives
+us zero polymorphism, and JPA code would keep casting back to the concrete type anyway — so it's an
+abstraction that pays for nothing. Classic **You Aren't Gonna Need It (YAGNI)** / **Keep It Simple, Stupid (KISS)** territory (*E-06
+Designprinzipien*, lecture).
 
-This does **not** break the **Dependency Inversion Principle** (*E-06 Designprinzipien*, lecture): our
-services already depend on the `JpaRepository` abstraction, not on a concrete database — just like the
-`UserService → IDatabase` example from the lecture. The entity is plain data, not a dependency to
-invert, so it needs no interface.
+And no, it doesn't step on the **Dependency Inversion Principle** (*E-06 Designprinzipien*, lecture):
+our services already depend on the `JpaRepository` abstraction, not on a concrete database — exactly the
+`UserService → IDatabase` example from the lecture. The entity is just data, not a dependency worth
+inverting.
 
-To decouple the domain model properly, we would actually have to use a hexagonal / clean architecture
-(domain and entity as separate types joined by a mapper). Since the architecture is prescribed by the
-assignment, however — direct use of the JPA entity framework — we did not use a hexagonal architecture
-here.
+If we really wanted to decouple the domain model, we'd have to go full hexagonal / clean architecture
+(domain and entity as separate types with a mapper in between). But the architecture is set by the
+assignment — direct JPA entities — so we didn't. We also checked this with the lecturer in the
+exercises.
 
-This decision was discussed and agreed upon with the lecturer during the exercise session.
+### 3. One way of doing errors, everywhere
 
-### 3. Consistent error handling via a typed exception hierarchy
+Errors turn into HTTP responses the same way in every service: an abstract `HttpException` carries the
+status, the concrete cases extend it, and a `@RestControllerAdvice` turns them into RFC-7807
+`ProblemDetail` responses. Our actual code just throws a meaningful exception and never fiddles with
+status codes — that's the advice layer's one job (**Separation of Concerns** and the **Single
+Responsibility Principle**, *E-06 Designprinzipien*, lecture).
 
-Every service maps errors to HTTP status codes the same way: an abstract `HttpException` (carrying an
-`HttpStatus`) is subclassed into typed domain exceptions, and a `@RestControllerAdvice` translates
-them into RFC-7807 `ProblemDetail` responses. Business code only ever throws a meaningful domain
-exception; the advice layer is the single place that turns it into an HTTP response. This keeps
-controllers and services free of status-code handling. It follows **Separation of Concerns** and the
-**Single Responsibility Principle** (*E-06 Designprinzipien*, lecture): the advice layer is solely
-responsible for turning domain exceptions into HTTP responses.
+### 4. The Swagger stuff lives on its own interface
 
-### 4. OpenAPI/Swagger contract lives on a separate interface
+Each controller implements a little `...Api` interface that holds all the OpenAPI/Swagger annotations.
+Keeps the controller itself readable and puts the whole API contract in one spot. Same setup in every
+service.
 
-Controllers implement a dedicated `...Api` interface that carries all OpenAPI/Swagger annotations
-(operations, responses, parameters). The implementation class stays free of documentation noise, and
-the API contract can be read in one place. This convention is applied across all services.
+### 5. Randomness sits behind an abstraction so we can test it
 
-### 5. Non-determinism is isolated behind an abstraction (for testability)
+We don't call a random source straight from the game logic. Roulette gets its number from a
+`RouletteSpinGenerator`, and the slot reels get their `Random` passed in through the constructor. That
+way a test can hand in a fixed source and check for an exact result — which is basically the only reason
+the game logic is testable at all. Straight-up **Dependency Inversion Principle** (*E-06
+Designprinzipien*, lecture), and honestly the same thing we were taught in Programmierung 3.
 
-The random element of each game is hidden behind an injectable abstraction rather than calling a
-random source inline: the roulette spin is produced by a `RouletteSpinGenerator` interface, and the
-slot reels receive their `Random` through the constructor. Tests can therefore inject a deterministic
-source and assert exact outcomes, which is what makes the game logic unit-testable. This is an
-application of the **Dependency Inversion Principle** (*E-06 Designprinzipien*, lecture): the game
-logic depends on a random abstraction, not on a concrete random source.
-This is also the approach we were taught in Programmierung 3.
+### 6. Stats are done in memory with streams
 
-### 6. Statistics are computed in-memory with stream-based calculators
+We don't calculate the stats with DB queries. A little stateless calculator takes the list of games and
+reduces it with streams. That keeps the whole thing a pure function we can test without a database or
+mocks, and it works the same in both game services. Calculator does the maths, service does the wiring —
+**Single Responsibility Principle** plus **High Cohesion / Low Coupling** (*E-06 Designprinzipien*, lecture).
 
-Aggregated statistics are not computed with database queries but by dedicated, stateless calculator
-components that receive a list of game entities and reduce it with streams. This keeps the aggregation
-logic a pure function that can be unit-tested without a database or mocks, and keeps it consistent
-across the game services. This follows the **Single Responsibility Principle** and **High Cohesion /
-Low Coupling** (*E-06 Designprinzipien*, lecture): the calculator only aggregates, the service only
-orchestrates.
+### 7. Entities validate themselves when they're created
 
-### 7. Domain models validate themselves on creation
+No bare constructor plus setters. Entities go through a factory / static `create(...)` that checks the
+invariants, so a broken entity can't even exist. The model looks after itself no matter how careful (or
+not) the caller is.
 
-Entities are not created with a bare constructor and setters; they are built through a factory / static
-`create(...)` path that validates the invariants, so an instance cannot come into existence in an
-invalid state. This protects domain integrity independently of how careful the caller is.
+### 8. The API talks camelCase
 
-### 8. The API uses camelCase JSON
-
-All DTOs use camelCase field names, so the exposed JSON keys are camelCase (e.g. `totalClientCount`)
-instead of the snake_case shown in the assignment. This keeps the JSON consistent with our Java naming
-conventions across all services and avoids per-field `@JsonProperty` mappings. It is a deliberate
-deviation from the assignment's example response bodies.
-
+All our DTOs use camelCase field names, so the JSON comes out camelCase (`totalClientCount`) instead of
+the snake_case in the assignment examples. On purpose: it keeps the JSON matching our Java naming
+everywhere and saves us a `@JsonProperty` on every single field. Yes, it's a deliberate deviation from
+the example bodies.
