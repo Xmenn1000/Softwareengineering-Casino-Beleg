@@ -2,31 +2,39 @@
 
 actor Player
 
-package "Roulette Service : 8081" as Roulette {
+package "Roulette Backend : 8081" as RouletteBackend {
 
-    component "Roulette Controller" as RouletteController
-    component "Roulette Service" as RouletteService
-    component "Roulette Engine" as RouletteEngine
-    component "Info Service" as InfoService
-    component "Stats Calculator" as StatsCalculator
-    component "Roulette Repository" as RouletteRepo
-    database "Roulette DB" as RouletteDB
-    component "Banking Rest Client" as BankingClient
+    component "RouletteController" as Controller
+    component "RouletteServiceImpl" as Service
+    component "RouletteEngine" as Engine
+    component "RouletteInfoService" as Info
+    component "RouletteStatsCalculator" as Stats
+    component "RouletteGameRepository" as Repo
+    database "Roulette DB" as DB
 
-    RouletteController --> RouletteService
+    component "BankingRestClient" as BankingClient
 
-    RouletteService --> RouletteEngine : play round
-    RouletteService --> InfoService : rules / chances
-    RouletteService --> StatsCalculator : stats
-    RouletteService --> RouletteRepo : persist games
-    RouletteRepo --> RouletteDB
+    component "RouletteBetStrategyResolver" as Resolver
+    component "Bet Strategies" as Strategies
 
-    RouletteService --> BankingClient : verify user\ncreate transaction
+    Controller --> Service : delegates requests
+
+    Service --> Engine : play round
+    Service --> Info : rules / chances
+    Service --> Stats : calculate stats
+    Service --> Repo : save / read games
+    Service --> BankingClient : validate user\ncreate transaction
+
+    Engine --> Resolver : resolve bet type
+    Info --> Resolver : RTP / house edge
+    Resolver --> Strategies : selects strategy
+
+    Repo --> DB : persist games
 }
 
 cloud "Banking Service : 8080" as BankingService
 
-Player --> RouletteController : HTTP\nplay / info / stats
+Player --> Controller : HTTP\nplay / info / stats
 BankingClient --> BankingService : HTTP\nuser / transaction
 
 @enduml

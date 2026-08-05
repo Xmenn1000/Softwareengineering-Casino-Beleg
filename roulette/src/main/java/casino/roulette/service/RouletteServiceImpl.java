@@ -82,15 +82,15 @@ public class RouletteServiceImpl implements RouletteService {
 
     @Override
     public List<RouletteGameDTO> getGames() {
-        return rouletteGameRepository.findAll()     // gets all entity entries from db
+        return rouletteGameRepository.findAll()
                 .stream()
-                .map(RouletteGameMapper::toGameDto) // + stream(): entity -> DTO
-                .toList();                          // makes list out of it again
+                .map(RouletteGameMapper::toGameDto)
+                .toList();
     }
 
     @Override
     public RouletteGameDTO getGame(Long gameId) {
-        RouletteGameEntity game = rouletteGameRepository.findById(gameId) // findById returns 'optional', no object, because could be no id
+        RouletteGameEntity game = rouletteGameRepository.findById(gameId)
                 .orElseThrow(() -> new RouletteGameNotFoundException(gameId));
 
         return RouletteGameMapper.toGameDto(game);
