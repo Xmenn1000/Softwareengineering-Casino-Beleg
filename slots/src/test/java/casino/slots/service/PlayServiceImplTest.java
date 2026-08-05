@@ -17,6 +17,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InOrder;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import casino.slots.exeptions.BankingUserNotFoundException;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -182,6 +183,91 @@ class PlayServiceImplTest {
                 .createSlotsTransaction(
                         anyLong(),
                         any(BigDecimal.class)
+                );
+
+        verify(repository, never())
+                .save(any(SlotsGameEntity.class));
+    }
+
+    @Test
+    void shouldStopWhenBankingUserDoesNotExist() {
+        SlotsPlayRequest request = createRequest();
+
+        doThrow(new BankingUserNotFoundException(request.getUserId()))
+                .when(bankingRestClient)
+                .findUserById(request.getUserId());
+
+        assertThrows(
+                BankingUserNotFoundException.class,
+                () -> playService.play(request)
+        );
+
+        verify(requestValidation)
+                .validatePlayRequest(request);
+
+        verify(bankingRestClient)
+                .findUserById(request.getUserId());
+
+        verify(bankingRestClient, never())
+                .createSlotsTransaction(
+                        anyLong(),
+                        any(BigDecimal.class)
+                );
+
+        verifyNoInteractions(
+                slotEngine,
+                entityValidator,
+                repository
+        );
+    }
+
+    @Test
+    void shouldNotSaveGameWhenBankingTransactionFails() {
+        SlotsPlayRequest request = createRequest();
+
+        GameResult gameResult = new GameResult(
+                true,
+                new BigDecimal("50.00"),
+                List.of(
+                        Symbol.SEVEN,
+                        Symbol.SEVEN,
+                        Symbol.SEVEN
+                )
+        );
+
+        when(slotEngine.play(request.getBetAmount()))
+                .thenReturn(gameResult);
+
+        doThrow(new BadSlotsRequestException(
+                "Banking rejected slots transaction"
+        ))
+                .when(bankingRestClient)
+                .createSlotsTransaction(
+                        request.getUserId(),
+                        gameResult.getAmount()
+                );
+
+        assertThrows(
+                BadSlotsRequestException.class,
+                () -> playService.play(request)
+        );
+
+        verify(requestValidation)
+                .validatePlayRequest(request);
+
+        verify(bankingRestClient)
+                .findUserById(request.getUserId());
+
+        verify(slotEngine)
+                .play(request.getBetAmount());
+
+        verify(entityValidator)
+                .validate(any(SlotsGameEntity.class));
+
+        verify(bankingRestClient)
+                .createSlotsTransaction(
+                        request.getUserId(),
+                        gameResult.getAmount()
                 );
 
         verify(repository, never())
