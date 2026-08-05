@@ -21,7 +21,7 @@ import java.util.List;
 @NoArgsConstructor
 @Table(name = "SlotsGames")
 @Entity
-public class  SlotsGameEntity {
+public class SlotsGameEntity {
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)

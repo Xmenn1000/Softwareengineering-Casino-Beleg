@@ -63,7 +63,7 @@ public class SlotMachine implements SlotEngine {
     public SlotsGameEntity play(SlotsPlayRequest request) {
         SlotsGameEntity finishedGame = new SlotsGameEntity();
 
-        BigDecimal betAmount = BigDecimal.valueOf(Long.parseLong(request.getBetAmount()));
+        BigDecimal betAmount = request.getBetAmount();
         GameResult result = play(betAmount);
 
         finishedGame.setUserId(request.getUserId());

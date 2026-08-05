@@ -1,13 +1,10 @@
 package casino.slots.validation;
 
-import casino.slots.domain.enums.Symbol;
 import casino.slots.exeptions.BadSlotsRequestException;
 import casino.slots.request.SlotsPlayRequest;
-import casino.slots.view.SlotsGameDTO;
 import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
-import java.util.List;
 
 @Component
 public class SlotsRequestValidation {
@@ -19,7 +16,6 @@ public class SlotsRequestValidation {
 
         validateUserId(gameRequest.getUserId());
         validateBetAmount(gameRequest.getBetAmount());
-        validateResultingAmount(gameRequest.getAmount());
 
     }
 
@@ -33,18 +29,12 @@ public class SlotsRequestValidation {
         }
     }
 
-    private void validateResultingAmount(BigDecimal resultingAmount) {
-        if (resultingAmount == null) {
-            throw new BadSlotsRequestException("There is no outcome amount of the game");
-        }
-    }
-
-    private void validateBetAmount(String betAmount) {
+    private void validateBetAmount(BigDecimal betAmount) {
         if (betAmount == null) {
             throw new BadSlotsRequestException("Bet amount was null");
         }
 
-        if (BigDecimal.valueOf(Long.parseLong(betAmount)).compareTo(BigDecimal.ZERO) <= 0) {
+        if (betAmount.compareTo(BigDecimal.ZERO) <= 0) {
             throw new BadSlotsRequestException("Bet amount has to be positive and grater than 0 but was: " + betAmount);
         }
     }
