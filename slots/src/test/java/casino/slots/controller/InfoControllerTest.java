@@ -1,6 +1,5 @@
-package casino.slots;
+package casino.slots.controller;
 
-import casino.slots.controller.InfoController;
 import casino.slots.service.InfoService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

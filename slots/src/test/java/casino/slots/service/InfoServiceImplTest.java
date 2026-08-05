@@ -1,10 +1,8 @@
-package casino.slots;
+package casino.slots.service;
 
 import casino.slots.domain.config.SlotPropertiesConfig;
 import casino.slots.domain.enums.ResultPattern;
 import casino.slots.domain.enums.Symbol;
-import casino.slots.service.ChanceCalculator;
-import casino.slots.service.InfoServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 

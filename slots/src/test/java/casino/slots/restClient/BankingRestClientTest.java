@@ -1,9 +1,7 @@
-package casino.slots;
+package casino.slots.restClient;
 
 import casino.slots.exeptions.BadSlotsRequestException;
 import casino.slots.exeptions.BankingUserNotFoundException;
-import casino.slots.restClient.BankingRestClient;
-import casino.slots.restClient.BankingUserDTO;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpMethod;

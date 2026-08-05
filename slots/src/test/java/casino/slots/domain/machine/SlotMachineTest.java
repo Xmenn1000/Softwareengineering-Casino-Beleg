@@ -1,10 +1,8 @@
-package casino.slots;
+package casino.slots.domain.machine;
 
 import casino.slots.domain.dto.GameResult;
 import casino.slots.domain.dto.OutCome;
 import casino.slots.domain.enums.Symbol;
-import casino.slots.domain.machine.CashOutMultiplier;
-import casino.slots.domain.machine.SlotMachine;
 import casino.slots.domain.ruleSet.Rule;
 import org.junit.jupiter.api.Test;
 

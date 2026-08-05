@@ -1,6 +1,5 @@
-package casino.slots;
+package casino.slots.controller;
 
-import casino.slots.controller.StatsController;
 import casino.slots.service.StatsService;
 import casino.slots.view.SlotsStatsDTO;
 import casino.slots.view.SlotsStatsUserDTO;

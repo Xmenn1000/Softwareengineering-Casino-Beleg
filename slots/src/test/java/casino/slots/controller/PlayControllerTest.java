@@ -1,6 +1,5 @@
-package casino.slots;
+package casino.slots.controller;
 
-import casino.slots.controller.PlayController;
 import casino.slots.domain.enums.Symbol;
 import casino.slots.request.SlotsPlayRequest;
 import casino.slots.service.PlayService;

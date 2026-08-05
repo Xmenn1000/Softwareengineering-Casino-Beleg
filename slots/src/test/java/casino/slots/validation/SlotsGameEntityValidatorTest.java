@@ -1,10 +1,9 @@
-package casino.slots;
+package casino.slots.validation;
 
 import casino.slots.domain.enums.Symbol;
 import casino.slots.exeptions.BadSlotsRequestException;
 import casino.slots.model.SlotsGameEntity;
 import casino.slots.model.SlotsGameEntityFactory;
-import casino.slots.validation.SlotsGameEntityValidator;
 import org.junit.jupiter.api.Test;
 
 import java.math.BigDecimal;

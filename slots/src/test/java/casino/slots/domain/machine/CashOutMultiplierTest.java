@@ -1,8 +1,7 @@
-package casino.slots;
+package casino.slots.domain.machine;
 
 import casino.slots.domain.enums.ResultPattern;
 import casino.slots.domain.enums.Symbol;
-import casino.slots.domain.machine.CashOutMultiplier;
 import org.junit.jupiter.api.Test;
 
 import java.math.BigDecimal;

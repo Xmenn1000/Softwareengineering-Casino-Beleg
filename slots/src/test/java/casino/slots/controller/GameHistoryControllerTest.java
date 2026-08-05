@@ -1,6 +1,5 @@
-package casino.slots;
+package casino.slots.controller;
 
-import casino.slots.controller.GameHistoryController;
 import casino.slots.service.GameHistoryService;
 import casino.slots.view.SlotsGameDTO;
 import org.junit.jupiter.api.BeforeEach;

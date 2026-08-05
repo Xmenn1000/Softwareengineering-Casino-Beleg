@@ -1,9 +1,8 @@
-package casino.slots;
+package casino.slots.service;
 
 import casino.slots.domain.enums.Symbol;
 import casino.slots.model.SlotsGameEntity;
 import casino.slots.model.SlotsGameEntityFactory;
-import casino.slots.service.StatsCalculatorImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 

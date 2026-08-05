@@ -1,8 +1,6 @@
-package casino.slots;
+package casino.slots.domain.ruleSet;
 
 import casino.slots.domain.dto.OutCome;
-import casino.slots.domain.ruleSet.Rule;
-import casino.slots.domain.ruleSet.RuleEngine;
 import org.junit.jupiter.api.Test;
 
 import java.math.BigDecimal;

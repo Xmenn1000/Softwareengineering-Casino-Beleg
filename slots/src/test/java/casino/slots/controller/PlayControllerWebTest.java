@@ -1,7 +1,5 @@
-package casino.slots;
+package casino.slots.controller;
 
-import casino.slots.controller.PlayController;
-import casino.slots.controller.SlotsAdviceController;
 import casino.slots.domain.enums.Symbol;
 import casino.slots.exeptions.BadSlotsRequestException;
 import casino.slots.exeptions.BankingUserNotFoundException;

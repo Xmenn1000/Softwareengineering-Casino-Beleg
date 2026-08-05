@@ -1,9 +1,8 @@
-package casino.slots;
+package casino.slots.repository;
 
 import casino.slots.domain.enums.Symbol;
 import casino.slots.model.SlotsGameEntity;
 import casino.slots.model.SlotsGameEntityFactory;
-import casino.slots.repository.SlotsGameRepository;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.data.jpa.test.autoconfigure.DataJpaTest;

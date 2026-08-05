@@ -1,8 +1,7 @@
-package casino.slots;
+package casino.slots.validation;
 
 import casino.slots.exeptions.BadSlotsRequestException;
 import casino.slots.request.SlotsPlayRequest;
-import casino.slots.validation.SlotsRequestValidation;
 import org.junit.jupiter.api.Test;
 
 import java.math.BigDecimal;

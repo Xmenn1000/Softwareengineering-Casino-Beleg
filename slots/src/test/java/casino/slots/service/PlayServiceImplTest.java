@@ -1,4 +1,4 @@
-package casino.slots;
+package casino.slots.service;
 
 import casino.slots.domain.dto.GameResult;
 import casino.slots.domain.enums.Symbol;
@@ -8,7 +8,6 @@ import casino.slots.model.SlotsGameEntity;
 import casino.slots.repository.SlotsGameRepository;
 import casino.slots.request.SlotsPlayRequest;
 import casino.slots.restClient.BankingRestClient;
-import casino.slots.service.PlayServiceImpl;
 import casino.slots.validation.SlotsGameEntityValidator;
 import casino.slots.validation.SlotsRequestValidation;
 import casino.slots.view.SlotsGameResultDTO;

@@ -1,11 +1,9 @@
-package casino.slots;
+package casino.slots.service;
 
 import casino.slots.exeptions.BankingUserNotFoundException;
 import casino.slots.model.SlotsGameEntity;
 import casino.slots.repository.SlotsGameRepository;
 import casino.slots.restClient.BankingRestClient;
-import casino.slots.service.SlotsStatsCalculator;
-import casino.slots.service.StatsServiceImpl;
 import casino.slots.view.SlotsStatsDTO;
 import casino.slots.view.SlotsStatsUserDTO;
 import org.junit.jupiter.api.BeforeEach;
@@ -71,22 +69,22 @@ class StatsServiceImplTest {
 
         SlotsStatsDTO result = statsService.getStats();
 
-        assertEquals(2L, result.getTotal_client_count());
-        assertEquals(3L, result.getTotal_games_count());
+        assertEquals(2L, result.getTotalClientCount());
+        assertEquals(3L, result.getTotalGamesCount());
 
         assertBigDecimalEquals(
                 "−5.00".replace("−", "-"),
-                result.getTotal_profit()
+                result.getTotalProfit()
         );
 
         assertBigDecimalEquals(
                 "20.00",
-                result.getTotal_cashout()
+                result.getTotalCashOut()
         );
 
         assertBigDecimalEquals(
                 "25.00",
-                result.getTotal_turnover()
+                result.getTotalTurnover()
         );
 
         verify(repository).findAll();
@@ -133,31 +131,31 @@ class StatsServiceImplTest {
                 statsService.getStatsByUserId(userId);
 
         assertEquals(5L, result.getClient());
-        assertEquals(2L, result.getTotal_games_count());
+        assertEquals(2L, result.getTotalGamesCount());
 
         assertBigDecimalEquals(
                 "30.00",
-                result.getTotal_winnings()
+                result.getTotalWinnings()
         );
 
         assertBigDecimalEquals(
                 "10.00",
-                result.getTotal_losses()
+                result.getTotalLosses()
         );
 
         assertBigDecimalEquals(
                 "20.00",
-                result.getTotal_client_profit()
+                result.getTotalClientProfit()
         );
 
         assertBigDecimalEquals(
                 "20.00",
-                result.getTotal_house_turnover_from_client()
+                result.getTotalHouseTurnoverFromClient()
         );
 
         assertBigDecimalEquals(
                 "-20.00",
-                result.getTotal_house_profit_from_client()
+                result.getTotalHouseProfitFromClient()
         );
 
         verify(bankingRestClient).findUserById(userId);

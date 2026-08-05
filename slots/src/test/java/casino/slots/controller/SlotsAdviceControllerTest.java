@@ -1,6 +1,5 @@
-package casino.slots;
+package casino.slots.controller;
 
-import casino.slots.controller.SlotsAdviceController;
 import casino.slots.exeptions.BadSlotsRequestException;
 import casino.slots.exeptions.BankingUserNotFoundException;
 import org.junit.jupiter.api.BeforeEach;
