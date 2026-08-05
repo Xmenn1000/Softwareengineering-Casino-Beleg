@@ -24,7 +24,7 @@ public class PlayServiceImpl implements PlayService {
     private final BankingRestClient bankingRestClient;
     private final SlotEngine slotEngine;
 
-    public PlayServiceImpl(SlotsGameRepository slotsGameRepository, SlotEngine slotMachine, SlotsRequestValidation slotsRequestValidation, SlotsGameEntityValidator slotsGameEntityValidator, BankingRestClient bankingRestClient, SlotEngine slotEngine) {
+    public PlayServiceImpl(SlotsGameRepository slotsGameRepository, SlotsRequestValidation slotsRequestValidation, SlotsGameEntityValidator slotsGameEntityValidator, BankingRestClient bankingRestClient, SlotEngine slotEngine) {
         this.slotsGameRepository = slotsGameRepository;
         this.slotsRequestValidation = slotsRequestValidation;
         this.slotsGameEntityValidator = slotsGameEntityValidator;
