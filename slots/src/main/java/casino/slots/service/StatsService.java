@@ -6,6 +6,5 @@ import casino.slots.view.SlotsStatsUserDTO;
 public interface StatsService {
 
     SlotsStatsDTO getStats();
-
     SlotsStatsUserDTO getStatsByUserId(Long userId);
 }

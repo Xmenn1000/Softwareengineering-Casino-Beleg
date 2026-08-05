@@ -1,5 +1,6 @@
 package casino.slots.service;
 
+import casino.slots.repository.SlotsGameRepository;
 import casino.slots.view.SlotsStatsDTO;
 import casino.slots.view.SlotsStatsUserDTO;
 import org.springframework.stereotype.Service;
@@ -7,7 +8,11 @@ import org.springframework.stereotype.Service;
 @Service
 public class StatsServiceImpl implements StatsService {
 
-    //TODO: implement by aggregating over the persisted game rounds
+    private final SlotsGameRepository slotsGameRepository;
+
+    public StatsServiceImpl(SlotsGameRepository slotsGameRepository) {
+        this.slotsGameRepository = slotsGameRepository;
+    }
 
     @Override
     public SlotsStatsDTO getStats() {
