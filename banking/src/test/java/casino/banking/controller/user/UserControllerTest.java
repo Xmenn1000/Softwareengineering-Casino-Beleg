@@ -1,6 +1,6 @@
 package casino.banking.controller.user;
 
-import casino.banking.exceptions.user.ModelValidityBreachException;
+import casino.banking.exceptions.user.UserModelValidityBreachException;
 import casino.banking.exceptions.user.UserNotFoundException;
 import casino.banking.request.user.UserRequestDTO;
 import casino.banking.services.user.UserService;
@@ -96,9 +96,9 @@ class UserControllerTest {
     @Test
     void create_serviceRejectsBody_propagatesException() {
         UserRequestDTO request = new UserRequestDTO("", "lastName");
-        when(userService.create(request)).thenThrow(new ModelValidityBreachException("First or last name are invalid"));
+        when(userService.create(request)).thenThrow(new UserModelValidityBreachException("First or last name are invalid"));
 
-        assertThrows(ModelValidityBreachException.class, () -> userController.create(request));
+        assertThrows(UserModelValidityBreachException.class, () -> userController.create(request));
         verify(userService, times(1)).create(request);
     }
 
@@ -131,9 +131,9 @@ class UserControllerTest {
     void replaceById_serviceRejectsBody_propagatesException() {
         Long id = 1L;
         UserRequestDTO request = new UserRequestDTO("", "name");
-        when(userService.replaceById(id, request)).thenThrow(new ModelValidityBreachException("FirstName:  is invalid"));
+        when(userService.replaceById(id, request)).thenThrow(new UserModelValidityBreachException("FirstName:  is invalid"));
 
-        assertThrows(ModelValidityBreachException.class, () -> userController.replaceById(id, request));
+        assertThrows(UserModelValidityBreachException.class, () -> userController.replaceById(id, request));
         verify(userService, times(1)).replaceById(id, request);
     }
 

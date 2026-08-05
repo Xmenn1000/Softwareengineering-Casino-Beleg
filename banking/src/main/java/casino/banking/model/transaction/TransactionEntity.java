@@ -1,5 +1,6 @@
 package casino.banking.model.transaction;
 
+import casino.banking.exceptions.transaction.TransactionModelValidityBreachException;
 import casino.banking.util.GameService;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -38,14 +39,28 @@ public class TransactionEntity implements Transaction {
 
     public static TransactionEntity createTransaction(GameService service, Long userId, BigDecimal amount) {
         TransactionEntity entity = new TransactionEntity();
+        validate(service, userId, amount);
         entity.invoicingParty = service;
         entity.userId = userId;
         entity.amount = amount;
 
         return entity;
     }
+    private static void validate(GameService service, Long userId, BigDecimal amount) {
+        if (service == null) {
+            throw new TransactionModelValidityBreachException("invoicingParty must not be null");
+        }
+        if (userId == null) {
+            throw new TransactionModelValidityBreachException("userId must not be null");
+        }
+        if (amount == null) {
+            throw new TransactionModelValidityBreachException("amount must not be null");
+        }
+    }
+
 
     public void replace(GameService service, Long userId, BigDecimal amount) {
+        validate(service, userId, amount);
         this.invoicingParty = service;
         this.userId = userId;
         this.amount = amount;

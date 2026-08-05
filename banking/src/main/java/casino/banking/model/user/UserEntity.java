@@ -1,6 +1,6 @@
 package casino.banking.model.user;
 
-import casino.banking.exceptions.user.ModelValidityBreachException;
+import casino.banking.exceptions.user.UserModelValidityBreachException;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -34,7 +34,7 @@ public class UserEntity implements User {
 
     static public UserEntity createUserEntity(String firstName, String lastName) {
         if(!isValidName(firstName) || !isValidName(lastName)) {
-            throw new ModelValidityBreachException("First or last name are invalid");
+            throw new UserModelValidityBreachException("First or last name are invalid");
         }
         UserEntity entity = new UserEntity();
         entity.firstName = firstName;
@@ -46,24 +46,23 @@ public class UserEntity implements User {
         return name != null && !name.isBlank();
     }
 
-
     public void setFirstName(String firstName) {
         if(!isValidName(firstName)) {
-            throw new ModelValidityBreachException(String.format("FirstName: %s is invalid", firstName));
+            throw new UserModelValidityBreachException(String.format("FirstName: %s is invalid", firstName));
         }
         this.firstName = firstName;
     }
 
     public void setLastName(String lastName) {
         if(!isValidName(lastName)) {
-            throw new ModelValidityBreachException(String.format("LastName: %s is invalid", lastName));
+            throw new UserModelValidityBreachException(String.format("LastName: %s is invalid", lastName));
         }
         this.lastName = lastName;
     }
 
     public void addBalance(BigDecimal amount) {
         if (amount == null) {
-            throw new ModelValidityBreachException("Balance amount must not be null");
+            throw new UserModelValidityBreachException("Balance amount must not be null");
         }
         this.balance = this.balance.add(amount);
     }
