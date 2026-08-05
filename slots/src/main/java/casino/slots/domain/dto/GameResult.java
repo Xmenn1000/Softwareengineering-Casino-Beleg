@@ -13,5 +13,5 @@ public class GameResult {
 
     private boolean winning;
     private BigDecimal amount;
-    private List<Symbol> SlotStates;
+    private List<Symbol> slotStates;
 }

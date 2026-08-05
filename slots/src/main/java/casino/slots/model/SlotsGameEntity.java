@@ -5,6 +5,7 @@ import casino.slots.domain.enums.Symbol;
 import casino.slots.validation.SlotsGameEntityValidator;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -40,6 +41,7 @@ public class SlotsGameEntity {
   @Column(name = "BetAmount", nullable = false)
   private BigDecimal betAmount;
 
+  @Enumerated
   @Column(name = "SlotStates", nullable = false)
   private List<Symbol> slotStates;
 
