@@ -18,8 +18,10 @@ public class SlotsGameEntityValidator {
     }
 
     private static void validateUser(Long user) {
-        if (user == null) {
-            throw new BadSlotsRequestException("User was empty");
+        if (user == null || user < 1) {
+            throw new BadSlotsRequestException(
+                    "User id has to be greater than 0"
+            );
         }
     }
 

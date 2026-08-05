@@ -78,6 +78,28 @@ class SlotsGameEntityValidatorTest {
         );
     }
 
+    @Test
+    void shouldRejectUserIdZero() {
+        SlotsGameEntity entity = createValidEntity();
+        entity.setUserId(0L);
+
+        assertThrows(
+                BadSlotsRequestException.class,
+                () -> validator.validate(entity)
+        );
+    }
+
+    @Test
+    void shouldRejectNegativeUserId() {
+        SlotsGameEntity entity = createValidEntity();
+        entity.setUserId(-1L);
+
+        assertThrows(
+                BadSlotsRequestException.class,
+                () -> validator.validate(entity)
+        );
+    }
+
     private SlotsGameEntity createValidEntity() {
         return SlotsGameEntityFactory.create(
                 1L,
