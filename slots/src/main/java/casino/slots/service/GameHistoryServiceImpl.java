@@ -8,8 +8,6 @@ import java.util.List;
 @Service
 public class GameHistoryServiceImpl implements GameHistoryService {
 
-    //TODO: implement using SlotsGameRepository
-
     @Override
     public List<SlotsGameDTO> findAll() {
         throw new UnsupportedOperationException("not implemented yet");

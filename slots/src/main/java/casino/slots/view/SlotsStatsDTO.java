@@ -9,10 +9,10 @@ import java.math.BigDecimal;
 @AllArgsConstructor
 public class SlotsStatsDTO {
 
-  private long total_client_count;
-  private long total_games_count;
-  private BigDecimal total_profit;
-  private BigDecimal total_cashout;
-  private BigDecimal total_turnover;
+  private long totalClientCount;
+  private long totalGamesCount;
+  private BigDecimal totalProfit;
+  private BigDecimal totalCashOut;
+  private BigDecimal totalTurnover;
 
 }
