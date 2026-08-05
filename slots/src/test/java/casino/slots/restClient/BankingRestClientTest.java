@@ -112,7 +112,7 @@ class BankingRestClientTest {
     void shouldCreateSlotsTransaction() {
         mockServer.expect(
                         requestTo(
-                                "http://banking-test/casino/bank/api/transactions/user/7"
+                                "http://banking-test/casino/bank/api/transaction/user/7"
                         )
                 )
                 .andExpect(method(HttpMethod.POST))
@@ -143,7 +143,7 @@ class BankingRestClientTest {
     void shouldThrowWhenTransactionUserDoesNotExist() {
         mockServer.expect(
                         requestTo(
-                                "http://banking-test/casino/bank/api/transactions/user/99"
+                                "http://banking-test/casino/bank/api/transaction/user/99"
                         )
                 )
                 .andExpect(method(HttpMethod.POST))
@@ -164,7 +164,7 @@ class BankingRestClientTest {
     void shouldThrowWhenBankingRejectsTransaction() {
         mockServer.expect(
                         requestTo(
-                                "http://banking-test/casino/bank/api/transactions/user/7"
+                                "http://banking-test/casino/bank/api/transaction/user/7"
                         )
                 )
                 .andExpect(method(HttpMethod.POST))

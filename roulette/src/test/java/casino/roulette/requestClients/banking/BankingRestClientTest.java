@@ -75,7 +75,7 @@ class BankingRestClientTest {
 
     @Test
     void createRouletteTransactionSendsExpectedRequestBody() {
-        server.expect(requestTo("http://banking-service/transactions/user/1"))
+        server.expect(requestTo("http://banking-service/transaction/user/1"))
                 .andExpect(method(HttpMethod.POST))
                 .andExpect(content().json("""
                         {
@@ -92,7 +92,7 @@ class BankingRestClientTest {
 
     @Test
     void createRouletteTransactionThrowsWhenUserDoesNotExist() {
-        server.expect(requestTo("http://banking-service/transactions/user/99"))
+        server.expect(requestTo("http://banking-service/transaction/user/99"))
                 .andExpect(method(HttpMethod.POST))
                 .andRespond(withResourceNotFound());
 
@@ -105,7 +105,7 @@ class BankingRestClientTest {
 
     @Test
     void createRouletteTransactionThrowsWhenBankingRejectsTransaction() {
-        server.expect(requestTo("http://banking-service/transactions/user/1"))
+        server.expect(requestTo("http://banking-service/transaction/user/1"))
                 .andExpect(method(HttpMethod.POST))
                 .andRespond(withBadRequest());
 

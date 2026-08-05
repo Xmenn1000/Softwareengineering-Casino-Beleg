@@ -39,7 +39,7 @@ public class BankingRestClient {
         );
 
         restClient.post()
-                .uri("/transactions/user/{userId}", userId)
+                .uri("/transaction/user/{userId}", userId)
                 .body(body)
                 .retrieve()
                 .onStatus(status -> status.value() == 404, (request, response) -> {
