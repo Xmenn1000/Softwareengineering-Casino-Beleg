@@ -7,6 +7,7 @@ import casino.slots.model.SlotsGameEntityFactory;
 import casino.slots.repository.SlotsGameRepository;
 import casino.slots.request.SlotsPlayRequest;
 import casino.slots.restClient.BankingRestClient;
+import casino.slots.validation.SlotsGameEntityValidator;
 import casino.slots.validation.SlotsRequestValidation;
 import casino.slots.view.SlotsGameDTO;
 import casino.slots.view.SlotsGameResultDTO;
@@ -19,12 +20,14 @@ public class PlayServiceImpl implements PlayService {
 
     private final SlotsGameRepository slotsGameRepository;
     private final SlotsRequestValidation slotsRequestValidation;
+    private final SlotsGameEntityValidator slotsGameEntityValidator;
     private final BankingRestClient bankingRestClient;
     private final SlotEngine slotEngine;
 
-    public PlayServiceImpl(SlotsGameRepository slotsGameRepository, SlotEngine slotMachine, SlotsRequestValidation slotsRequestValidation, BankingRestClient bankingRestClient, SlotEngine slotEngine) {
+    public PlayServiceImpl(SlotsGameRepository slotsGameRepository, SlotEngine slotMachine, SlotsRequestValidation slotsRequestValidation, SlotsGameEntityValidator slotsGameEntityValidator, BankingRestClient bankingRestClient, SlotEngine slotEngine) {
         this.slotsGameRepository = slotsGameRepository;
         this.slotsRequestValidation = slotsRequestValidation;
+        this.slotsGameEntityValidator = slotsGameEntityValidator;
         this.bankingRestClient = bankingRestClient;
         this.slotEngine = slotEngine;
     }
@@ -41,6 +44,8 @@ public class PlayServiceImpl implements PlayService {
         GameResult gameResult = slotEngine.play(playRequest.getBetAmount());
 
         SlotsGameEntity game = SlotsGameEntityFactory.create(playRequest.getUserId(), gameResult.isWinning(), gameResult.getAmount(), playRequest.getBetAmount(), gameResult.getSlotStates());
+
+        slotsGameEntityValidator.validate(game);
 
         bankingRestClient.createSlotsTransaction(game.getUserId(), game.getAmount());
 
