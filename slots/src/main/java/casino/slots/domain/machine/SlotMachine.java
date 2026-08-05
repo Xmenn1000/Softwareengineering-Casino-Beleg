@@ -32,7 +32,7 @@ public class SlotMachine implements SlotEngine {
         this.allRules = rules;
     }
 
-
+    @Override
     public GameResult play(BigDecimal betAmount) {
         OutCome result = spin();
         BigDecimal amount =  calculateWinningAmount(result, betAmount);
@@ -56,22 +56,5 @@ public class SlotMachine implements SlotEngine {
 
     public BigDecimal calculateWinningAmount(OutCome outcome, BigDecimal betAmount) {
         return allRules.payOut(outcome, betAmount);
-    }
-
-
-    @Override
-    public SlotsGameEntity play(SlotsPlayRequest request) {
-        SlotsGameEntity finishedGame = new SlotsGameEntity();
-
-        BigDecimal betAmount = request.getBetAmount();
-        GameResult result = play(betAmount);
-
-        finishedGame.setUserId(request.getUserId());
-        finishedGame.setWinning(result.isWinning());
-        finishedGame.setAmount(result.getAmount());
-        finishedGame.setBetAmount(betAmount);
-        finishedGame.setSlotStates(result.getSlotStates());
-
-        return finishedGame;
     }
 }

@@ -3,6 +3,7 @@ package casino.slots.service;
 import casino.slots.domain.dto.GameResult;
 import casino.slots.domain.machine.SlotEngine;
 import casino.slots.model.SlotsGameEntity;
+import casino.slots.model.SlotsGameEntityFactory;
 import casino.slots.repository.SlotsGameRepository;
 import casino.slots.request.SlotsPlayRequest;
 import casino.slots.restClient.BankingRestClient;
@@ -17,14 +18,12 @@ import java.math.BigDecimal;
 public class PlayServiceImpl implements PlayService {
 
     private final SlotsGameRepository slotsGameRepository;
-    private final SlotEngine slotMachine;
     private final SlotsRequestValidation slotsRequestValidation;
     private final BankingRestClient bankingRestClient;
     private final SlotEngine slotEngine;
 
     public PlayServiceImpl(SlotsGameRepository slotsGameRepository, SlotEngine slotMachine, SlotsRequestValidation slotsRequestValidation, BankingRestClient bankingRestClient, SlotEngine slotEngine) {
         this.slotsGameRepository = slotsGameRepository;
-        this.slotMachine = slotMachine;
         this.slotsRequestValidation = slotsRequestValidation;
         this.bankingRestClient = bankingRestClient;
         this.slotEngine = slotEngine;
@@ -39,7 +38,9 @@ public class PlayServiceImpl implements PlayService {
 
         bankingRestClient.findUserById(playRequest.getUserId());
 
-        SlotsGameEntity game = slotEngine.play(playRequest);
+        GameResult gameResult = slotEngine.play(playRequest.getBetAmount());
+
+        SlotsGameEntity game = SlotsGameEntityFactory.create(playRequest.getUserId(), gameResult.isWinning(), gameResult.getAmount(), playRequest.getBetAmount(), gameResult.getSlotStates());
 
         bankingRestClient.createSlotsTransaction(game.getUserId(), game.getAmount());
 
