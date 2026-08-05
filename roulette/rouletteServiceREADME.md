@@ -1,61 +1,63 @@
 # Roulette Service README
 
-## Kurzbeschreibung
+## Short Summary
 
-Der Roulette Service bildet den Spiel-Service fuer europaeisches Roulette im Casino-Projekt ab. Er
-stellt REST-Endpunkte bereit, ueber die ein Spieler eine Roulette-Runde spielen, Spielregeln und
-Gewinnchancen abrufen sowie globale, benutzerbezogene und spielbezogene Statistiken einsehen kann.
+The Roulette Service represents the European roulette game service in the casino project. It
+provides REST endpoints that allow a player to play a roulette round, read the game rules and
+winning chances, and retrieve global, user-specific, and game-specific statistics.
 
-Der Service speichert jede gespielte Runde in einer eigenen PostgreSQL-Datenbank. Fuer
-Benutzerpruefung und Kontobewegungen kommuniziert er mit dem Banking Service. Dadurch verwaltet der
-Roulette Service selbst keine Benutzerkonten und keine Kontostaende, sondern konzentriert sich auf
-seine eigene Domaene: Roulette-Spielregeln, Spielauswertung, Spielhistorie und Roulette-Statistiken.
+The service stores every played round in its own PostgreSQL database. For user validation and
+account movements, it communicates with the Banking Service. Therefore, the Roulette Service does
+not manage user accounts or balances itself. It focuses on its own domain: roulette rules, game
+evaluation, game history, and roulette statistics.
 
-## Grundlegender Aufbau
+## Basic Structure
 
-Der Roulette Service ist weniger streng nach Vertical Slice Architecture aufgebaut als der Banking
-Service. Das passt zur Vorgabe aus dem Beleg: Der Banking Service ist staerker nach Subdomaenen wie
-User, Transaction und Stat gesliced, waehrend die Spiel-Services einfacher geschichtet aufgebaut
-werden duerfen.
+The Roulette Service is less strictly organized according to Vertical Slice Architecture than the
+Banking Service. This matches the assignment requirements: the Banking Service is sliced more
+strongly by subdomains such as User, Transaction, and Stat, while the game services may use a
+simpler layered structure.
 
-Die wichtigsten Schichten sind:
+The most important layers are:
 
-- `controller`: REST-Schnittstelle nach aussen.
-- `service`: Anwendungslogik und Koordination der anderen Komponenten.
-- `game`: eigentliche Roulette-Spiellogik.
-- `validation`: zentrale Request-Validierung.
-- `repository`: Datenbankzugriff.
-- `model`: persistierte Datenbank-Entity.
-- `view`: DTOs fuer REST-Responses.
-- `request`: DTOs fuer REST-Requests.
-- `mapper`: Umwandlung von Entity zu DTO.
-- `requestClients`: Kommunikation mit anderen Services, hier Banking.
-- `config`: externe Konfiguration und Spring Beans.
-- `exceptions`: eigene fachliche Fehler mit passenden HTTP-Statuscodes.
-- `util`: Roulette-Regeln und Enum-Typen.
+- `controller`: REST interface to the outside.
+- `service`: application logic and coordination of the other components.
+- `game`: actual roulette game logic.
+- `validation`: central request validation.
+- `repository`: database access.
+- `model`: persisted database entity.
+- `view`: DTOs for REST responses.
+- `request`: DTOs for REST requests.
+- `mapper`: conversion from entity to DTO.
+- `requestClients`: communication with other services, in this case Banking.
+- `config`: external configuration and Spring beans.
+- `exceptions`: custom domain errors with matching HTTP status codes.
+- `game.strategy`: Strategy Pattern for the individual bet types.
+- `util`: enum types such as `BetType`.
 
-Der grobe Ablauf bei einem Spiel ist:
+The rough flow for one game round is:
 
 ```text
 Player
   -> RouletteController
   -> RouletteServiceImpl
   -> RouletteRequestValidator
-  -> BankingRestClient: User pruefen
-  -> RouletteEngine: Spiel auswerten
-  -> BankingRestClient: Gewinn/Verlust buchen
-  -> RouletteGameRepository: Spiel speichern
-  -> RouletteGameMapper: Entity zu Response-DTO
+  -> BankingRestClient: validate user
+  -> RouletteEngine: evaluate game
+  -> RouletteBetStrategyResolver: find matching bet strategy
+  -> BankingRestClient: book win/loss
+  -> RouletteGameRepository: store game
+  -> RouletteGameMapper: entity to response DTO
   -> Player
 ```
 
-## REST-API
+## REST API
 
-Die REST-API ist in `RouletteApi` definiert und wird durch `RouletteController` umgesetzt.
+The REST API is defined in `RouletteApi` and implemented by `RouletteController`.
 
 ### `POST /casino/roulette/api/play`
 
-Startet genau eine Roulette-Runde.
+Starts exactly one roulette round.
 
 Request:
 
@@ -68,614 +70,643 @@ Request:
 }
 ```
 
-Der Service prueft zuerst, ob der Request formal gueltig ist. Danach wird ueber den Banking Service
-geprueft, ob der Benutzer existiert. Anschliessend wird die Roulette-Runde ausgewertet, der Gewinn
-oder Verlust beim Banking Service gebucht und das Spiel in der Roulette-Datenbank gespeichert.
+The service first checks whether the request is formally valid. Then it checks via the Banking
+Service whether the user exists. After that, the roulette round is evaluated, the win or loss is
+booked through the Banking Service, and the game is stored in the Roulette database.
 
 ### `GET /casino/roulette/api/info/rules`
 
-Gibt die unterstuetzten Roulette-Regeln als Text zurueck. Dazu gehoeren die Spielvariante, die
-unterstuetzten Wettarten und das Verhalten der Zahl `0`.
+Returns the supported roulette rules as text. This includes the game variant, the supported bet
+types, and the behavior of the number `0`.
 
 ### `GET /casino/roulette/api/info/chances`
 
-Gibt Gewinnwahrscheinlichkeiten, Auszahlungen, Return to Player und House Edge aus.
+Returns hit probabilities, payouts, Return to Player, and House Edge.
 
 ### `GET /casino/roulette/api/stats`
 
-Gibt globale Roulette-Statistiken zurueck, z.B. Anzahl unterschiedlicher Spieler, Anzahl Spiele,
-Gesamtumsatz, Gesamtauszahlung und Gewinn des Hauses.
+Returns global roulette statistics, for example the number of different players, number of games,
+total turnover, total payout, and house profit.
 
 ### `GET /casino/roulette/api/stats/user/{userId}`
 
-Gibt Statistiken fuer einen konkreten Benutzer zurueck. Die User-ID wird validiert und der Benutzer
-wird ueber den Banking Service geprueft. Existiert der Benutzer nicht, kommt ein `404 Not Found`.
-Existiert der Benutzer, hat aber noch keine Roulette-Spiele, koennen die Statistikwerte `0` sein.
+Returns statistics for a specific user. The user ID is validated, and the user is checked through
+the Banking Service. If the user does not exist, the service returns `404 Not Found`. If the user
+exists but has not played any roulette games yet, the statistic values may be `0`.
 
 ### `GET /casino/roulette/api/stats/games`
 
-Gibt eine Liste aller gespeicherten Roulette-Spiele zurueck.
+Returns a list of all stored roulette games.
 
 ### `GET /casino/roulette/api/stat/{gameId}`
 
-Gibt ein einzelnes gespeichertes Spiel anhand seiner Spiel-ID zurueck. Falls die Spiel-ID nicht
-existiert, wird ein `404 Not Found` zurueckgegeben.
+Returns a single stored game by its game ID. If the game ID does not exist, the service returns
+`404 Not Found`.
 
 ### `DELETE /casino/roulette/api/stat/{gameId}`
 
-Loescht ein gespeichertes Spiel anhand seiner Spiel-ID und gibt das geloeschte Spiel noch einmal als
-DTO zurueck. Falls die Spiel-ID nicht existiert, wird ein `404 Not Found` zurueckgegeben.
+Deletes a stored game by its game ID and returns the deleted game as a DTO. If the game ID does not
+exist, the service returns `404 Not Found`.
 
-## Wichtige Klassen und Methoden
+## Important Classes and Methods
 
-## Startklasse
+## Start Class
 
 ### `RouletteApplication`
 
-Diese Klasse startet die Spring-Boot-Anwendung. Sie enthaelt die `main`-Methode und sorgt ueber
-`SpringApplication.run(...)` dafuer, dass Spring den Application Context startet, Beans erstellt und
-die REST-Endpunkte verfuegbar macht.
+This class starts the Spring Boot application. It contains the `main` method and uses
+`SpringApplication.run(...)` to start the Spring application context, create beans, and make the
+REST endpoints available.
 
-## Controller-Schicht
+## Controller Layer
 
 ### `RouletteApi`
 
-`RouletteApi` ist ein Interface, das die REST-Endpunkte beschreibt. Dort stehen die Annotationen wie
-`@PostMapping`, `@GetMapping`, `@DeleteMapping` und `@RequestMapping`.
+`RouletteApi` is an interface that describes the REST endpoints. It contains annotations such as
+`@PostMapping`, `@GetMapping`, `@DeleteMapping`, and `@RequestMapping`.
 
-Warum als Interface?
+Why use an interface?
 
-Dadurch ist die API-Signatur getrennt von der konkreten Controller-Implementierung. Man sieht an
-einer zentralen Stelle, welche Endpunkte der Roulette Service anbietet. Dieses Muster passt auch gut
-zum Stil der anderen Services, weil Controller dadurch schlanker bleiben.
+This separates the API signature from the concrete controller implementation. It provides one
+central place where the endpoints offered by the Roulette Service are visible. This pattern also
+fits the style of the other services, because it keeps controllers thinner.
 
-Wichtige Methoden:
+Important methods:
 
-- `play(...)`: beschreibt den Endpunkt fuer eine neue Spielrunde.
-- `getRules()`: beschreibt den Endpunkt fuer Spielregeln.
-- `getChances()`: beschreibt den Endpunkt fuer Gewinnchancen.
-- `getStats()`: beschreibt den Endpunkt fuer globale Statistiken.
-- `getUserStats(...)`: beschreibt den Endpunkt fuer benutzerbezogene Statistiken.
-- `getGames()`: beschreibt den Endpunkt fuer alle gespeicherten Spiele.
-- `getGame(...)`: beschreibt den Endpunkt fuer ein einzelnes Spiel.
-- `deleteGame(...)`: beschreibt den Endpunkt zum Loeschen eines Spiels.
+- `play(...)`: describes the endpoint for a new game round.
+- `getRules()`: describes the endpoint for game rules.
+- `getChances()`: describes the endpoint for winning chances.
+- `getStats()`: describes the endpoint for global statistics.
+- `getUserStats(...)`: describes the endpoint for user-specific statistics.
+- `getGames()`: describes the endpoint for all stored games.
+- `getGame(...)`: describes the endpoint for one specific game.
+- `deleteGame(...)`: describes the endpoint for deleting a game.
 
 ### `RouletteController`
 
-`RouletteController` implementiert `RouletteApi`. Er enthaelt bewusst kaum eigene Logik. Seine
-Aufgabe ist es, HTTP-Requests entgegenzunehmen und an den `RouletteService` weiterzugeben.
+`RouletteController` implements `RouletteApi`. It intentionally contains almost no own logic. Its
+task is to receive HTTP requests and forward them to `RouletteService`.
 
-Beispiel:
+Example:
 
 ```java
 return ResponseEntity.ok(rouletteService.play(request));
 ```
 
-Der Controller entscheidet also nicht selbst, wie Roulette funktioniert. Das ist wichtig, weil
-Controller sonst schnell zu gross werden. Die fachliche Logik liegt stattdessen im Service und in
-der Game-Schicht.
+The controller therefore does not decide how roulette works. This is important because controllers
+can otherwise quickly become too large. The domain logic is located in the service and game layers
+instead.
 
 ### `RouletteAdviceController`
 
-`RouletteAdviceController` behandelt zentrale Fehler fuer den Roulette Controller. Er faengt eigene
-`HttpException`-Klassen ab und wandelt sie in HTTP-Responses mit `ProblemDetail` um.
+`RouletteAdviceController` handles central errors for the Roulette Controller. It catches custom
+`HttpException` classes and converts them into HTTP responses with `ProblemDetail`.
 
-Dadurch muss nicht jede Controller-Methode selbst `try/catch` verwenden. Fachliche Fehler koennen an
-der Stelle entstehen, an der sie fachlich sinnvoll sind, und werden spaeter zentral in eine
-REST-Antwort uebersetzt.
+This means that not every controller method needs its own `try/catch`. Domain errors can be thrown
+where they make sense, and later they are centrally translated into a REST response.
 
-## Service-Schicht
+## Service Layer
 
 ### `RouletteService`
 
-`RouletteService` ist das Interface fuer die Anwendungslogik. Es beschreibt, welche Operationen der
-Service anbietet, ohne festzulegen, wie sie intern umgesetzt werden.
+`RouletteService` is the interface for the application logic. It describes which operations the
+service offers without defining how they are implemented internally.
 
-Warum ein Interface?
+Why use an interface?
 
-Ein Interface ist hier nicht zwingend notwendig, aber sinnvoll, weil es die Grenze zwischen
-Controller und Service klar macht. Ausserdem passt es zum Stil vieler Spring-Anwendungen und
-erleichtert spaeter Tests oder alternative Implementierungen.
+An interface is not strictly necessary here, but it is useful because it clearly marks the boundary
+between controller and service. It also fits the style of many Spring applications and makes later
+tests or alternative implementations easier.
 
 ### `RouletteServiceImpl`
 
-`RouletteServiceImpl` ist die zentrale Koordinationsklasse. Sie verbindet Controller, Validierung,
-Banking Client, Game Engine, Repository, Statistikberechnung und Mapper.
+`RouletteServiceImpl` is the central coordination class. It connects controller, validation,
+Banking client, game engine, repository, statistics calculation, and mapper.
 
-Wichtige Methode: `play(RoulettePlayRequestDTO request)`
+Important method: `play(RoulettePlayRequestDTO request)`
 
-Ablauf:
+Flow:
 
 1. `rouletteRequestValidator.validatePlayRequest(request)`
-Prueft, ob Request, User-ID, Bet-Type und Einsatz gueltig sind.
+Checks whether request, user ID, bet type, and bet amount are valid.
 
 2. `bankingRestClient.findUserById(request.getUser())`
-Prueft beim Banking Service, ob der Benutzer existiert.
+Checks through the Banking Service whether the user exists.
 
 3. `rouletteEngine.play(request)`
-Fuehrt die eigentliche Roulette-Runde aus.
+Executes the actual roulette round.
 
 4. `bankingRestClient.createRouletteTransaction(...)`
-Bucht Gewinn oder Verlust beim Banking Service.
+Books the win or loss through the Banking Service.
 
 5. `rouletteGameRepository.save(game)`
-Speichert die gespielte Runde in der Roulette-Datenbank.
+Stores the played round in the Roulette database.
 
 6. `RouletteGameMapper.toPlayResultDto(savedGame)`
-Wandelt die Entity in ein Response-DTO um.
+Converts the entity into a response DTO.
 
-Wichtige Methode: `getUserStats(Long userId)`
+Important method: `getUserStats(Long userId)`
 
-Diese Methode validiert die User-ID und prueft ebenfalls ueber Banking, ob der Benutzer existiert.
-Danach werden alle Roulette-Spiele dieses Benutzers aus der Datenbank gelesen und durch
-`RouletteStatsCalculator` ausgewertet.
+This method validates the user ID and also checks through Banking whether the user exists. Then all
+roulette games for this user are read from the database and evaluated by `RouletteStatsCalculator`.
 
-Warum wird Banking hier auch abgefragt?
+Why is Banking checked here as well?
 
-Der Endpunkt bezieht sich auf einen konkreten Benutzer. Deshalb ist es fachlich sauberer, zwischen
-"Benutzer existiert nicht" und "Benutzer existiert, hat aber noch keine Roulette-Spiele" zu
-unterscheiden.
+The endpoint refers to a specific user. Therefore, it is cleaner from a domain perspective to
+distinguish between "user does not exist" and "user exists but has not played roulette yet".
 
 ### `RouletteInfoService`
 
-Diese Klasse erzeugt die Texte fuer:
+This class creates the text responses for:
 
-- Spielregeln
-- Gewinnchancen
+- game rules
+- winning chances
 - RTP
 - House Edge
 
-Die Klasse wurde ausgelagert, damit `RouletteServiceImpl` nicht zu viel Textlogik enthaelt. Der
-Service soll koordinieren, aber nicht lange Info-Texte zusammenbauen.
+The class was extracted so that `RouletteServiceImpl` does not contain too much text-building
+logic. The service should coordinate, but it should not assemble long information texts itself.
 
-Wichtige Methoden:
+Important methods:
 
-- `getRules()`: liefert die textuelle Beschreibung der Roulette-Regeln.
-- `getChances()`: liefert Wahrscheinlichkeiten, Auszahlungen, RTP und House Edge.
+- `getRules()`: returns the textual description of the roulette rules.
+- `getChances()`: returns probabilities, payouts, RTP, and House Edge.
 
 ### `RouletteStatsCalculator`
 
-Diese Klasse berechnet Statistiken aus gespeicherten `RouletteGameEntity`-Objekten.
+This class calculates statistics from stored `RouletteGameEntity` objects.
 
-Wichtige Methoden:
+Important methods:
 
 - `calculateStats(List<RouletteGameEntity> games)`
-Berechnet globale Statistiken ueber alle Spiele.
+Calculates global statistics across all games.
 
 - `calculateUserStats(Long userId, List<RouletteGameEntity> games)`
-Berechnet Statistiken fuer einen bestimmten Benutzer.
+Calculates statistics for a specific user.
 
-Wichtige Werte:
+Important values:
 
-- `totalClientCount`: Anzahl unterschiedlicher Spieler.
-- `totalGamesCount`: Anzahl aller Spiele.
-- `totalCashOut`: Summe aller positiven Gewinne, die an Spieler ausgezahlt wurden.
-- `totalTurnover`: Summe aller Einsaetze.
-- `totalClientProfit`: Nettoergebnis aus Sicht aller Spieler.
-- `totalProfit`: Nettoergebnis aus Sicht des Hauses.
+- `totalClientCount`: number of different players.
+- `totalGamesCount`: number of all games.
+- `totalCashOut`: sum of all positive winnings paid out to players.
+- `totalTurnover`: sum of all bet amounts.
+- `totalClientProfit`: net result from the players' perspective.
+- `totalProfit`: net result from the house perspective.
 
-Die Klasse verwendet Java Streams, weil die Statistikberechnung dadurch gut als Datenfluss lesbar
-ist: Liste nehmen, Werte extrahieren, filtern, summieren.
+The class uses Java Streams because the statistic calculation is readable as a data flow: take a
+list, extract values, filter, and sum.
 
-## Validation-Schicht
+## Validation Layer
 
 ### `RouletteRequestValidator`
 
-Diese Klasse buendelt die grundlegende Request-Validierung.
+This class bundles the basic request validation.
 
-Wichtige Methoden:
+Important methods:
 
 - `validatePlayRequest(RoulettePlayRequestDTO request)`
-Prueft den gesamten Request fuer `/play`.
+Checks the complete request for `/play`.
 
 - `validateUserId(Long userId)`
-Prueft, ob eine User-ID vorhanden und groesser als `0` ist.
+Checks whether a user ID exists and is greater than `0`.
 
-Warum wurde diese Klasse ausgelagert?
+Why was this class extracted?
 
-Vorher lag ein Teil der Validierung im Service und ein Teil in der Engine. Dadurch gab es doppelte
-Pruefungen, z.B. fuer leere Requests oder leere User-IDs. Mit dem Validator ist klarer: Grundlegende
-Request-Validierung findet an einer zentralen Stelle statt.
+Previously, part of the validation was located in the service and part of it in the engine. This
+created duplicated checks, for example for empty requests or empty user IDs. With the validator, it
+is clearer that basic request validation happens in one central place.
 
-Warum liegt nicht jede Validierung dort?
+Why is not every validation placed there?
 
-Roulette-spezifische Regeln wie "COLOR darf nur RED oder BLACK sein" liegen weiterhin in
-`RouletteRules`, weil sie nicht nur technische Request-Validierung sind, sondern echte Spielregeln.
-Entity-Schutz liegt weiterhin in `RouletteGameEntity`, damit keine ungueltige Entity gebaut werden
-kann.
+Roulette-specific rules such as "COLOR must be RED or BLACK" remain in the strategy classes because
+they are not only technical request validation, but actual game rules. Entity protection remains in
+`RouletteGameEntity`, so an invalid entity cannot be created.
 
-## Game-Schicht
+## Game Layer
 
 ### `RouletteEngine`
 
-`RouletteEngine` fuehrt eine einzelne Roulette-Runde aus.
+`RouletteEngine` executes one single roulette round.
 
-Wichtige Methode: `play(RoulettePlayRequestDTO request)`
+Important method: `play(RoulettePlayRequestDTO request)`
 
-Ablauf:
+Flow:
 
 1. `spinGenerator.spin()`
-Erzeugt eine zufaellige Ballposition zwischen `0` und `36`.
+Creates a random ball position between `0` and `36`.
 
-2. `RouletteRules.isWinningBet(...)`
-Prueft, ob die Wette gewonnen hat.
+2. `rouletteBetStrategyResolver.resolve(request.getBetType())`
+Finds the matching bet strategy for the provided `BetType`.
 
-3. `calculateAmount(...)`
-Berechnet den Gewinn oder Verlust.
+3. `strategy.isWinning(...)`
+Uses the concrete strategy to check whether the bet won.
 
-4. `RouletteGameEntity.create(...)`
-Erstellt eine persistierbare Entity fuer die gespielte Runde.
+4. `calculateAmount(...)`
+Calculates the win or loss amount.
 
-Warum wurde die Validierung aus der Engine entfernt?
+5. `RouletteGameEntity.create(...)`
+Creates a persistable entity for the played round.
 
-Die Engine soll moeglichst nur Spielauswertung machen. Request-Validierung gehoert in den Validator,
-Banking-Pruefung in den Service und die Entity schuetzt ihre eigenen Daten. Dadurch hat jede Klasse
-eine klarere Aufgabe.
+Why was validation removed from the engine?
+
+The engine should focus as much as possible on game evaluation. Request validation belongs in the
+validator, Banking checks belong in the service, and the entity protects its own data. This gives
+each class a clearer responsibility.
 
 ### `RouletteSpinGenerator`
 
-`RouletteSpinGenerator` ist ein Interface fuer das Drehen des Roulette-Rads.
+`RouletteSpinGenerator` is an interface for spinning the roulette wheel.
 
-Wichtige Methode:
+Important method:
 
-- `spin()`: gibt eine Zahl zwischen `0` und `36` zurueck.
+- `spin()`: returns a number between `0` and `36`.
 
-Warum ein Interface?
+Why use an interface?
 
-Damit die Engine nicht direkt von Zufallslogik abhaengt. Fuer Tests kann spaeter ein fake oder
-fester Spin Generator verwendet werden, z.B. einer, der immer `17` zurueckgibt. Das macht die
-Spielauswertung testbar.
+This keeps the engine independent from direct random number generation. For tests, a fake or fixed
+spin generator can be used later, for example one that always returns `17`. This makes the game
+evaluation testable.
 
 ### `RandomRouletteSpinGenerator`
 
-Diese Klasse implementiert `RouletteSpinGenerator` und erzeugt eine echte zufaellige Ballposition.
+This class implements `RouletteSpinGenerator` and creates a real random ball position.
 
-Die Methode:
+The method:
 
 ```java
 ThreadLocalRandom.current().nextInt(37)
 ```
 
-liefert Werte von `0` bis `36`. Die obere Grenze `37` ist exklusiv, deshalb ist `36` der groesste
-moegliche Wert.
+returns values from `0` to `36`. The upper bound `37` is exclusive, so `36` is the highest possible
+value.
 
-### `RouletteRules`
+### `RouletteBetStrategy`
 
-`RouletteRules` enthaelt die eigentlichen Roulette-Regeln.
+`RouletteBetStrategy` is the interface for the Strategy Pattern. Every supported bet type
+implements this interface and encapsulates its own win logic, payout, and probability.
 
-Wichtige Methoden:
+Important methods:
 
-- `isWinningBet(BetType betType, String betValue, int ballPosition)`
-Verteilt die Pruefung auf die passende Wettart.
+- `betType()`
+Defines which `BetType` the strategy is responsible for.
 
-- `payoutMultiplier(BetType betType)`
-Gibt den Gewinnmultiplikator zurueck.
+- `isWinning(String betValue, int ballPosition)`
+Checks whether a concrete bet wins for a concrete ball position.
 
-- `hitProbability(BetType betType)`
-Berechnet die Trefferwahrscheinlichkeit.
+- `payoutMultiplier()`
+Returns the payout multiplier.
 
-- `returnToPlayer(BetType betType)`
-Berechnet den theoretischen Return to Player.
+- `winningOutcomes()`
+Returns how many winning fields this bet type has.
 
-- `houseEdge(BetType betType)`
-Berechnet den Hausvorteil.
+- `hitProbability()`
+Calculates the hit probability.
 
-Unterstuetzte Wettarten:
+- `returnToPlayer()`
+Calculates the theoretical Return to Player.
 
-- `STRAIGHT_NUMBER`: eine einzelne Zahl von `0` bis `36`, Auszahlung `35:1`.
-- `COLOR`: `RED` oder `BLACK`, Auszahlung `1:1`.
-- `PARITY`: `EVEN` oder `ODD`, Auszahlung `1:1`.
-- `RANGE`: `LOW` oder `HIGH`, Auszahlung `1:1`.
-- `DOZEN`: `FIRST`, `SECOND` oder `THIRD`, Auszahlung `2:1`.
+- `houseEdge()`
+Calculates the house edge.
 
-Warum europaeisches Roulette?
+### `RouletteBetStrategyResolver`
 
-Europaeisches Roulette hat die Zahlen `0` bis `36`, also 37 Felder. Amerikanisches Roulette haette
-zusaetzlich `00` und dadurch 38 Felder. Die europaeische Variante ist einfacher abzubilden, im
-deutschen/europaeischen Kontext naheliegender und hat einen klaren House Edge von `1/37`.
+The resolver collects all strategy beans and stores them in a map by `BetType`. When the engine
+evaluates a game round, it asks the resolver for the matching strategy.
 
-Warum ist die `0` wichtig?
+Because of this, the engine does not need a long `if` or `switch` chain for all bet types. New bet
+types can later be added by implementing a new strategy class and registering it as a Spring bean.
 
-Die Zahl `0` sorgt dafuer, dass einfache Wetten wie Rot/Schwarz, Gerade/Ungerade oder Niedrig/Hoch
-nicht exakt fair sind. Bei Rot/Schwarz gibt es 18 Gewinnfelder und 18 Verlustfelder plus die `0`.
-Dadurch gewinnt das Haus langfristig.
+### Concrete Strategy Classes
 
-Warum wird House Edge nicht extra vom Gewinn abgezogen?
+Supported bet types:
 
-Der House Edge entsteht automatisch durch die Kombination aus:
+- `StraightNumberBetStrategy`: `STRAIGHT_NUMBER`, one single number from `0` to `36`, payout
+`35:1`.
+- `ColorBetStrategy`: `COLOR`, `RED` or `BLACK`, payout `1:1`.
+- `ParityBetStrategy`: `PARITY`, `EVEN` or `ODD`, payout `1:1`.
+- `RangeBetStrategy`: `RANGE`, `LOW` or `HIGH`, payout `1:1`.
+- `DozenBetStrategy`: `DOZEN`, `FIRST`, `SECOND`, or `THIRD`, payout `2:1`.
 
-- 37 moeglichen Feldern
-- normalen Auszahlungen
-- Zahl `0`
+Why European roulette?
 
-Beispiel Rot/Schwarz:
+European roulette uses the numbers `0` to `36`, so it has 37 fields. American roulette would have
+an additional `00` field and therefore 38 fields. The European version is easier to model, more
+natural in a German/European context, and has a clear House Edge of `1/37`.
 
-- Gewinnchance: `18/37`
-- Auszahlung bei Gewinn: `1:1`
-- Verlustchance: `19/37`
+Why is `0` important?
 
-Langfristig ergibt sich daraus ein Hausvorteil von `1/37`. Wenn man den House Edge zusaetzlich
-abziehen wuerde, waere das mathematisch doppelt und damit falsch.
+The number `0` makes simple bets such as red/black, even/odd, or low/high not completely fair. For
+red/black, there are 18 winning fields and 18 losing fields plus `0`. This is why the house wins in
+the long run.
 
-Warum ist House Edge nicht in der `application.yaml`?
+Why is House Edge not subtracted separately from the result?
 
-Der House Edge ist keine frei einstellbare technische Konfiguration, sondern eine mathematische
-Folge der Roulette-Regeln. Wenn man ihn in die Config legen wuerde, koennte dort ein Wert stehen,
-der gar nicht zu den echten Regeln passt.
+The House Edge is created automatically by the combination of:
 
-Konfigurierbar sind deshalb nur Werte, die wirklich betriebliche Einstellungen sind, z.B.:
+- 37 possible fields
+- normal payouts
+- the number `0`
 
-- minimaler Einsatz
-- maximaler Einsatz
-- Banking-Service-URL
-- Name des Services fuer Banking-Transaktionen
+Example red/black:
 
-Die Spielmathematik bleibt im Code bei `RouletteRules`.
+- hit probability: `18/37`
+- payout on win: `1:1`
+- loss probability: `19/37`
 
-## Persistence-Schicht
+In the long run, this creates a house advantage of `1/37`. If the House Edge were subtracted again,
+it would be mathematically counted twice and therefore wrong.
+
+Why is House Edge not stored in `application.yaml`?
+
+The House Edge is not a freely configurable technical setting. It is a mathematical consequence of
+the roulette rules. If it were stored in the config, the config could contain a value that does not
+match the actual rules.
+
+Only values that are real operational settings are configurable, for example:
+
+- minimum bet
+- maximum bet
+- Banking Service URL
+- service name for Banking transactions
+
+The game mathematics remain in the strategy classes.
+
+## Persistence Layer
 
 ### `RouletteGameEntity`
 
-Diese Entity repraesentiert eine gespeicherte Roulette-Runde in der Datenbanktabelle
-`roulette_games`.
+This entity represents one stored roulette round in the `roulette_games` database table.
 
-Wichtige Felder:
+Important fields:
 
-- `id`: technische Spiel-ID.
-- `user`: ID des Spielers.
-- `winning`: ob die Runde gewonnen wurde.
-- `amount`: Netto-Gewinn oder Netto-Verlust aus Spielersicht.
-- `betAmount`: urspruenglicher Einsatz.
-- `betType`: Art der Wette.
-- `betValue`: konkreter Wert der Wette.
-- `ballPosition`: gezogene Roulette-Zahl.
+- `id`: technical game ID.
+- `user`: ID of the player.
+- `winning`: whether the round was won.
+- `amount`: net win or net loss from the player's perspective.
+- `betAmount`: original bet amount.
+- `betType`: type of the bet.
+- `betValue`: concrete value of the bet.
+- `ballPosition`: drawn roulette number.
 
-Wichtige Methode:
+Important method:
 
-- `create(...)`: Factory-Methode zum Erzeugen einer gueltigen Entity.
+- `create(...)`: factory method for creating a valid entity.
 
-Warum eine Factory-Methode?
+Why use a factory method?
 
-Die Entity hat einen geschuetzten No-Args-Konstruktor fuer JPA. Fachlich soll eine Entity aber nicht
-halbgueltig gebaut werden. Deshalb werden neue Entities ueber `create(...)` erzeugt. Dort werden
-zentrale Entity-Regeln geprueft, bevor das Objekt entsteht.
+The entity has a protected no-args constructor for JPA. From a domain perspective, however, an
+entity should not be created in a half-valid state. Therefore, new entities are created through
+`create(...)`. Central entity rules are checked there before the object is created.
 
-Warum wird `betValue` normalisiert?
+Why is `betValue` normalized?
 
-`betValue` wird mit `trim().toUpperCase()` gespeichert. Dadurch werden Eingaben wie `" red "`,
-`"Red"` und `"RED"` einheitlich als `"RED"` gespeichert. Das macht Datenbankeintraege konsistenter.
+`betValue` is stored with `trim().toUpperCase()`. This means inputs such as `" red "`, `"Red"`, and
+`"RED"` are all stored consistently as `"RED"`. This makes database entries more consistent.
 
 ### `RouletteGameRepository`
 
-Das Repository erweitert `JpaRepository<RouletteGameEntity, Long>`.
+The repository extends `JpaRepository<RouletteGameEntity, Long>`.
 
-Dadurch stellt Spring Data JPA automatisch Methoden bereit, z.B.:
+Spring Data JPA automatically provides methods such as:
 
 - `findAll()`
 - `findById(...)`
 - `save(...)`
 - `delete(...)`
 
-Zusaetzlich gibt es:
+Additionally, there is:
 
 - `findByUser(Long user)`
 
-Diese Methode wird von Spring Data JPA aus dem Methodennamen abgeleitet. Spring erkennt: Suche alle
-`RouletteGameEntity`-Eintraege, deren Feld `user` dem uebergebenen Wert entspricht.
+This method is derived by Spring Data JPA from the method name. Spring understands this as: search
+all `RouletteGameEntity` entries whose `user` field matches the provided value.
 
-## Mapper und DTOs
+## Mapper and DTOs
 
 ### `RouletteGameMapper`
 
-Der Mapper wandelt Datenbank-Entities in DTOs fuer die REST-Ausgabe um.
+The mapper converts database entities into DTOs for the REST output.
 
-Wichtige Methoden:
+Important methods:
 
 - `toGameDto(RouletteGameEntity entity)`
 - `toPlayResultDto(RouletteGameEntity entity)`
 
-Warum ein Mapper?
+Why use a mapper?
 
-Die Entity gehoert zur Datenbank-Schicht. Die DTOs gehoeren zur REST-Schicht. Durch den Mapper
-werden diese Schichten getrennt. So muss nicht die Datenbankstruktur direkt als API-Struktur nach
-aussen gegeben werden.
+The entity belongs to the database layer. The DTOs belong to the REST layer. The mapper separates
+these layers, so the database structure does not have to be exposed directly as the API structure.
 
-### Request-DTO
+### Request DTO
 
 ### `RoulettePlayRequestDTO`
 
-Dieses DTO beschreibt den JSON-Body fuer `/play`.
+This DTO describes the JSON body for `/play`.
 
-Felder:
+Fields:
 
 - `user`
 - `betType`
 - `betValue`
 - `amount`
 
-Es wird bewusst camelCase verwendet, weil das laut Ruecksprache mit dem Professor erlaubt ist.
-Deshalb werden keine `@JsonProperty`-Annotationen gebraucht.
+camelCase is used intentionally because the professor confirmed that it is allowed. Therefore, no
+`@JsonProperty` annotations are needed.
 
-### Response-DTOs im Package `view`
+### Response DTOs in the `view` Package
 
-Die DTOs im Package `view` bilden die JSON-Ausgaben der REST-API ab. Im Beleg ist mit "View" nicht
-ein HTML-Dokument gemeint, sondern die aeussere Darstellung der REST-Daten.
+The DTOs in the `view` package represent the JSON responses of the REST API. In the assignment,
+"View" does not mean an HTML document, but the external representation of REST data.
 
-Wichtige DTOs:
+Important DTOs:
 
-- `RoulettePlayResultDTO`: Ergebnis einer gespielten Runde.
-- `RouletteGameDTO`: gespeichertes Spiel.
-- `RouletteStatsDTO`: globale Statistiken.
-- `RouletteUserStatsDTO`: benutzerbezogene Statistiken.
+- `RoulettePlayResultDTO`: result of a played round.
+- `RouletteGameDTO`: stored game.
+- `RouletteStatsDTO`: global statistics.
+- `RouletteUserStatsDTO`: user-specific statistics.
 
-## Banking-Kommunikation
+## Banking Communication
 
 ### `BankingRestClient`
 
-Diese Klasse kommuniziert mit dem Banking Service ueber HTTP.
+This class communicates with the Banking Service via HTTP.
 
-Wichtige Methoden:
+Important methods:
 
 - `findUserById(Long userId)`
-Fragt den Banking Service, ob ein Benutzer existiert.
+Asks the Banking Service whether a user exists.
 
 - `createRouletteTransaction(Long userId, BigDecimal amount)`
-Erstellt beim Banking Service eine Transaktion fuer Gewinn oder Verlust.
+Creates a transaction for a win or loss at the Banking Service.
 
-Warum gibt es diese Klasse?
+Why does this class exist?
 
-Der Roulette Service soll nicht wissen muessen, wie HTTP-Aufrufe technisch gebaut werden. Diese
-Verantwortung liegt im Client. Dadurch bleibt `RouletteServiceImpl` besser lesbar.
+The Roulette Service should not need to know how HTTP calls are built technically. This
+responsibility is located in the client. As a result, `RouletteServiceImpl` remains easier to read.
 
 ### `BankingUserDTO`
 
-DTO fuer die Antwort des Banking Service beim Laden eines Benutzers.
+DTO for the response from the Banking Service when loading a user.
 
 ### `BankingTransactionRequestDTO`
 
-DTO fuer den Request an den Banking Service, wenn eine Roulette-Transaktion erstellt wird.
+DTO for the request to the Banking Service when a roulette transaction is created.
 
-Der `amount` ist dabei das Nettoergebnis aus Sicht des Spielers:
+The `amount` is the net result from the player's perspective:
 
-- positiver Betrag: Spieler gewinnt Geld.
-- negativer Betrag: Spieler verliert Geld.
+- positive amount: the player wins money.
+- negative amount: the player loses money.
 
-## Konfiguration
+## Configuration
 
 ### `RouletteConfig`
 
-Diese Klasse erstellt den `RestClient` fuer den Banking Service.
+This class creates the `RestClient` for the Banking Service.
 
-Wichtige Methode:
+Important method:
 
 - `bankRestClient(...)`
 
-Die Base-URL kommt aus der `application.yaml`.
+The base URL comes from `application.yaml`.
 
 ### `RouletteProperties`
 
-Diese Klasse bindet Werte aus der `application.yaml` an ein Java-Objekt.
+This class binds values from `application.yaml` to a Java object.
 
-Aktuell konfigurierbar:
+Currently configurable:
 
 - `casino.roulette.betting.minAmount`
 - `casino.roulette.betting.maxAmount`
 - `casino.roulette.banking.invoicingParty`
 
-Warum diese Werte in der Config?
+Why are these values in the config?
 
-Diese Werte sind betriebliche Einstellungen. Es ist realistisch, dass man sie spaeter ohne
-Codeaenderung anpassen moechte.
+These values are operational settings. It is realistic that they may need to be changed later
+without changing code.
 
-Warum nicht alle Spielregeln in der Config?
+Why are not all game rules in the config?
 
-Spielregeln wie Auszahlungen, Gewinnwahrscheinlichkeiten oder House Edge gehoeren fachlich zusammen.
-Wenn man einzelne Werte davon frei konfigurierbar macht, koennen schnell widerspruechliche Regeln
-entstehen. Deshalb liegen diese Regeln gebuendelt in `RouletteRules`.
+Game rules such as payouts, winning probabilities, or House Edge belong together from a domain
+perspective. If single values were freely configurable, contradictory rules could quickly occur.
+Therefore, these rules are bundled in the strategy classes.
 
 ## Exceptions
 
 ### `HttpException`
 
-Basisklasse fuer fachliche HTTP-Fehler. Sie enthaelt einen HTTP-Status und eine Fehlermeldung.
+Base class for domain-specific HTTP errors. It contains an HTTP status and an error message.
 
 ### `BadRouletteRequestException`
 
-Wird verwendet, wenn ein Request fachlich oder formal ungueltig ist. Ergebnis: `400 Bad Request`.
+Used when a request is invalid from a technical or domain perspective. Result: `400 Bad Request`.
 
-Beispiele:
+Examples:
 
-- leerer Request
-- User-ID kleiner oder gleich `0`
-- fehlender Einsatz
-- Einsatz kleiner als Mindesteinsatz
-- ungueltiger Wettwert
+- empty request
+- user ID less than or equal to `0`
+- missing bet amount
+- bet amount below the minimum
+- invalid bet value
 
 ### `BankingUserNotFoundException`
 
-Wird verwendet, wenn der Banking Service einen Benutzer nicht findet. Ergebnis: `404 Not Found`.
+Used when the Banking Service cannot find a user. Result: `404 Not Found`.
 
 ### `RouletteGameNotFoundException`
 
-Wird verwendet, wenn ein gespeichertes Roulette-Spiel nicht gefunden wird. Ergebnis: `404 Not
-Found`.
+Used when a stored roulette game cannot be found. Result: `404 Not Found`.
 
-## Wichtige Architekturentscheidungen
+## Important Architecture Decisions
 
-### Warum geschichtete Architektur statt Vertical Slice?
+### Why Layered Architecture Instead of Vertical Slice?
 
-Der Banking Service ist komplexer, weil er mehrere Subdomaenen wie User, Transaction und Stat hat.
-Dort ist Vertical Slice Architecture sinnvoll, weil jede Subdomaene eigene Controller, Handler und
-Datenzugriffe haben kann.
+The Banking Service is more complex because it has several subdomains such as User, Transaction,
+and Stat. Vertical Slice Architecture is useful there because each subdomain can have its own
+controllers, handlers, and data access.
 
-Der Roulette Service ist kleiner und fachlich enger. Die Hauptdomaene ist das Spiel Roulette.
-Deshalb ist eine geschichtete Architektur uebersichtlicher:
+The Roulette Service is smaller and has a narrower domain. The main domain is the roulette game.
+Therefore, a layered architecture is more understandable:
 
-- Controller fuer REST
-- Service fuer Koordination
-- Engine fuer Spiellogik
-- Repository fuer Datenbank
-- Client fuer Banking
+- controller for REST
+- service for coordination
+- engine for game logic
+- repository for database access
+- client for Banking
 
-Das entspricht auch der Belegvorgabe, dass die Spiel-Services weniger streng geschichtet aufgebaut
-werden duerfen.
+This also matches the assignment requirement that the game services may be structured less strictly
+than the Banking Service.
 
-### Warum DTOs statt Entities direkt ausgeben?
+### Why DTOs Instead of Returning Entities Directly?
 
-Entities gehoeren zur Datenbank. DTOs gehoeren zur API. Wenn man Entities direkt ausgibt, koppelt
-man die API stark an die Datenbankstruktur. Mit DTOs kann die API stabil bleiben, auch wenn sich
-intern die Entity aendert.
+Entities belong to the database. DTOs belong to the API. If entities were returned directly, the API
+would be strongly coupled to the database structure. With DTOs, the API can remain stable even if
+the internal entity changes.
 
-### Warum `BigDecimal` fuer Geld?
+### Why `BigDecimal` for Money?
 
-Geld sollte nicht mit `double` oder `float` berechnet werden, weil diese Typen Rundungsfehler
-erzeugen koennen. `BigDecimal` ist fuer Geldbetraege besser geeignet und wird auch in den
-Beleganforderungen gefordert.
+Money should not be calculated with `double` or `float`, because these types can create rounding
+errors. `BigDecimal` is better suited for monetary values and is also required by the assignment.
 
-### Warum `Long` fuer IDs?
+### Why `Long` for IDs?
 
-Die Beleganforderungen sehen Long-IDs vor. Ausserdem ist `Long` bei Datenbank-IDs in Spring/JPA sehr
-ueblich und bietet genug Wertebereich.
+The assignment requires Long IDs. In addition, `Long` is very common for database IDs in Spring/JPA
+and provides a sufficiently large value range.
 
-### Warum wird der Gewinn als Nettoergebnis gespeichert?
+### Why Is the Win Stored as a Net Result?
 
-Das Feld `amount` beschreibt das Ergebnis aus Sicht des Spielers:
+The `amount` field describes the result from the player's perspective:
 
-- Verlust: `-betAmount`
-- Gewinn: `betAmount * payoutMultiplier`
+- loss: `-betAmount`
+- win: `betAmount * payoutMultiplier`
 
-Der urspruengliche Einsatz bleibt separat in `betAmount` gespeichert. Dadurch koennen Statistiken
-sowohl Gewinn/Verlust als auch Umsatz sauber berechnen.
+The original bet remains stored separately in `betAmount`. This allows statistics to calculate both
+win/loss and turnover cleanly.
 
-### Warum wird die Banking-Transaktion nach der Spielauswertung erstellt?
+### Why Is the Banking Transaction Created After Game Evaluation?
 
-Erst nach der Spielauswertung steht fest, ob der Spieler gewonnen oder verloren hat. Danach kann der
-Roulette Service genau diesen Betrag an Banking senden.
+Only after the game has been evaluated is it clear whether the player has won or lost. After that,
+the Roulette Service can send exactly this amount to Banking.
 
-Aktueller Ablauf:
+Current flow:
 
-1. User existiert?
-2. Spiel auswerten.
-3. Gewinn/Verlust buchen.
-4. Spiel speichern.
+1. Does the user exist?
+2. Evaluate the game.
+3. Book win/loss.
+4. Store the game.
 
-### Warum wird der User nicht in der Roulette-Datenbank gespeichert?
+### Why Is the User Not Stored in the Roulette Database?
 
-Der Roulette Service speichert nur die User-ID. Die eigentlichen Benutzerdaten gehoeren dem Banking
-Service. Das trennt die Verantwortlichkeiten der Services:
+The Roulette Service stores only the user ID. The actual user data belongs to the Banking Service.
+This separates the responsibilities of the services:
 
-- Banking verwaltet Benutzer und Konten.
-- Roulette verwaltet Roulette-Spiele und Roulette-Statistiken.
+- Banking manages users and accounts.
+- Roulette manages roulette games and roulette statistics.
 
-### Warum ist die Zahlengenerierung ausgelagert?
+### Why Is Number Generation Extracted?
 
-Durch `RouletteSpinGenerator` kann die Zufallszahl spaeter in Tests ersetzt werden. Ohne diese
-Auslagerung waere die Engine schwer testbar, weil jedes Spiel zufaellig waere.
+With `RouletteSpinGenerator`, the random number can later be replaced in tests. Without this
+extraction, the engine would be hard to test because every game would be random.
 
-### Warum keine zusaetzlichen Wettarten?
+### Why Strategy Pattern for Bet Types?
 
-Roulette bietet noch viele weitere Wettarten, z.B. Split, Street, Corner, Six Line oder Column. Fuer
-den Beleg wurden die wichtigsten und gut nachvollziehbaren Wettarten umgesetzt:
+Previously, all bet types were located in one central rules class with several `if` checks. That was
+still acceptable for the current scope, but this class would have grown larger when adding more
+roulette bets.
+
+With the Strategy Pattern, every bet type has its own class. The engine only needs to know that
+there is a matching strategy. `RouletteBetStrategyResolver` decides which concrete strategy is used.
+
+This improves:
+
+- readability: every bet type is located in its own class.
+- extensibility: new bet types need a new strategy, but no large engine change.
+- testability: every bet type can be tested in isolation.
+- assignment traceability: the pattern is clearly visible in the code.
+
+### Why No Additional Bet Types?
+
+Roulette provides many more bet types, for example split, street, corner, six line, or column. For
+the assignment, the most important and understandable bet types were implemented:
 
 - Straight Number
 - Color
@@ -683,23 +714,21 @@ den Beleg wurden die wichtigsten und gut nachvollziehbaren Wettarten umgesetzt:
 - Range
 - Dozen
 
-Damit sind die Grundprinzipien von Roulette abgebildet, ohne die Implementierung unnoetig gross zu
-machen.
+This covers the basic principles of roulette without making the implementation unnecessarily large.
 
-### Warum keine `@JsonProperty`-Annotationen?
+### Why No `@JsonProperty` Annotations?
 
-Nach Ruecksprache mit dem Professor darf camelCase verwendet werden. Deshalb muessen JSON-Felder wie
-`betType`, `betValue` oder `ballPosition` nicht auf snake_case gemappt werden.
+After consulting the professor, camelCase is allowed. Therefore, JSON fields such as `betType`,
+`betValue`, or `ballPosition` do not need to be mapped to snake_case.
 
-### Warum `ProblemDetail` fuer Fehler?
+### Why `ProblemDetail` for Errors?
 
-`ProblemDetail` ist eine standardisierte Art, Fehler in REST-APIs zurueckzugeben. Dadurch sehen
-Fehlerantworten einheitlicher aus und enthalten neben der Meldung auch den HTTP-Status.
+`ProblemDetail` is a standardized way of returning errors in REST APIs. This makes error responses
+more consistent and includes the HTTP status together with the message.
 
-## Datenbank
+## Database
 
-Der Roulette Service verwendet eine eigene PostgreSQL-Datenbank. In der `application.yaml` steht
-lokal:
+The Roulette Service uses its own PostgreSQL database. In `application.yaml`, the local setup is:
 
 ```yaml
 spring:
@@ -707,42 +736,42 @@ spring:
     url: jdbc:postgresql://localhost:15433/roulette
 ```
 
-In Docker wird die Datenbank ueber `roulette/compose.yaml` gestartet. Die Tabelle fuer gespeicherte
-Spiele wird durch JPA/Hibernate aus der Entity `RouletteGameEntity` abgeleitet.
+In Docker, the database is started through `roulette/compose.yaml`. The table for stored games is
+derived by JPA/Hibernate from the entity `RouletteGameEntity`.
 
-Aktuell ist `ddl-auto: update` gesetzt. Das ist fuer Entwicklung praktisch, weil Hibernate die
-Tabelle automatisch anlegen oder aktualisieren kann. Fuer produktive Systeme waeren Migrationstools
-wie Flyway oder Liquibase sauberer, fuer den Beleg ist `update` aber nachvollziehbar und einfach.
+Currently, `ddl-auto: update` is set. This is practical for development because Hibernate can
+automatically create or update the table. For production systems, migration tools such as Flyway or
+Liquibase would be cleaner, but for the assignment `update` is understandable and simple.
 
 ## Swagger
 
-Durch die Springdoc-OpenAPI-Abhaengigkeit stellt der Roulette Service eine Swagger UI bereit:
+The Springdoc OpenAPI dependency provides a Swagger UI for the Roulette Service:
 
 ```text
 http://localhost:8081/swagger-ui/index.html
 ```
 
-Dort koennen alle Endpunkte ausprobiert werden.
+All endpoints can be tested there.
 
-## Aktueller Stand
+## Current Status
 
-Der Roulette Service erfuellt die zentrale Funktionalitaet:
+The Roulette Service fulfills the central functionality:
 
-- Spielrunde ausfuehren
-- User ueber Banking pruefen
-- Gewinn/Verlust ueber Banking buchen
-- Spiel speichern
-- Regeln ausgeben
-- Chancen, RTP und House Edge ausgeben
-- globale Statistiken ausgeben
-- Benutzerstatistiken ausgeben
-- Spielhistorie ausgeben
-- einzelnes Spiel anzeigen
-- einzelnes Spiel loeschen
-- ungueltige Requests und nicht gefundene Ressourcen mit passenden Fehlern beantworten
+- execute a game round
+- validate users through Banking
+- book wins/losses through Banking
+- store games
+- return rules
+- return chances, RTP, and House Edge
+- return global statistics
+- return user statistics
+- return game history
+- return a single game
+- delete a single game
+- respond to invalid requests and missing resources with matching errors
+- provide focused automated tests for controllers, services, game logic, strategies, validation,
+  mapping, entity creation, and the Banking REST client
 
-Noch sinnvoll fuer die Abgabe:
+Still useful before submission:
 
-- gezielte Tests fuer Engine, Rules, Validator, Service und Controller
-- PlantUML-Diagramm fuer den Roulette Service pflegen
-- eventuell lange Lern-Kommentare im Code vor finaler Abgabe kuerzen
+- manually test the Swagger calls again after the last refactoring

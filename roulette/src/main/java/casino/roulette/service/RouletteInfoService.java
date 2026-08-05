@@ -1,11 +1,17 @@
 package casino.roulette.service;
 
+import casino.roulette.game.strategy.RouletteBetStrategyResolver;
 import casino.roulette.util.BetType;
-import casino.roulette.util.RouletteRules;
 import org.springframework.stereotype.Component;
 
 @Component
 public class RouletteInfoService {
+
+    private final RouletteBetStrategyResolver rouletteBetStrategyResolver;
+
+    public RouletteInfoService(RouletteBetStrategyResolver rouletteBetStrategyResolver) {
+        this.rouletteBetStrategyResolver = rouletteBetStrategyResolver;
+    }
 
     public String getRules() {
         return """
@@ -33,16 +39,16 @@ public class RouletteInfoService {
             Losing round: amount = -betAmount.
             House edge is caused by number 0.
             """.formatted(
-                RouletteRules.returnToPlayer(BetType.STRAIGHT_NUMBER),
-                RouletteRules.houseEdge(BetType.STRAIGHT_NUMBER),
-                RouletteRules.returnToPlayer(BetType.COLOR),
-                RouletteRules.houseEdge(BetType.COLOR),
-                RouletteRules.returnToPlayer(BetType.PARITY),
-                RouletteRules.houseEdge(BetType.PARITY),
-                RouletteRules.returnToPlayer(BetType.RANGE),
-                RouletteRules.houseEdge(BetType.RANGE),
-                RouletteRules.returnToPlayer(BetType.DOZEN),
-                RouletteRules.houseEdge(BetType.DOZEN)
+                rouletteBetStrategyResolver.resolve(BetType.STRAIGHT_NUMBER).returnToPlayer(),
+                rouletteBetStrategyResolver.resolve(BetType.STRAIGHT_NUMBER).houseEdge(),
+                rouletteBetStrategyResolver.resolve(BetType.COLOR).returnToPlayer(),
+                rouletteBetStrategyResolver.resolve(BetType.COLOR).houseEdge(),
+                rouletteBetStrategyResolver.resolve(BetType.PARITY).returnToPlayer(),
+                rouletteBetStrategyResolver.resolve(BetType.PARITY).houseEdge(),
+                rouletteBetStrategyResolver.resolve(BetType.RANGE).returnToPlayer(),
+                rouletteBetStrategyResolver.resolve(BetType.RANGE).houseEdge(),
+                rouletteBetStrategyResolver.resolve(BetType.DOZEN).returnToPlayer(),
+                rouletteBetStrategyResolver.resolve(BetType.DOZEN).houseEdge()
         );
     }
 }
