@@ -1,7 +1,6 @@
 package casino.banking.requestClients.transaction;
 
 import casino.banking.exceptions.transaction.BadTransactionRequestException;
-import casino.banking.exceptions.user.BadDepositRequestException;
 import casino.banking.view.user.UserDTO;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -20,7 +19,7 @@ public class UserRestClient {
         this.restClient = restClient;
     }
 
-    public UserDTO depositBalanceById(Long userId, BigInteger amount, int decimals) throws BadDepositRequestException {
+    public UserDTO depositBalanceById(Long userId, BigInteger amount, int decimals) {
         return restClient.post()
                 .uri("/user/{userId}/deposit/{amount}/{decimals}", userId, amount, decimals)
                 .retrieve()

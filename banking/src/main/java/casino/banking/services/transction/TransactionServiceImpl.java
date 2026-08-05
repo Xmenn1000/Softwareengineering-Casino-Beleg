@@ -3,6 +3,7 @@ package casino.banking.services.transction;
 import casino.banking.exceptions.transaction.TransactionNotKnownException;
 import casino.banking.mapper.transaction.TransactionMapper;
 import casino.banking.model.transaction.TransactionEntity;
+import casino.banking.model.transaction.TransactionFactory;
 import casino.banking.repository.transaction.TransactionRepository;
 import casino.banking.request.transaction.TransactionRequestDTO;
 import casino.banking.request.transaction.UserGameTransactionRequestDTO;
@@ -22,10 +23,12 @@ public class TransactionServiceImpl implements TransactionService {
 
     private final TransactionRepository transactionRepository;
     private final UserRestClient userRestClient;
+    private final TransactionFactory transactionFactory;
 
-    TransactionServiceImpl(TransactionRepository transactionRepository, UserRestClient userRestClient) {
+    TransactionServiceImpl(TransactionRepository transactionRepository, UserRestClient userRestClient, TransactionFactory transactionFactory) {
         this.transactionRepository = transactionRepository;
         this.userRestClient = userRestClient;
+        this.transactionFactory = transactionFactory;
     }
 
     @Override
@@ -33,7 +36,7 @@ public class TransactionServiceImpl implements TransactionService {
         BigInteger amount = MoneyHelper.extractIntegerPart(transactionRequestDTO.getAmount());
         int decimals = MoneyHelper.extractFractionPart2Decimals(transactionRequestDTO.getAmount());
         userRestClient.depositBalanceById(userId, amount, decimals);
-        TransactionEntity transactionEntity = TransactionEntity.createTransaction(transactionRequestDTO.getGameService(), userId, transactionRequestDTO.getAmount());
+        TransactionEntity transactionEntity = transactionFactory.createTransaction(transactionRequestDTO.getGameService(), userId, transactionRequestDTO.getAmount());
         transactionRepository.save(transactionEntity);
         return TransactionMapper.toUserTransactionDto(transactionEntity);
     }

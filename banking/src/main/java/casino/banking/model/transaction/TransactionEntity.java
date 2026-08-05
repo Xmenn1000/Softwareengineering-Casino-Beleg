@@ -16,7 +16,7 @@ import java.math.BigDecimal;
 @Entity
 @Getter
 @Table(name = "transactions")
-public class TransactionEntity {
+public class TransactionEntity implements Transaction {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)

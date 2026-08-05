@@ -33,7 +33,7 @@ public class TransactionController implements TransactionApi {
 
     @Override
     public ResponseEntity<UserTransactionDTO> createForUserId(Long userId, TransactionRequestDTO transactionRequestDTO) {
-        return ResponseEntity.ok(transactionService.createForUserId(userId, transactionRequestDTO));
+        return ResponseEntity.status(201).body(transactionService.createForUserId(userId, transactionRequestDTO));
     }
 
     @Override
