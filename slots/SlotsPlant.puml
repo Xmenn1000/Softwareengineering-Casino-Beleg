@@ -1,2 +1,65 @@
 @startuml
+
+actor Player
+
+package "Slots Service : 8082" as Slots {
+
+package "Game" as GamePackage {
+component "Play Controller" as PlayController
+component "Play Service" as PlayService
+component "Slot Engine" as SlotEngine
+component "Rule Engine" as RuleEngine
+
+PlayController --> PlayService
+PlayService --> SlotEngine : spin
+SlotEngine --> RuleEngine : highest payout
+}
+
+package "Info" as InfoPackage {
+component "Info Controller" as InfoController
+component "Info Service" as InfoService
+component "Chance Calculator" as ChanceCalculator
+
+InfoController --> InfoService
+InfoService --> ChanceCalculator : calculate chances
+}
+
+package "Stats" as StatsPackage {
+component "Stats Controller" as StatsController
+component "History Controller" as HistoryController
+component "Stats Service" as StatsService
+component "History Service" as HistoryService
+component "Stats Calculator" as StatsCalculator
+
+StatsController --> StatsService
+HistoryController --> HistoryService
+StatsService --> StatsCalculator : aggregate
+}
+
+component "Games Repo" as GamesRepo
+component "Banking Rest Client" as BankingClient
+
+PlayService --> GamesRepo : persist Games
+StatsService --> GamesRepo : load Games
+HistoryService --> GamesRepo : load / delete
+PlayService --> BankingClient : verify User / create Transaction
+StatsService --> BankingClient : verify User
+
+}
+
+database "Postgres Slots" as SlotsDB {
+  [Games] as GamesTable
+}
+
+node "Banking Service : 8080" as Banking
+
+GamesRepo --> GamesTable : persist / load Games
+
+Player --> PlayController : HTTP \n play
+Player --> InfoController : HTTP \n rules / chances
+Player --> StatsController : HTTP \n stats
+Player --> HistoryController : HTTP \n games / history
+
+BankingClient --> Banking : HTTP \n User / Transaction
+
 @enduml

@@ -9,9 +9,8 @@ component "User Controller" as UserController
 component "User Service" as UserService
 component "User Repo" as UserRepo
 
-
 UserController --> UserService
-UserService --> UserRepo: persist User
+UserService --> UserRepo
 }
 
 package "Transaction Slice" as TransactionServicePackage {
@@ -21,16 +20,24 @@ component "Transaction Service" as TransactionService
 component "Transaction Repo" as TransactionRepo
 
 TransactionController --> TransactionService
-TransactionService --> TransactionRepo : persist Transactions
+TransactionService --> TransactionRepo
 }
 
 TransactionService --> UserController : HTTP \n deposit
 
 }
 
+database "Postgres Banking" as BankingDB {
+  [User] as UserTable
+  [Transactions] as TransactionTable
+}
+
 node GameServices
 
-GameServices -> TransactionController : HTTP \ncreate Transactions
+UserRepo --> UserTable : persist User
+TransactionRepo --> TransactionTable : persist Transactions
+
+GameServices --> TransactionController : HTTP \n create Transactions
 Player --> UserController : HTTP \n manage User
 
 @enduml
