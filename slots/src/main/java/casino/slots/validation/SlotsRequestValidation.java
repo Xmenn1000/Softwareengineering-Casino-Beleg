@@ -24,8 +24,8 @@ public class SlotsRequestValidation {
             throw new BadSlotsRequestException("User Id was null");
         }
 
-        if (userId < 0) {
-            throw new BadSlotsRequestException("User ID has to be at least 0, but was: " + userId);
+        if (userId < 1) {
+            throw new BadSlotsRequestException("User ID has to be at least 1, but was: " + userId);
         }
     }
 

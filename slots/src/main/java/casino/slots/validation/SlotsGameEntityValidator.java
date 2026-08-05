@@ -3,10 +3,12 @@ package casino.slots.validation;
 import casino.slots.domain.enums.Symbol;
 import casino.slots.exeptions.BadSlotsRequestException;
 import casino.slots.model.SlotsGameEntity;
+import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
 import java.util.List;
 
+@Component
 public class SlotsGameEntityValidator {
     public void validate(SlotsGameEntity entity) {
         validateUser(entity.getUserId());
@@ -35,7 +37,7 @@ public class SlotsGameEntityValidator {
 
 
     private static void validateSlotState(List<Symbol> symbols) {
-        if (symbols.isEmpty()) {
+        if (symbols == null || symbols.isEmpty()) {
             throw new BadSlotsRequestException("Slots is broken, there no symbols");
         }
     }
