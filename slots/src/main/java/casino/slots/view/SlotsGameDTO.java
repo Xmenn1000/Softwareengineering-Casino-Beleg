@@ -1,21 +1,20 @@
 package casino.slots.view;
 
 import casino.slots.domain.enums.Symbol;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
 import java.util.List;
 
 @Getter
-@NoArgsConstructor
+@AllArgsConstructor
 public class SlotsGameDTO {
 
-  private long user;
   private long id;
+  private long userId;
   private boolean winning;
-  private BigDecimal resultingAmount;
-  private String betAmount;
-  private List<Symbol> symbols;
-
+  private BigDecimal amount;
+  private BigDecimal betAmount;
+  private List<Symbol> slotStates;
 }
