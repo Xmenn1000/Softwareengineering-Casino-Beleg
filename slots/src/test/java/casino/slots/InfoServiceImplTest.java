@@ -59,7 +59,7 @@ class InfoServiceImplTest {
         assertTrue(rules.contains("Pull the lever"));
         assertTrue(rules.contains("Three of a kind"));
         assertTrue(rules.contains("/chances"));
-        assertTrue(rules.contains("loss"));
+        assertTrue(rules.contains("The bet is gone"));
     }
 
     @Test
