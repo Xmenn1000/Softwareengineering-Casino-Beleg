@@ -46,7 +46,7 @@ public class BankingRestClient {
                     throw new BankingUserNotFoundException(userId);
                 })
                 .onStatus(status -> status.value() == 400, (request, response) -> {
-                    throw new BadSlotsRequestException("Banking rejected roulette transaction");
+                    throw new BadSlotsRequestException("Banking rejected slots transaction");
                 })
                 .toBodilessEntity();
     }
