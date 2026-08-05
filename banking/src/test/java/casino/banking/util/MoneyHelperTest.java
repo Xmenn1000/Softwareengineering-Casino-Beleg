@@ -65,4 +65,22 @@ class MoneyHelperTest {
         assertEquals(new BigDecimal("10.00"), result);
     }
 
+    @Test
+    void extractFractionPart2Decimals_extractFraction() {
+        BigDecimal number = new BigDecimal("20.33");
+
+        int result = MoneyHelper.extractFractionPart2Decimals(number);
+
+        assertEquals(33, result);
+    }
+
+    @Test
+    void extractIntegerPart_extractsIntegerPart() {
+        BigDecimal number = new BigDecimal("20.33");
+
+        BigInteger result =MoneyHelper.extractIntegerPart(number);
+
+        assertEquals(new BigInteger("20"), result);
+    }
+
 }
