@@ -1,7 +1,7 @@
 package casino.banking.requestClients.transaction;
 
 import casino.banking.exceptions.transaction.BadTransactionRequestException;
-import casino.banking.view.user.UserDTO;
+import casino.banking.exceptions.transaction.TransactionUserNotKnownException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpMethod;
@@ -16,7 +16,6 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.test.web.client.match.MockRestRequestMatchers.method;
 import static org.springframework.test.web.client.match.MockRestRequestMatchers.requestTo;
 import static org.springframework.test.web.client.response.MockRestResponseCreators.*;
-;
 
 //https://www.javathinking.com/blog/mocking-a-rest-call-with-mockrestserviceserver/
 class UserRestClientTest {
@@ -32,6 +31,46 @@ class UserRestClientTest {
                 .baseUrl(baseUrl);
         mockServer = MockRestServiceServer.bindTo(builder).build();
         userRestClient = new UserRestClient(builder.build());
+    }
+
+    @Test
+    void findById_success_returnsUser() {
+        Long userId = 1L;
+        String firstName = "firstName";
+        String lastName = "lastName";
+        BigDecimal balance = new BigDecimal("100.00");
+
+        String body = """
+        {
+          "id": %d,
+          "firstName": "%s",
+          "lastName": "%s",
+          "balance": %s
+        }
+        """.formatted(userId, firstName, lastName, balance);
+
+        mockServer.expect(requestTo(baseUrl + String.format("/user/%d", userId)))
+                .andExpect(method(HttpMethod.GET))
+                .andRespond(withSuccess(body, MediaType.APPLICATION_JSON));
+
+
+        BankUserDTO user = userRestClient.findById(userId);
+        assertEquals(userId, user.getId());
+        assertEquals(firstName, user.getFirstName());
+        assertEquals(lastName, user.getLastName());
+        assertEquals(balance, user.getBalance());
+    }
+
+    @Test
+    void findById_userNotFound_throwsTransactionUserNotKnown() {
+        Long userId = 1L;
+
+        mockServer.expect(requestTo(baseUrl + String.format("/user/%d", userId)))
+                .andExpect(method(HttpMethod.GET))
+                .andRespond(withResourceNotFound());
+
+
+        assertThrows(TransactionUserNotKnownException.class, () -> userRestClient.findById(userId));
     }
 
     // ---------- depositBalanceById ----------
@@ -58,7 +97,7 @@ class UserRestClientTest {
                 .andRespond(withSuccess(body, MediaType.APPLICATION_JSON));
 
 
-        UserDTO user = userRestClient.depositBalanceById(1L, amount, decimals);
+        BankUserDTO user = userRestClient.depositBalanceById(1L, amount, decimals);
         assertEquals(userId, user.getId());
         assertEquals(firstName, user.getFirstName());
         assertEquals(lastName, user.getLastName());
@@ -66,7 +105,7 @@ class UserRestClientTest {
     }
 
     @Test
-    void depositBalanceById_userNotFound_throwsBadTransactionRequest() {
+    void depositBalanceById_userNotFound_throwsTransactionUserNotKnown() {
         Long userId = 1L;
         BigInteger amount = new BigInteger("20");
         int decimals = 33;
@@ -76,7 +115,7 @@ class UserRestClientTest {
                 .andRespond(withResourceNotFound());
 
 
-        assertThrows(BadTransactionRequestException.class, () -> userRestClient.depositBalanceById(1L, amount, decimals));
+        assertThrows(TransactionUserNotKnownException.class, () -> userRestClient.depositBalanceById(1L, amount, decimals));
     }
 
     @Test
@@ -117,7 +156,7 @@ class UserRestClientTest {
                 .andRespond(withSuccess(body, MediaType.APPLICATION_JSON));
 
 
-        UserDTO user = userRestClient.withDrawById(1L, amount, decimals);
+        BankUserDTO user = userRestClient.withDrawById(1L, amount, decimals);
         assertEquals(userId, user.getId());
         assertEquals(firstName, user.getFirstName());
         assertEquals(lastName, user.getLastName());
@@ -125,7 +164,7 @@ class UserRestClientTest {
     }
 
     @Test
-    void withDrawById_userNotFound_throwsBadTransactionRequest() {
+    void withDrawById_userNotFound_throwsTransactionUserNotKnown() {
         Long userId = 1L;
         BigInteger amount = new BigInteger("20");
         int decimals = 33;
@@ -135,7 +174,7 @@ class UserRestClientTest {
                 .andRespond(withResourceNotFound());
 
 
-        assertThrows(BadTransactionRequestException.class, () -> userRestClient.withDrawById(1L, amount, decimals));
+        assertThrows(TransactionUserNotKnownException.class, () -> userRestClient.withDrawById(1L, amount, decimals));
     }
 
     @Test

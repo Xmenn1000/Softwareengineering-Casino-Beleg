@@ -1,7 +1,5 @@
 package casino.banking.model.transaction;
 
-import casino.banking.model.user.UserEntity;
-import casino.banking.model.user.UserFactory;
 import casino.banking.util.GameService;
 import org.springframework.stereotype.Service;
 
