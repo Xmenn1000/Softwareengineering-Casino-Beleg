@@ -25,6 +25,7 @@ services:
     container_name: Roulette-backend
     environment:
       SPRING_DATASOURCE_URL: jdbc:postgresql://roulette-db:5432/roulette
+      CASINO_BANK_BASE_URL: http://banking-backend:8080/casino/bank/api
     build: .
     ports:
       - "8081:8081"

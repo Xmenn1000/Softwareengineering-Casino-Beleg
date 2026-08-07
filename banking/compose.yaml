@@ -25,6 +25,7 @@ services:
     container_name: Banking-backend
     environment:
       SPRING_DATASOURCE_URL: jdbc:postgresql://banking-db:5432/banking
+      CASINO_BANK_BASE_URL: http://banking-backend:8080/casino/bank/api
     build: .
     ports:
       - "8080:8080"

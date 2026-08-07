@@ -25,6 +25,7 @@ services:
     container_name: Slots-backend
     environment:
       SPRING_DATASOURCE_URL: jdbc:postgresql://slots-db:5432/slots
+      CASINO_BANK_BASE_URL: http://banking-backend:8080/casino/bank/api
     build: .
     ports:
       - "8082:8082"
