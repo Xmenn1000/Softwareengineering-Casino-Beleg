@@ -92,4 +92,63 @@ class UserRestClientTest {
 
         assertThrows(BadTransactionRequestException.class, () -> userRestClient.depositBalanceById(1L, amount, decimals));
     }
+
+    // ---------- withDrawById ----------
+    @Test
+    void withDrawById_success_returnsUpdatedUser() {
+        Long userId = 1L;
+        BigInteger amount = new BigInteger("20");
+        int decimals = 33;
+        String firstName = "firstName";
+        String lastName = "lastName";
+        BigDecimal balance = new BigDecimal("100.00");
+
+        String body = """
+        {
+          "id": %d,
+          "firstName": "%s",
+          "lastName": "%s",
+          "balance": %s
+        }
+        """.formatted(1, "firstName", "lastName", balance);
+
+        mockServer.expect(requestTo(baseUrl + String.format("/user/%d/withDraw/%d/%d", userId, amount, decimals)))
+                .andExpect(method(HttpMethod.POST))
+                .andRespond(withSuccess(body, MediaType.APPLICATION_JSON));
+
+
+        UserDTO user = userRestClient.withDrawById(1L, amount, decimals);
+        assertEquals(userId, user.getId());
+        assertEquals(firstName, user.getFirstName());
+        assertEquals(lastName, user.getLastName());
+        assertEquals(balance, user.getBalance());
+    }
+
+    @Test
+    void withDrawById_userNotFound_throwsBadTransactionRequest() {
+        Long userId = 1L;
+        BigInteger amount = new BigInteger("20");
+        int decimals = 33;
+
+        mockServer.expect(requestTo(baseUrl + String.format("/user/%d/withDraw/%d/%d", userId, amount, decimals)))
+                .andExpect(method(HttpMethod.POST))
+                .andRespond(withResourceNotFound());
+
+
+        assertThrows(BadTransactionRequestException.class, () -> userRestClient.withDrawById(1L, amount, decimals));
+    }
+
+    @Test
+    void withDrawById_badRequest_throwsBadTransactionRequest() {
+        Long userId = 1L;
+        BigInteger amount = new BigInteger("20");
+        int decimals = 33;
+
+        mockServer.expect(requestTo(baseUrl + String.format("/user/%d/withDraw/%d/%d", userId, amount, decimals)))
+                .andExpect(method(HttpMethod.POST))
+                .andRespond(withBadRequest());
+
+
+        assertThrows(BadTransactionRequestException.class, () -> userRestClient.withDrawById(1L, amount, decimals));
+    }
 }

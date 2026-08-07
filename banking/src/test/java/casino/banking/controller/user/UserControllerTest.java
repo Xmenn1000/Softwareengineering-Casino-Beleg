@@ -186,4 +186,31 @@ class UserControllerTest {
         assertThrows(UserNotFoundException.class, () -> userController.depositBalanceById(id, amount, decimals));
         verify(userService, times(1)).depositBalanceById(id, amount, decimals);
     }
+
+    // ---------- withDrawById ----------
+    @Test
+    void withDraw_validAmount_returnsUpdatedUserBody() {
+        Long id = 1L;
+        BigInteger amount = BigInteger.valueOf(20);
+        int decimals = 50;
+        UserDTO dto = new UserDTO(id, "firstName", "lastName", new BigDecimal("29.50"));
+        when(userService.withDrawById(id, amount, decimals)).thenReturn(dto);
+
+        ResponseEntity<UserDTO> response = userController.withDrawById(id, amount, decimals);
+
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertEquals(dto, response.getBody());
+        verify(userService, times(1)).withDrawById(id, amount, decimals);
+    }
+
+    @Test
+    void withDraw_unknownUser_propagatesException() {
+        Long id = 1L;
+        BigInteger amount = BigInteger.valueOf(20);
+        int decimals = 0;
+        when(userService.withDrawById(id, amount, decimals)).thenThrow(new UserNotFoundException(id));
+
+        assertThrows(UserNotFoundException.class, () -> userController.withDrawById(id, amount, decimals));
+        verify(userService, times(1)).withDrawById(id, amount, decimals);
+    }
 }

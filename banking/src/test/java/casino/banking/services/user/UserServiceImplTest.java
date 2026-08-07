@@ -168,4 +168,29 @@ class UserServiceImplTest {
         assertThrows(UserNotFoundException.class,
                 () -> userService.depositBalanceById(id, amount, decimals));
     }
+
+    @Test
+    void withDrawById_validAmount_decreasesBalanceAndReturnsDTO() {
+        Long id = 1L;
+        UserEntity user = UserEntity.createUserEntity("firstName", "lastName");
+        user.addBalance(new BigDecimal("50.00"));
+        when(userRepository.findById(id)).thenReturn(Optional.of(user));
+
+        UserDTO result = userService.withDrawById(id, new BigInteger("20"), 50);
+
+        assertEquals("firstName", result.getFirstName());
+        assertEquals("lastName", result.getLastName());
+        assertEquals(0, new BigDecimal("29.50").compareTo(result.getBalance()));
+    }
+
+    @Test
+    void withDrawById_idNotExists_throwsUserNotFoundException() {
+        Long id = 1L;
+        BigInteger amount = new BigInteger("20");
+        int decimals = 50;
+        when(userRepository.findById(id)).thenReturn(Optional.empty());
+
+        assertThrows(UserNotFoundException.class,
+                () -> userService.withDrawById(id, amount, decimals));
+    }
 }

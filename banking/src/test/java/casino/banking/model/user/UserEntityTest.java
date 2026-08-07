@@ -143,4 +143,31 @@ class UserEntityTest {
 
         assertThrows(UserModelValidityBreachException.class, () -> user.addBalance(null));
     }
+
+    // ---------- withDrawBalance ----------
+    @Test
+    void withDrawBalance_positiveAmount_decreasesBalance() {
+        UserEntity user = UserEntity.createUserEntity("firstName", "lastName");
+
+        user.addBalance(new BigDecimal("50"));
+        user.withDrawBalance(new BigDecimal("20"));
+
+        assertEquals(0, new BigDecimal("30").compareTo(user.getBalance()));
+    }
+
+    @Test
+    void withDrawBalance_moreThanBalance_goesNegative() {
+        UserEntity user = UserEntity.createUserEntity("firstName", "lastName");
+
+        user.withDrawBalance(new BigDecimal("20"));
+
+        assertEquals(0, new BigDecimal("-20").compareTo(user.getBalance()));
+    }
+
+    @Test
+    void withDrawBalance_null_throws() {
+        UserEntity user = UserEntity.createUserEntity("firstName", "lastName");
+
+        assertThrows(UserModelValidityBreachException.class, () -> user.withDrawBalance(null));
+    }
 }

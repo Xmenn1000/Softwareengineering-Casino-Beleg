@@ -95,6 +95,38 @@ class InfoServiceImplTest {
     }
 
     @Test
+    void shouldIncludeSingleSymbolCombinationWhenConfigured() {
+        SlotPropertiesConfig config = new SlotPropertiesConfig();
+
+        config.setNumberOfFields(3);
+
+        config.setWeights(Map.of(
+                Symbol.CHERRY, 8,
+                Symbol.SEVEN, 1
+        ));
+
+        config.setPayout(Map.of(
+                ResultPattern.THREE_OF_A_KIND,
+                Map.of(Symbol.CHERRY, 8),
+
+                ResultPattern.TWO_OF_A_KIND,
+                Map.of(Symbol.SEVEN, 10),
+
+                ResultPattern.ONE_OF_A_KIND,
+                Map.of(Symbol.SEVEN, 2)
+        ));
+
+        InfoServiceImpl serviceWithAllPatterns = new InfoServiceImpl(
+                config,
+                new ChanceCalculator(config)
+        );
+
+        String chances = serviceWithAllPatterns.getChances();
+
+        assertTrue(chances.contains("1x SEVEN"));
+    }
+
+    @Test
     void shouldExplainProfitCalculation() {
         String chances = infoService.getChances();
 
