@@ -58,14 +58,14 @@ class GameHistoryServiceImplTest {
 
         SlotsGameDTO firstDTO = result.getFirst();
 
-        assertEquals(1L, firstDTO.getUserId());
+        assertEquals(1L, firstDTO.getUser());
         assertTrue(firstDTO.isWinning());
         assertBigDecimalEquals("20.00", firstDTO.getAmount());
         assertBigDecimalEquals("5.00", firstDTO.getBetAmount());
 
         SlotsGameDTO secondDTO = result.get(1);
 
-        assertEquals(2L, secondDTO.getUserId());
+        assertEquals(2L, secondDTO.getUser());
         assertFalse(secondDTO.isWinning());
         assertBigDecimalEquals("-10.00", secondDTO.getAmount());
 
@@ -103,7 +103,7 @@ class GameHistoryServiceImplTest {
         SlotsGameDTO result = service.findById(gameId);
 
         assertEquals(gameId, result.getId());
-        assertEquals(1L, result.getUserId());
+        assertEquals(1L, result.getUser());
         assertTrue(result.isWinning());
         assertEquals(game.getSlotStates(), result.getSlotStates());
 
@@ -148,7 +148,7 @@ class GameHistoryServiceImplTest {
         SlotsGameDTO result = service.deleteById(gameId);
 
         assertEquals(gameId, result.getId());
-        assertEquals(1L, result.getUserId());
+        assertEquals(1L, result.getUser());
 
         InOrder order = inOrder(repository);
 

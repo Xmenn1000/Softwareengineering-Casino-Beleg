@@ -35,7 +35,7 @@ class PlayControllerTest {
     @Test
     void shouldReturnPlayResultWithStatusOk() {
         SlotsPlayRequest request = new SlotsPlayRequest();
-        request.setUserId(1L);
+        request.setUser(1L);
         request.setBetAmount(new BigDecimal("10.00"));
 
         SlotsGameResultDTO expectedResult =

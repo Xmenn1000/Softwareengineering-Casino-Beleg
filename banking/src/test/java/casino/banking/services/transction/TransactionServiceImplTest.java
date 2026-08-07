@@ -9,6 +9,7 @@ import casino.banking.request.transaction.UserGameTransactionRequestDTO;
 import casino.banking.requestClients.transaction.UserRestClient;
 import casino.banking.util.GameService;
 import casino.banking.view.transaction.TransactionDTO;
+import casino.banking.view.transaction.TransactionDeleteDTO;
 import casino.banking.view.transaction.UserTransactionDTO;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -22,6 +23,9 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -56,8 +60,81 @@ class TransactionServiceImplTest {
         verify(transactionRepository).save(entity);
 
         assertEquals(userId, result.getUserID());
-        assertEquals(GameService.ROULETTE, result.getTransactionDTO().getGameService());
+        assertEquals(GameService.ROULETTE, result.getTransactionDTO().getInvoicingParty());
         assertEquals(0, amount.compareTo(result.getTransactionDTO().getAmount()));
+    }
+
+    @Test
+    void createForUserId_negativeAmountWithDecimals_withDrawsExactAmount() {
+        Long userId = 1L;
+        BigDecimal amount = new BigDecimal("-5.50");
+        TransactionRequestDTO request = new TransactionRequestDTO(GameService.SLOTS, amount);
+
+        TransactionEntity entity = TransactionEntity.createTransaction(GameService.SLOTS, userId, amount);
+        when(transactionFactory.createTransaction(GameService.SLOTS, userId, amount)).thenReturn(entity);
+
+        transactionService.createForUserId(userId, request);
+
+        verify(userRestClient).withDrawById(userId, new BigInteger("5"), 50);
+        verify(userRestClient, never()).depositBalanceById(any(), any(), anyInt());
+    }
+
+    @Test
+    void createForUserId_negativeWholeAmount_withDrawsWithoutDecimals() {
+        Long userId = 1L;
+        BigDecimal amount = new BigDecimal("-5");
+        TransactionRequestDTO request = new TransactionRequestDTO(GameService.SLOTS, amount);
+
+        TransactionEntity entity = TransactionEntity.createTransaction(GameService.SLOTS, userId, amount);
+        when(transactionFactory.createTransaction(GameService.SLOTS, userId, amount)).thenReturn(entity);
+
+        transactionService.createForUserId(userId, request);
+
+        verify(userRestClient).withDrawById(userId, new BigInteger("5"), 0);
+    }
+
+    @Test
+    void createForUserId_positiveAmountBelowOne_deposits() {
+        Long userId = 1L;
+        BigDecimal amount = new BigDecimal("0.50");
+        TransactionRequestDTO request = new TransactionRequestDTO(GameService.ROULETTE, amount);
+
+        TransactionEntity entity = TransactionEntity.createTransaction(GameService.ROULETTE, userId, amount);
+        when(transactionFactory.createTransaction(GameService.ROULETTE, userId, amount)).thenReturn(entity);
+
+        transactionService.createForUserId(userId, request);
+
+        verify(userRestClient).depositBalanceById(userId, BigInteger.ZERO, 50);
+        verify(userRestClient, never()).withDrawById(any(), any(), anyInt());
+    }
+
+    @Test
+    void createForUserId_negativeAmountBelowOne_withDraws() {
+        Long userId = 1L;
+        BigDecimal amount = new BigDecimal("-0.50");
+        TransactionRequestDTO request = new TransactionRequestDTO(GameService.SLOTS, amount);
+
+        TransactionEntity entity = TransactionEntity.createTransaction(GameService.SLOTS, userId, amount);
+        when(transactionFactory.createTransaction(GameService.SLOTS, userId, amount)).thenReturn(entity);
+
+        transactionService.createForUserId(userId, request);
+
+        verify(userRestClient).withDrawById(userId, BigInteger.ZERO, 50);
+    }
+
+    @Test
+    void createForUserId_zeroAmount_deposits() {
+        Long userId = 1L;
+        BigDecimal amount = BigDecimal.ZERO;
+        TransactionRequestDTO request = new TransactionRequestDTO(GameService.ROULETTE, amount);
+
+        TransactionEntity entity = TransactionEntity.createTransaction(GameService.ROULETTE, userId, amount);
+        when(transactionFactory.createTransaction(GameService.ROULETTE, userId, amount)).thenReturn(entity);
+
+        transactionService.createForUserId(userId, request);
+
+        verify(userRestClient).depositBalanceById(userId, BigInteger.ZERO, 0);
+        verify(userRestClient, never()).withDrawById(any(), any(), anyInt());
     }
 
     // ---------- replaceById ----------
@@ -76,7 +153,7 @@ class TransactionServiceImplTest {
         UserTransactionDTO result = transactionService.replaceById(transactionId, request);
 
         assertEquals(userId, result.getUserID());
-        assertEquals(GameService.ROULETTE, result.getTransactionDTO().getGameService());
+        assertEquals(GameService.ROULETTE, result.getTransactionDTO().getInvoicingParty());
         assertEquals(0, amount.compareTo(result.getTransactionDTO().getAmount()));
     }
 
@@ -101,11 +178,11 @@ class TransactionServiceImplTest {
         TransactionEntity entity = TransactionEntity.createTransaction(GameService.SLOTS, userId, new BigDecimal("3"));
         when(transactionRepository.findById(transactionId)).thenReturn(Optional.of(entity));
 
-        UserTransactionDTO result = transactionService.deleteById(transactionId);
+        TransactionDeleteDTO result = transactionService.deleteById(transactionId);
 
         verify(transactionRepository).deleteById(transactionId);
-        assertEquals(userId, result.getUserID());
-        assertEquals(GameService.SLOTS, result.getTransactionDTO().getGameService());
+        assertEquals(userId, result.getUser());
+        assertEquals(GameService.SLOTS, result.getInvoicingParty());
     }
 
     @Test
@@ -128,7 +205,7 @@ class TransactionServiceImplTest {
 
         assertEquals(1, result.size());
         assertEquals(userId, result.getFirst().getUserID());
-        assertEquals(GameService.ROULETTE, result.getFirst().getTransactionDTO().getGameService());
+        assertEquals(GameService.ROULETTE, result.getFirst().getTransactionDTO().getInvoicingParty());
     }
 
     @Test
@@ -149,7 +226,7 @@ class TransactionServiceImplTest {
         List<TransactionDTO> result = transactionService.findByUserId(userId);
 
         assertEquals(1, result.size());
-        assertEquals(GameService.SLOTS, result.getFirst().getGameService());
+        assertEquals(GameService.SLOTS, result.getFirst().getInvoicingParty());
         assertEquals(0, amount.compareTo(result.getFirst().getAmount()));
     }
 

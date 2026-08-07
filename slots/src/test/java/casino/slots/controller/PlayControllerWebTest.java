@@ -65,7 +65,7 @@ class PlayControllerWebTest {
                         MediaType.APPLICATION_JSON
                 ))
                 .andDo(print())
-                .andExpect(jsonPath("$.userId").value(7))
+                .andExpect(jsonPath("$.user").value(7))
                 .andExpect(jsonPath("$.winning").value(true))
                 .andExpect(jsonPath("$.amount").value(40.00))
                 .andExpect(jsonPath("$.betAmount").value(10.00))

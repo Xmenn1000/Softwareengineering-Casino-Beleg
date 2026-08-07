@@ -21,7 +21,7 @@ public class PlayController implements PlayControllerAPI {
 
     @Override
     public ResponseEntity<SlotsGameResultDTO> requestPlay(SlotsPlayRequest playRequest) {
-        LOGGER.info("play requested by user {}", playRequest.getUserId());
+        LOGGER.info("play requested by user {}", playRequest.getUser());
         return ResponseEntity.ok(playService.play(playRequest));
     }
 }

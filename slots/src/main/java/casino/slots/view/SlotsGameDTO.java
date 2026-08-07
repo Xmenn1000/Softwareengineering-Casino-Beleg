@@ -12,7 +12,7 @@ import java.util.List;
 public class SlotsGameDTO {
 
   private long id;
-  private long userId;
+  private long user;
   private boolean winning;
   private BigDecimal amount;
   private BigDecimal betAmount;

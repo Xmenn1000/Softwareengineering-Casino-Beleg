@@ -102,7 +102,7 @@ class SlotsRequestValidationTest {
             BigDecimal betAmount
     ) {
         SlotsPlayRequest request = new SlotsPlayRequest();
-        request.setUserId(userId);
+        request.setUser(userId);
         request.setBetAmount(betAmount);
         return request;
     }

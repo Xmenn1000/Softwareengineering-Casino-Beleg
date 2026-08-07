@@ -5,6 +5,7 @@ import casino.banking.request.transaction.UserGameTransactionRequestDTO;
 import casino.banking.services.transction.TransactionService;
 import casino.banking.util.GameService;
 import casino.banking.view.transaction.TransactionDTO;
+import casino.banking.view.transaction.TransactionDeleteDTO;
 import casino.banking.view.transaction.UserTransactionDTO;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -95,10 +96,10 @@ class TransactionControllerTest {
     @Test
     void deleteById_returnsDeletedTransactionBody() {
         Long transactionId = 10L;
-        UserTransactionDTO dto = new UserTransactionDTO(1L, new TransactionDTO(transactionId, GameService.ROULETTE, new BigDecimal("5")));
+        TransactionDeleteDTO dto = new TransactionDeleteDTO(GameService.ROULETTE, 1L, new BigDecimal("5"));
         when(transactionService.deleteById(transactionId)).thenReturn(dto);
 
-        ResponseEntity<UserTransactionDTO> response = transactionController.deleteById(transactionId);
+        ResponseEntity<TransactionDeleteDTO> response = transactionController.deleteById(transactionId);
 
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertEquals(dto, response.getBody());

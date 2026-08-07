@@ -2,6 +2,7 @@ package casino.banking.services.user;
 
 import casino.banking.exceptions.user.UserNotFoundException;
 import casino.banking.mapper.user.UserMapper;
+import casino.banking.model.user.User;
 import casino.banking.model.user.UserEntity;
 import casino.banking.model.user.UserFactory;
 import casino.banking.repository.user.UserRepository;
@@ -65,10 +66,19 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserDTO depositBalanceById(Long id, BigInteger amount, int decimals) {
-        UserEntity user = userRepository.findById(id).orElseThrow(() -> new UserNotFoundException(id));
+    public UserDTO depositBalanceById(Long userId, BigInteger amount, int decimals) {
+        UserEntity user = userRepository.findById(userId).orElseThrow(() -> new UserNotFoundException(userId));
         BigDecimal toAdd = MoneyHelper.createBigDecimal2Decimals(amount, decimals);
         user.addBalance(toAdd);
+        return UserMapper.toDto(user);
+    }
+
+    @Override
+    public UserDTO withDrawById(Long userId, BigInteger amount, int decimals) {
+        UserEntity user = userRepository.findById(userId).orElseThrow(() -> new UserNotFoundException(userId));
+        BigDecimal toAdd = MoneyHelper.createBigDecimal2Decimals(amount, decimals);
+        user.withDrawBalance(toAdd);
+
         return UserMapper.toDto(user);
     }
 }

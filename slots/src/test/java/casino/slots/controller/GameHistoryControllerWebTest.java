@@ -67,7 +67,7 @@ class GameHistoryControllerWebTest {
                 .andExpect(jsonPath("$.length()").value(2))
 
                 .andExpect(jsonPath("$[0].id").value(10))
-                .andExpect(jsonPath("$[0].userId").value(1))
+                .andExpect(jsonPath("$[0].user").value(1))
                 .andExpect(jsonPath("$[0].winning").value(true))
                 .andExpect(jsonPath("$[0].amount").value(20.0))
                 .andExpect(jsonPath("$[0].betAmount").value(5.0))
@@ -75,7 +75,7 @@ class GameHistoryControllerWebTest {
                         .value("CHERRY"))
 
                 .andExpect(jsonPath("$[1].id").value(11))
-                .andExpect(jsonPath("$[1].userId").value(2))
+                .andExpect(jsonPath("$[1].user").value(2))
                 .andExpect(jsonPath("$[1].winning").value(false))
                 .andExpect(jsonPath("$[1].amount").value(-10.0));
     }
@@ -105,7 +105,7 @@ class GameHistoryControllerWebTest {
                 )
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").value(5))
-                .andExpect(jsonPath("$.userId").value(7))
+                .andExpect(jsonPath("$.user").value(7))
                 .andExpect(jsonPath("$.winning").value(true))
                 .andExpect(jsonPath("$.amount").value(40.0))
                 .andExpect(jsonPath("$.betAmount").value(10.0))
@@ -139,7 +139,7 @@ class GameHistoryControllerWebTest {
                 )
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").value(5))
-                .andExpect(jsonPath("$.userId").value(7))
+                .andExpect(jsonPath("$.user").value(7))
                 .andExpect(jsonPath("$.winning").value(false))
                 .andExpect(jsonPath("$.amount").value(-10.0));
     }

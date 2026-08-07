@@ -81,7 +81,7 @@ class PlayFlowIntegrationTest {
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .content("""
                                         {
-                                          "userId": 7,
+                                          "user": 7,
                                           "betAmount": 10.00
                                         }
                                         """)
@@ -90,7 +90,7 @@ class PlayFlowIntegrationTest {
                 .andExpect(content().contentTypeCompatibleWith(
                         MediaType.APPLICATION_JSON
                 ))
-                .andExpect(jsonPath("$.userId").value(7))
+                .andExpect(jsonPath("$.user").value(7))
                 .andExpect(jsonPath("$.winning").value(true))
                 .andExpect(jsonPath("$.amount").value(40.0))
                 .andExpect(jsonPath("$.betAmount").value(10.0))

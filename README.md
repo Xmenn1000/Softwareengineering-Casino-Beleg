@@ -3,9 +3,9 @@
 The goal of this project is to build a RESTful microservice architecture as a group project. The application models an online casino where users can create accounts via the provided APIs and play the available games risk-free.
 
 # Autoren
-- Ryu Siegert
-- Gordian Reinhold
-- Nils Scharein 
+- Ryu Siegert - Banking/Slots
+- Gordian Reinhold - Roulette
+- Nils Scharein - Banking/Slots
 
 ## Design Decisions
 
@@ -15,7 +15,7 @@ root and a service-specific one inside each service in which decisions were made
 - [`DESIGN_DECISIONS_GLOBAL.md`](DESIGN_DECISIONS_GLOBAL.md) in the root holds the global decisions
   that apply to the whole project.
 - Each service has its own file — [`banking/DESIGN_DECISIONS_BANKING.md`](banking/DESIGN_DECISIONS_BANKING.md),
-  [`roulette/rouletteServiceREADME.md`](roulette/DESIGN_DECISIONS_ROULETTE.md),
+  [`roulette/rouletteServiceREADME.md`](roulette/rouletteServiceREADME.md),
   [`slots/DESIGN_DECISIONS_SLOTS.md`](slots/DESIGN_DECISIONS_SLOTS.md) — holding the decisions that
   apply only to that specific service.
 

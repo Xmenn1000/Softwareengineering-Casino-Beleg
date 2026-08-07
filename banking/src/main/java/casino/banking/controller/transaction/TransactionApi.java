@@ -3,6 +3,7 @@ package casino.banking.controller.transaction;
 import casino.banking.request.transaction.TransactionRequestDTO;
 import casino.banking.request.transaction.UserGameTransactionRequestDTO;
 import casino.banking.view.transaction.TransactionDTO;
+import casino.banking.view.transaction.TransactionDeleteDTO;
 import casino.banking.view.transaction.UserTransactionDTO;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -50,7 +51,7 @@ public interface TransactionApi {
     );
 
     @DeleteMapping("/transaction/{transactionId}")
-        ResponseEntity<UserTransactionDTO> deleteById(
+        ResponseEntity<TransactionDeleteDTO> deleteById(
             @PathVariable Long transactionId
     );
 }

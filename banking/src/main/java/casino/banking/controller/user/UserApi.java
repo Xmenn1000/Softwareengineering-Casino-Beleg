@@ -99,7 +99,17 @@ public interface UserApi {
             @Parameter(description = "User ID", example = "42")
             @PathVariable Long userId,
             @Parameter(description = "Deposit amount", example = "100")
-            @PathVariable BigInteger amount,
+            @Min(0) @PathVariable BigInteger amount,
+            @Parameter(description = "Positiv Number of decimals (max 2)", example = "2")
+            @Min(0) @Max(99) @PathVariable int decimals
+    );
+
+    @PostMapping("/user/{userId}/withDraw/{amount}/{decimals}")
+    ResponseEntity<UserDTO> withDrawById(
+            @Parameter(description = "User ID", example = "42")
+            @PathVariable Long userId,
+            @Parameter(description = "Withdraw amount", example = "100")
+            @Min(0) @PathVariable BigInteger amount,
             @Parameter(description = "Positiv Number of decimals (max 2)", example = "2")
             @Min(0) @Max(99) @PathVariable int decimals
     );

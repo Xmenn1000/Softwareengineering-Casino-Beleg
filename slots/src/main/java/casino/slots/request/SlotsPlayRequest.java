@@ -10,7 +10,7 @@ import java.math.BigDecimal;
 @Getter
 @Setter
 public class SlotsPlayRequest {
-    private Long userId;
+    private Long user;
     private BigDecimal betAmount;
 }
 

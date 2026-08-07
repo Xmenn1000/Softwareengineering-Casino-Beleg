@@ -4,6 +4,7 @@ import casino.banking.request.transaction.TransactionRequestDTO;
 import casino.banking.request.transaction.UserGameTransactionRequestDTO;
 import casino.banking.services.transction.TransactionService;
 import casino.banking.view.transaction.TransactionDTO;
+import casino.banking.view.transaction.TransactionDeleteDTO;
 import casino.banking.view.transaction.UserTransactionDTO;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.http.ResponseEntity;
@@ -42,7 +43,7 @@ public class TransactionController implements TransactionApi {
     }
 
     @Override
-    public ResponseEntity<UserTransactionDTO> deleteById(Long transactionId) {
+    public ResponseEntity<TransactionDeleteDTO> deleteById(Long transactionId) {
         return ResponseEntity.ok(transactionService.deleteById(transactionId));
     }
 

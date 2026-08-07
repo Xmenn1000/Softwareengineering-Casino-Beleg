@@ -85,7 +85,7 @@ class PlayServiceImplTest {
         SlotsGameResultDTO result =
                 playService.play(request);
 
-        assertEquals(1L, result.getUserId());
+        assertEquals(1L, result.getUser());
         assertTrue(result.isWinning());
 
         assertEquals(
@@ -193,9 +193,9 @@ class PlayServiceImplTest {
     void shouldStopWhenBankingUserDoesNotExist() {
         SlotsPlayRequest request = createRequest();
 
-        doThrow(new BankingUserNotFoundException(request.getUserId()))
+        doThrow(new BankingUserNotFoundException(request.getUser()))
                 .when(bankingRestClient)
-                .findUserById(request.getUserId());
+                .findUserById(request.getUser());
 
         assertThrows(
                 BankingUserNotFoundException.class,
@@ -206,7 +206,7 @@ class PlayServiceImplTest {
                 .validatePlayRequest(request);
 
         verify(bankingRestClient)
-                .findUserById(request.getUserId());
+                .findUserById(request.getUser());
 
         verify(bankingRestClient, never())
                 .createSlotsTransaction(
@@ -243,7 +243,7 @@ class PlayServiceImplTest {
         ))
                 .when(bankingRestClient)
                 .createSlotsTransaction(
-                        request.getUserId(),
+                        request.getUser(),
                         gameResult.getAmount()
                 );
 
@@ -256,7 +256,7 @@ class PlayServiceImplTest {
                 .validatePlayRequest(request);
 
         verify(bankingRestClient)
-                .findUserById(request.getUserId());
+                .findUserById(request.getUser());
 
         verify(slotEngine)
                 .play(request.getBetAmount());
@@ -266,7 +266,7 @@ class PlayServiceImplTest {
 
         verify(bankingRestClient)
                 .createSlotsTransaction(
-                        request.getUserId(),
+                        request.getUser(),
                         gameResult.getAmount()
                 );
 
@@ -276,7 +276,7 @@ class PlayServiceImplTest {
 
     private SlotsPlayRequest createRequest() {
         SlotsPlayRequest request = new SlotsPlayRequest();
-        request.setUserId(1L);
+        request.setUser(1L);
         request.setBetAmount(new BigDecimal("10.00"));
         return request;
     }

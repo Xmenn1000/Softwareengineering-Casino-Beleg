@@ -6,4 +6,5 @@ import java.math.BigInteger;
 
 public interface UserBalanceService {
     UserDTO depositBalanceById(Long userId, BigInteger amount, int decimals);
+    UserDTO withDrawById(Long userId, BigInteger amount, int decimals);
 }

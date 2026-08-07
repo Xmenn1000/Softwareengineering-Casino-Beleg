@@ -48,4 +48,9 @@ public class UserController implements UserApi {
     public ResponseEntity<UserDTO> depositBalanceById(Long userId, BigInteger amount, int decimals) {
         return ResponseEntity.ok(userService.depositBalanceById(userId, amount, decimals));
     }
+
+    @Override
+    public ResponseEntity<UserDTO> withDrawById(Long userId, BigInteger amount, int decimals) {
+        return ResponseEntity.ok(userService.withDrawById(userId, amount, decimals));
+    }
 }

@@ -32,4 +32,17 @@ public class UserRestClient {
                 .body(UserDTO.class);
     }
 
+    public UserDTO withDrawById(Long userId, BigInteger amount, int decimals) {
+        return restClient.post()
+                .uri("/user/{userId}/withDraw/{amount}/{decimals}", userId, amount, decimals)
+                .retrieve()
+                .onStatus(status -> status.value() == 404, (request, reponse) -> {
+                    throw new BadTransactionRequestException(String.format("No Valid User with id %d found", userId));
+                })
+                .onStatus(status -> status.value() == 400, (request, reponse) -> {
+                    throw new BadTransactionRequestException(String.format("could not deposit %s.%d for %d", amount, decimals, userId));
+                })
+                .body(UserDTO.class);
+    }
+
 }

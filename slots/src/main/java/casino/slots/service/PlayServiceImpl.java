@@ -9,11 +9,8 @@ import casino.slots.request.SlotsPlayRequest;
 import casino.slots.restClient.BankingRestClient;
 import casino.slots.validation.SlotsGameEntityValidator;
 import casino.slots.validation.SlotsRequestValidation;
-import casino.slots.view.SlotsGameDTO;
 import casino.slots.view.SlotsGameResultDTO;
 import org.springframework.stereotype.Service;
-
-import java.math.BigDecimal;
 
 @Service
 public class PlayServiceImpl implements PlayService {
@@ -35,15 +32,13 @@ public class PlayServiceImpl implements PlayService {
     @Override
     public SlotsGameResultDTO play(SlotsPlayRequest playRequest) {
 
-        //TODO: VALIDATE USER AND ADD MORE TO PLAY SERVICE (LOOK AT ROULLETT SERVICE INTERFACE)
-
         slotsRequestValidation.validatePlayRequest(playRequest);
 
-        bankingRestClient.findUserById(playRequest.getUserId());
+        bankingRestClient.findUserById(playRequest.getUser());
 
         GameResult gameResult = slotEngine.play(playRequest.getBetAmount());
 
-        SlotsGameEntity game = SlotsGameEntityFactory.create(playRequest.getUserId(), gameResult.isWinning(), gameResult.getAmount(), playRequest.getBetAmount(), gameResult.getSlotStates());
+        SlotsGameEntity game = SlotsGameEntityFactory.create(playRequest.getUser(), gameResult.isWinning(), gameResult.getAmount(), playRequest.getBetAmount(), gameResult.getSlotStates());
 
         slotsGameEntityValidator.validate(game);
 

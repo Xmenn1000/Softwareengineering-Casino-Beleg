@@ -8,8 +8,9 @@ import java.math.BigDecimal;
 
 @Getter
 @AllArgsConstructor
-public class TransactionDTO {
-    Long id;
+public class TransactionDeleteDTO {
+
     GameService invoicingParty;
+    Long user;
     BigDecimal amount;
 }

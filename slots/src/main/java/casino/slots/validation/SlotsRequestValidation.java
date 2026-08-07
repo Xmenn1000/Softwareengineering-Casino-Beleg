@@ -14,7 +14,7 @@ public class SlotsRequestValidation {
             throw new BadSlotsRequestException("RequestBody was null");
         }
 
-        validateUserId(gameRequest.getUserId());
+        validateUserId(gameRequest.getUser());
         validateBetAmount(gameRequest.getBetAmount());
 
     }

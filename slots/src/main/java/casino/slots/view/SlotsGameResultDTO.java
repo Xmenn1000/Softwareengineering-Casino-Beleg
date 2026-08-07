@@ -11,7 +11,7 @@ import java.util.List;
 @AllArgsConstructor
 public class SlotsGameResultDTO {
 
-  private long userId;
+  private long user;
   private boolean winning;
   private BigDecimal amount;
   private List<Symbol> slotStates;

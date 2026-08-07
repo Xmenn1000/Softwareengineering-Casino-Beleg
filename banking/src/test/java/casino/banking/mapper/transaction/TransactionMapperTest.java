@@ -34,7 +34,7 @@ class TransactionMapperTest {
     void toDto_valid_createsDTOWithFields() {
         TransactionDTO newTransactionDto = TransactionMapper.toDto(dummyTransaction);
         assertEquals(newTransactionDto.getId(), dummyTransaction.getId());
-        assertEquals(newTransactionDto.getGameService(), dummyTransaction.getInvoicingParty());
+        assertEquals(newTransactionDto.getInvoicingParty(), dummyTransaction.getInvoicingParty());
         assertEquals(newTransactionDto.getAmount(), dummyTransaction.getAmount());
     }
 
@@ -43,7 +43,7 @@ class TransactionMapperTest {
         UserTransactionDTO newUserTransactionDto = TransactionMapper.toUserTransactionDto(dummyTransaction);
         assertEquals(newUserTransactionDto.getUserID(), dummyTransaction.getUserId());
         assertEquals(newUserTransactionDto.getTransactionDTO().getId(), dummyTransaction.getId());
-        assertEquals(newUserTransactionDto.getTransactionDTO().getGameService(), dummyTransaction.getInvoicingParty());
+        assertEquals(newUserTransactionDto.getTransactionDTO().getInvoicingParty(), dummyTransaction.getInvoicingParty());
         assertEquals(newUserTransactionDto.getTransactionDTO().getAmount(), dummyTransaction.getAmount());
     }
 }

@@ -2,6 +2,7 @@ package casino.banking.services.transction;
 
 import casino.banking.request.transaction.TransactionRequestDTO;
 import casino.banking.request.transaction.UserGameTransactionRequestDTO;
+import casino.banking.view.transaction.TransactionDeleteDTO;
 import casino.banking.view.transaction.UserTransactionDTO;
 
 public interface TransactionManagementService {
@@ -16,7 +17,7 @@ public interface TransactionManagementService {
             UserGameTransactionRequestDTO userGameTransactionRequestDTO
     );
 
-    UserTransactionDTO deleteById(
+    TransactionDeleteDTO deleteById(
             Long transactionId
     );
 }

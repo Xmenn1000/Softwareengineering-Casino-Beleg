@@ -10,10 +10,12 @@ import casino.banking.request.transaction.UserGameTransactionRequestDTO;
 import casino.banking.requestClients.transaction.UserRestClient;
 import casino.banking.util.MoneyHelper;
 import casino.banking.view.transaction.TransactionDTO;
+import casino.banking.view.transaction.TransactionDeleteDTO;
 import casino.banking.view.transaction.UserTransactionDTO;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.List;
 
@@ -33,10 +35,24 @@ public class TransactionServiceImpl implements TransactionService {
 
     @Override
     public UserTransactionDTO createForUserId(Long userId, TransactionRequestDTO transactionRequestDTO) {
-        BigInteger amount = MoneyHelper.extractIntegerPart(transactionRequestDTO.getAmount());
-        int decimals = MoneyHelper.extractFractionPart2Decimals(transactionRequestDTO.getAmount());
-        userRestClient.depositBalanceById(userId, amount, decimals);
-        TransactionEntity transactionEntity = transactionFactory.createTransaction(transactionRequestDTO.getGameService(), userId, transactionRequestDTO.getAmount());
+        BigDecimal requestedAmount = transactionRequestDTO.getAmount();
+
+        // Deposit und Withdraw nehmen beide einen positiven Betrag, die Richtung steckt im Endpoint.
+        // Deshalb wird immer der Absolutbetrag zerlegt: extractIntegerPart rundet mit FLOOR, was nur
+        // beim Addieren aufgeht (-5.50 -> -6 + 0.50). Auf dem Absolutbetrag stimmt die Zerlegung fuer
+        // beide Richtungen (5.50 -> 5 + 0.50).
+        BigDecimal magnitude = requestedAmount.abs();
+        BigInteger amount = MoneyHelper.extractIntegerPart(magnitude);
+        int decimals = MoneyHelper.extractFractionPart2Decimals(magnitude);
+
+        if(requestedAmount.signum() >= 0) {
+            userRestClient.depositBalanceById(userId, amount, decimals);
+        }
+        else {
+            userRestClient.withDrawById(userId, amount, decimals);
+        }
+
+        TransactionEntity transactionEntity = transactionFactory.createTransaction(transactionRequestDTO.getInvoicingParty(), userId, transactionRequestDTO.getAmount());
         transactionRepository.save(transactionEntity);
         return TransactionMapper.toUserTransactionDto(transactionEntity);
     }
@@ -46,7 +62,7 @@ public class TransactionServiceImpl implements TransactionService {
         TransactionEntity transactionToReplace = transactionRepository.findById(transactionId).orElseThrow(() -> new TransactionNotKnownException(transactionId));
 
         transactionToReplace.replace(
-                userGameTransactionRequestDTO.getTransactionRequestDTO().getGameService(),
+                userGameTransactionRequestDTO.getTransactionRequestDTO().getInvoicingParty(),
                 userGameTransactionRequestDTO.getUserId(),
                 userGameTransactionRequestDTO.getTransactionRequestDTO().getAmount());
 
@@ -54,10 +70,10 @@ public class TransactionServiceImpl implements TransactionService {
     }
 
     @Override
-    public UserTransactionDTO deleteById(Long transactionId) {
+    public TransactionDeleteDTO deleteById(Long transactionId) {
         TransactionEntity transactionToDelete = transactionRepository.findById(transactionId).orElseThrow(() -> new TransactionNotKnownException(transactionId));
         transactionRepository.deleteById(transactionId);
-        return TransactionMapper.toUserTransactionDto(transactionToDelete);
+        return TransactionMapper.toTransactionDeleteDTO(transactionToDelete);
     }
 
     @Override

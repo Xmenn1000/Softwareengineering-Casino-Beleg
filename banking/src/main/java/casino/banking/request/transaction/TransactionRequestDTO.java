@@ -9,6 +9,6 @@ import java.math.BigDecimal;
 @Getter
 @AllArgsConstructor
 public class TransactionRequestDTO {
-    GameService gameService;
+    GameService invoicingParty;
     BigDecimal amount;
 }

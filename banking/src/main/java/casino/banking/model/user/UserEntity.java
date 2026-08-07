@@ -67,4 +67,11 @@ public class UserEntity implements User {
         this.balance = this.balance.add(amount);
     }
 
+    public void withDrawBalance(BigDecimal amount) {
+        if (amount == null) {
+            throw new UserModelValidityBreachException("Balance amount must not be null");
+        }
+        this.balance = this.balance.subtract(amount);
+    }
+
 }
