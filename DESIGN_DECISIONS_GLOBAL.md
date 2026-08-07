@@ -84,3 +84,22 @@ All our DTOs use camelCase field names, so the JSON comes out camelCase (`totalC
 the snake_case in the assignment examples. On purpose: it keeps the JSON matching our Java naming
 everywhere and saves us a `@JsonProperty` on every single field. Yes, it's a deliberate deviation from
 the example bodies.
+
+### 9. No Testing of Exceptions and Configs
+
+The assignment wants a test class per class. We skipped two groups on purpose.
+
+**The exceptions.** They're all just a thin subclass of `HttpException` that passes a status and a
+message up to `super(...)`. Nothing to branch on, nothing to really get wrong. A test there would only
+check that a constructor kept what we handed it, which is testing Java, not us. The interesting bit is
+whether a thrown exception comes back out as the right HTTP status, and that's the advice layer's job.
+Every service has an `...AdviceControllerTest` for exactly that.
+
+**The wiring configs.** `BankConfig`, `RouletteConfig` and `SlotsConfig` just build `RestClient` beans
+from a base URL in `application.yaml`. Testing that means checking that Spring injects a `@Value` and
+that a builder returns a builder, so we'd be testing Spring. And if the URL is wrong, no unit test is
+going to save us anyway, only actually starting the thing does.
+
+Config that builds real game stuff is a different story though. `SlotConfig` puts the payout table and
+the rule set together from the YAML, and that can absolutely be wrong, so it got its own
+`SlotConfigurationTest`. So the rule isn't "configs are exempt", it's "no own logic, no test class".

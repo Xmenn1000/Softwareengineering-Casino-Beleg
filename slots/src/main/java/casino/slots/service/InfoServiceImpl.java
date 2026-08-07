@@ -38,7 +38,7 @@ public class InfoServiceImpl implements InfoService {
             When you actually win (it happens, occasionally):
             - Only your best matching combo counts. We are generous like that. Once. I Mean the House always wins right? right!
             - Three of a kind is the jackpot dream. Chase it responsibly. Or don't.
-            - GOLDBAR and SEVEN are so fancy that even two of them pay out, But dont count on them. 
+            - GOLDBAR and SEVEN are so fancy that even two of them pay out, But dont count on them.
               and a lonely single SEVEN still tips you a little.
             - Want the cold, hard numbers? They live over at /chances.
 
