@@ -122,7 +122,7 @@ class BankingRestClientTest {
                 .andExpect(content().json(
                         """
                         {
-                          "gameService": "SLOTS",
+                          "invoicingParty": "SLOTS",
                           "amount": 12.50
                         }
                         """

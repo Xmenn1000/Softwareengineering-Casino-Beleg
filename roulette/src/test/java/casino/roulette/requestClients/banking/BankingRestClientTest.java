@@ -79,7 +79,7 @@ class BankingRestClientTest {
                 .andExpect(method(HttpMethod.POST))
                 .andExpect(content().json("""
                         {
-                          "gameService": "ROULETTE",
+                          "invoicingParty": "ROULETTE",
                           "amount": -10.00
                         }
                         """))

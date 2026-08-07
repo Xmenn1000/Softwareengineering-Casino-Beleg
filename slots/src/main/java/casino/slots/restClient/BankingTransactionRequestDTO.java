@@ -8,6 +8,6 @@ import java.math.BigDecimal;
 @Getter
 @AllArgsConstructor
 public class BankingTransactionRequestDTO {
-    private String gameService;
+    private String invoicingParty;
     private BigDecimal amount;
 }
