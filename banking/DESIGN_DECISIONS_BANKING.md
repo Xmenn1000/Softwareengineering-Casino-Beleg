@@ -7,7 +7,24 @@ here. Project-wide stuff is in `DESIGN_DECISIONS_GLOBAL.md` in the root.
 
 ## Decisions
 
-### 1. The service interfaces are split by what you do with them
+### 1. Money moving out of a balance gets its own endpoint
+
+The assignment wants `deposit` to answer a negative `amount` with a 400, so that endpoint can only ever
+push a balance up. But we're a casino ... the whole point is that money also comes back *from* the players.
+A lost spin has to move the balance down, and with deposit locked to positive numbers there was no way
+left to do it.
+
+So we added a second endpoint next to it: `POST /user/{userId}/withDraw/{amount}/{decimals}`. Both take a
+positive amount and both are rejected with a 400 if it isn't — the *direction* isn't a sign any more, it's
+which endpoint you call. `TransactionServiceImpl` picks the one that matches the sign of the transaction
+and hands over the absolute value, so a `-5.50` game result becomes a withdrawal of `5.50`.
+
+Yes, this is an endpoint the assignment never lists. We'd rather add one honest endpoint than either
+break the specced 400 or smuggle losses in as "negative deposits", which would make the API lie about
+what it does (**Principle of Least Surprise**). It also keeps the two operations separately testable and
+leaves `MoneyHelper` as the single place that converts between the path parts and `BigDecimal`.
+
+### 2. The service interfaces are split by what you do with them
 
 Instead of one big `UserService` interface, we cut it into role interfaces: `UserQueryService` for the
 reads (`findById`, `findAll`), `UserManagementService` for the writes (`create`, `replace`, `delete`),
@@ -16,14 +33,14 @@ all three. Transactions work the same way — `TransactionQueryService` + `Trans
 That way a caller only ever depends on the slice it actually uses, which is the **Interface Segregation
 Principle** (*E-06 Designprinzipien*, lecture), and the reads stay cleanly separated from the writes.
 
-### 2. The known game services are an enum, not a free string
+### 3. The known game services are an enum, not a free string
 
 A transaction's invoicing party has to be a known game service, so we modelled that as a `GameService`
 enum (`SLOTS`, `ROULETTE`) instead of a plain string. An unknown party can't even get into the system —
 anything that isn't a real enum value is rejected with a 400 before we reach any logic. So "is this a
 real game service?" is basically answered by the type itself.
 
-### 3. Money conversion lives in one place
+### 4. Money conversion lives in one place
 
 The deposit API works with an integer amount plus a decimal count, but everything inside the service is
 `BigDecimal`. We keep that back-and-forth in a single `MoneyHelper` instead of scattering the conversion
@@ -37,7 +54,7 @@ tenths (0.50). Anything longer than two digits gets a 400, exactly as the assign
 
 We ran this past the lecturer in the exercise session and got the go-ahead.
 
-### 4. Editing or deleting a transaction is a ledger correction, not a re-booking
+### 5. Editing or deleting a transaction is a ledger correction, not a re-booking
 
 `POST` a transaction applies it to the user's balance (via the deposit endpoint). `PUT` and `DELETE` on
 a transaction, though, only touch the ledger row — they deliberately **don't** reverse the old amount or
@@ -52,7 +69,7 @@ transaction object and never mentions a balance effect, so we kept the balance s
 (**Single Responsibility** / **Principle of Least Surprise**: an edit edits the record, a booking books
 money — not both at once). If real re-booking were wanted, it'd be a separate, explicit reversal flow.
 
-### 5. Creating a transaction isn't atomic across the self-call — and that's an accepted limit
+### 6. Creating a transaction isn't atomic across the self-call — and that's an accepted limit
 
 `createForUserId` does two things in sequence: it calls the deposit endpoint (an HTTP call the service
 makes against itself) and then saves the transaction row. Those two steps aren't wrapped in one
