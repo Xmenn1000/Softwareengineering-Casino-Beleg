@@ -58,6 +58,8 @@ public class TransactionServiceImpl implements TransactionService {
     public UserTransactionDTO replaceById(Long transactionId, UserGameTransactionRequestDTO userGameTransactionRequestDTO) {
         TransactionEntity transactionToReplace = transactionRepository.findById(transactionId).orElseThrow(() -> new TransactionNotKnownException(transactionId));
 
+        userRestClient.findById(userGameTransactionRequestDTO.getUserId());
+
         transactionToReplace.replace(
                 userGameTransactionRequestDTO.getTransactionRequestDTO().getInvoicingParty(),
                 userGameTransactionRequestDTO.getUserId(),

@@ -34,8 +34,8 @@ public class UserRestClient {
         return restClient.post()
                 .uri("/user/{userId}/deposit/{amount}/{decimals}", userId, amount, decimals)
                 .retrieve()
-                .onStatus(status -> status.value() == 404, (request, reponse) -> {
-                    throw new BadTransactionRequestException(String.format("No Valid User with id %d found", userId));
+                .onStatus(status -> status.value() == 404, (request, response) -> {
+                    throw new UserNotFoundException(userId);
                 })
                 .onStatus(status -> status.value() == 400, (request, reponse) -> {
                     throw new BadTransactionRequestException(String.format("could not deposit %s.%d for %d", amount, decimals, userId));
@@ -47,8 +47,8 @@ public class UserRestClient {
         return restClient.post()
                 .uri("/user/{userId}/withDraw/{amount}/{decimals}", userId, amount, decimals)
                 .retrieve()
-                .onStatus(status -> status.value() == 404, (request, reponse) -> {
-                    throw new BadTransactionRequestException(String.format("No Valid User with id %d found", userId));
+                .onStatus(status -> status.value() == 404, (request, response) -> {
+                    throw new UserNotFoundException(userId);
                 })
                 .onStatus(status -> status.value() == 400, (request, reponse) -> {
                     throw new BadTransactionRequestException(String.format("could not deposit %s.%d for %d", amount, decimals, userId));
