@@ -16,7 +16,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 class SlotsGameEntityFactoryTest {
 
     @Test
-    void createSetsAllFields() {
+    void shouldSetAllFields() {
         SlotsGameEntity entity = SlotsGameEntityFactory.create(
                 1L,
                 true,
@@ -36,7 +36,7 @@ class SlotsGameEntityFactoryTest {
     }
 
     @Test
-    void createLeavesIdUntouchedSoTheDatabaseCanAssignIt() {
+    void shouldLeaveIdUnsetForTheDatabase() {
         SlotsGameEntity entity = SlotsGameEntityFactory.create(
                 1L,
                 false,
@@ -50,7 +50,7 @@ class SlotsGameEntityFactoryTest {
     }
 
     @Test
-    void createReturnsANewInstanceOnEveryCall() {
+    void shouldReturnANewInstanceOnEveryCall() {
         SlotsGameEntity first = SlotsGameEntityFactory.create(
                 1L,
                 true,
@@ -69,10 +69,8 @@ class SlotsGameEntityFactoryTest {
         assertNotSame(first, second);
     }
 
-    // Die Factory baut nur zusammen, geprueft wird erst durch den SlotsGameEntityValidator
-    // beziehungsweise SlotsGameEntity.create. Diese Aufgabenteilung wird hier festgehalten.
     @Test
-    void createDoesNotValidateItsInput() {
+    void shouldNotValidateItsInput() {
         assertDoesNotThrow(() -> SlotsGameEntityFactory.create(
                 -1L,
                 true,
@@ -83,7 +81,7 @@ class SlotsGameEntityFactoryTest {
     }
 
     @Test
-    void createKeepsInvalidValuesAsGiven() {
+    void shouldKeepInvalidValuesAsGiven() {
         SlotsGameEntity entity = SlotsGameEntityFactory.create(
                 -1L,
                 true,

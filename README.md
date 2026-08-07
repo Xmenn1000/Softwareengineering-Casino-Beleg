@@ -14,9 +14,9 @@ root and a service-specific one inside each service in which decisions were made
 
 - [`DESIGN_DECISIONS_GLOBAL.md`](DESIGN_DECISIONS_GLOBAL.md) in the root holds the global decisions
   that apply to the whole project.
-- Each service has its own file — [`banking/DESIGN_DECISIONS_BANKING.md`](banking/DESIGN_DECISIONS_BANKING.md),
+- Each service has its own file: [`banking/DESIGN_DECISIONS_BANKING.md`](banking/DESIGN_DECISIONS_BANKING.md),
   [`roulette/rouletteServiceREADME.md`](roulette/rouletteServiceREADME.md),
-  [`slots/DESIGN_DECISIONS_SLOTS.md`](slots/DESIGN_DECISIONS_SLOTS.md) — holding the decisions that
+  [`slots/DESIGN_DECISIONS_SLOTS.md`](slots/DESIGN_DECISIONS_SLOTS.md) holding the decisions that
   apply only to that specific service.
 
 # KI-Nutzung im Projekt
@@ -177,13 +177,13 @@ Commit messages:
 **Format:** `<type>(<scope>): <description>`
 
 **Types:**
-- `feat` – new feature
-- `fix` – bug fix
-- `chore` – tooling, dependencies, build config
-- `refactor` – code change that neither fixes a bug nor adds a feature
-- `docs` – documentation only
-- `test` – adding or adjusting tests
-- `style` – formatting, no code change
+- `feat`: new feature
+- `fix`: bug fix
+- `chore`: tooling, dependencies, build config
+- `refactor`: code change that neither fixes a bug nor adds a feature
+- `docs`: documentation only
+- `test`: adding or adjusting tests
+- `style`: formatting, no code change
 
 **Scopes:** `banking`, `roulette`, `slots`, `root` (repo-wide)
 

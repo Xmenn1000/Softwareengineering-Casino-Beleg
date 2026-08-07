@@ -16,8 +16,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 class SlotsGameMapperTest {
 
     @Test
-    void mapsEntityToDto() {
-        SlotsGameEntity entity = entity();
+    void shouldMapEntityToDto() {
+        SlotsGameEntity entity = createValidEntity();
         entity.setId(42L);
 
         SlotsGameDTO result = SlotsGameMapper.toDTO(entity);
@@ -34,7 +34,7 @@ class SlotsGameMapperTest {
     }
 
     @Test
-    void mapsLosingGameWithNegativeAmount() {
+    void shouldMapLosingGameWithNegativeAmount() {
         SlotsGameEntity entity = SlotsGameEntityFactory.create(
                 7L,
                 false,
@@ -51,8 +51,8 @@ class SlotsGameMapperTest {
     }
 
     @Test
-    void keepsSymbolOrderOfTheReels() {
-        SlotsGameEntity entity = entity();
+    void shouldKeepSymbolOrderOfTheReels() {
+        SlotsGameEntity entity = createValidEntity();
         entity.setSlotStates(List.of(Symbol.SEVEN, Symbol.CHERRY, Symbol.LEMON));
 
         SlotsGameDTO result = SlotsGameMapper.toDTO(entity);
@@ -63,7 +63,7 @@ class SlotsGameMapperTest {
         );
     }
 
-    private SlotsGameEntity entity() {
+    private SlotsGameEntity createValidEntity() {
         return SlotsGameEntityFactory.create(
                 1L,
                 true,

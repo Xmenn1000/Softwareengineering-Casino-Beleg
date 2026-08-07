@@ -37,10 +37,7 @@ public class TransactionServiceImpl implements TransactionService {
     public UserTransactionDTO createForUserId(Long userId, TransactionRequestDTO transactionRequestDTO) {
         BigDecimal requestedAmount = transactionRequestDTO.getAmount();
 
-        // Deposit und Withdraw nehmen beide einen positiven Betrag, die Richtung steckt im Endpoint.
-        // Deshalb wird immer der Absolutbetrag zerlegt: extractIntegerPart rundet mit FLOOR, was nur
-        // beim Addieren aufgeht (-5.50 -> -6 + 0.50). Auf dem Absolutbetrag stimmt die Zerlegung fuer
-        // beide Richtungen (5.50 -> 5 + 0.50).
+        // Deposit and withdraw both take a positive amount, so we always split the absolute value.
         BigDecimal magnitude = requestedAmount.abs();
         BigInteger amount = MoneyHelper.extractIntegerPart(magnitude);
         int decimals = MoneyHelper.extractFractionPart2Decimals(magnitude);

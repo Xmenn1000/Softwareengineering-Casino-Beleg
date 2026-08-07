@@ -15,7 +15,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 class SlotsGameEntityTest {
 
     @Test
-    void createSetsAllFields() {
+    void shouldCreateEntityWithAllFields() {
         SlotsGameEntity entity = SlotsGameEntity.create(
                 1L,
                 true,
@@ -35,7 +35,7 @@ class SlotsGameEntityTest {
     }
 
     @Test
-    void createAcceptsLosingGameWithNegativeAmount() {
+    void shouldAcceptLosingGameWithNegativeAmount() {
         SlotsGameEntity entity = SlotsGameEntity.create(
                 1L,
                 false,
@@ -49,14 +49,20 @@ class SlotsGameEntityTest {
     }
 
     @Test
-    void createLeavesIdUntouchedSoTheDatabaseCanAssignIt() {
-        SlotsGameEntity entity = validEntity();
+    void shouldLeaveIdUnsetForTheDatabase() {
+        SlotsGameEntity entity = SlotsGameEntity.create(
+                1L,
+                true,
+                new BigDecimal("20.00"),
+                new BigDecimal("5.00"),
+                List.of(Symbol.CHERRY, Symbol.CHERRY, Symbol.CHERRY)
+        );
 
         assertEquals(0L, entity.getId());
     }
 
     @Test
-    void createRejectsUserIdZero() {
+    void shouldRejectUserIdZero() {
         assertThrows(
                 BadSlotsRequestException.class,
                 () -> SlotsGameEntity.create(
@@ -70,7 +76,7 @@ class SlotsGameEntityTest {
     }
 
     @Test
-    void createRejectsNegativeUserId() {
+    void shouldRejectNegativeUserId() {
         assertThrows(
                 BadSlotsRequestException.class,
                 () -> SlotsGameEntity.create(
@@ -84,7 +90,7 @@ class SlotsGameEntityTest {
     }
 
     @Test
-    void createRejectsNullAmount() {
+    void shouldRejectNullAmount() {
         assertThrows(
                 BadSlotsRequestException.class,
                 () -> SlotsGameEntity.create(
@@ -98,7 +104,7 @@ class SlotsGameEntityTest {
     }
 
     @Test
-    void createRejectsNullBetAmount() {
+    void shouldRejectNullBetAmount() {
         assertThrows(
                 BadSlotsRequestException.class,
                 () -> SlotsGameEntity.create(
@@ -112,7 +118,7 @@ class SlotsGameEntityTest {
     }
 
     @Test
-    void createRejectsZeroBetAmount() {
+    void shouldRejectZeroBetAmount() {
         assertThrows(
                 BadSlotsRequestException.class,
                 () -> SlotsGameEntity.create(
@@ -126,7 +132,7 @@ class SlotsGameEntityTest {
     }
 
     @Test
-    void createRejectsNegativeBetAmount() {
+    void shouldRejectNegativeBetAmount() {
         assertThrows(
                 BadSlotsRequestException.class,
                 () -> SlotsGameEntity.create(
@@ -140,7 +146,7 @@ class SlotsGameEntityTest {
     }
 
     @Test
-    void createRejectsNullSlotStates() {
+    void shouldRejectNullSlotStates() {
         assertThrows(
                 BadSlotsRequestException.class,
                 () -> SlotsGameEntity.create(
@@ -154,7 +160,7 @@ class SlotsGameEntityTest {
     }
 
     @Test
-    void createRejectsEmptySlotStates() {
+    void shouldRejectEmptySlotStates() {
         assertThrows(
                 BadSlotsRequestException.class,
                 () -> SlotsGameEntity.create(
@@ -164,16 +170,6 @@ class SlotsGameEntityTest {
                         new BigDecimal("5.00"),
                         List.of()
                 )
-        );
-    }
-
-    private SlotsGameEntity validEntity() {
-        return SlotsGameEntity.create(
-                1L,
-                true,
-                new BigDecimal("20.00"),
-                new BigDecimal("5.00"),
-                List.of(Symbol.CHERRY, Symbol.CHERRY, Symbol.CHERRY)
         );
     }
 }
