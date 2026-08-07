@@ -26,6 +26,7 @@ services:
     environment:
       SPRING_DATASOURCE_URL: jdbc:postgresql://slots-db:5432/slots
       CASINO_BANK_BASE_URL: http://banking-backend:8080/casino/bank/api
+    image: nilsscharein/casino-slots:1.0
     build: .
     ports:
       - "8082:8082"

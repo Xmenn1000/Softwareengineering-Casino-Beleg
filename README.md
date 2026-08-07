@@ -94,6 +94,30 @@ unable to get image 'postgres:17': error during connect: Get "http://%2F%2F.%2Fp
 
 This just means you forgot to start Docker Desktop first.
 
+## Start via Docker Hub
+
+The images are on Docker Hub. To make the submission easier we added an extra compose file
+[`compose.registry.yaml`](compose.registry.yaml) that just pulls them instead of building anything.
+No Java, no Maven, only Docker.
+
+| Service  | Image                              | Docker Hub                                            |
+|----------|------------------------------------|-------------------------------------------------------|
+| Banking  | `nilsscharein/casino-banking:1.0`  | https://hub.docker.com/r/nilsscharein/casino-banking  |
+| Roulette | `nilsscharein/casino-roulette:1.0` | https://hub.docker.com/r/nilsscharein/casino-roulette |
+| Slots    | `nilsscharein/casino-slots:1.0`    | https://hub.docker.com/r/nilsscharein/casino-slots    |
+
+One command and everything is up, missing images get pulled on the way:
+
+```bash
+docker compose -f compose.registry.yaml up -d
+```
+
+Stopping it again:
+
+```bash
+docker compose -f compose.registry.yaml down -v 
+```
+
 ## Important Links
 
 [Swagger Annotations](https://github.com/swagger-api/swagger-core/wiki/Swagger-2.X---Annotations)

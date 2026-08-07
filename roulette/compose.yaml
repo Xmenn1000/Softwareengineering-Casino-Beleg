@@ -26,6 +26,7 @@ services:
     environment:
       SPRING_DATASOURCE_URL: jdbc:postgresql://roulette-db:5432/roulette
       CASINO_BANK_BASE_URL: http://banking-backend:8080/casino/bank/api
+    image: nilsscharein/casino-roulette:1.0
     build: .
     ports:
       - "8081:8081"

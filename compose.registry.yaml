@@ -1,0 +1,99 @@
+services:
+
+  banking-db:
+    container_name: Banking-PostgresDB
+    image: postgres:17
+    environment:
+      - POSTGRES_DB=banking
+      - POSTGRES_USER=postgresUser
+      - POSTGRES_PASSWORD=postgresPW
+    ports:
+      - "15432:5432"
+    restart: unless-stopped
+    volumes:
+      - banking-db-data:/var/lib/postgresql/data
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U postgresUser -d banking" ]
+      interval: 20s
+      timeout: 10s
+      retries: 5
+      start_period: 30s
+
+  banking-backend:
+    container_name: Banking-backend
+    image: nilsscharein/casino-banking:1.0
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://banking-db:5432/banking
+      CASINO_BANK_BASE_URL: http://banking-backend:8080/casino/bank/api
+    ports:
+      - "8080:8080"
+    depends_on:
+      banking-db:
+        condition: service_healthy
+
+  roulette-db:
+    container_name: Roulette-PostgresDB
+    image: postgres:17
+    environment:
+      - POSTGRES_DB=roulette
+      - POSTGRES_USER=postgresUser
+      - POSTGRES_PASSWORD=postgresPW
+    ports:
+      - "15433:5432"
+    restart: unless-stopped
+    volumes:
+      - roulette-db-data:/var/lib/postgresql/data
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U postgresUser -d roulette" ]
+      interval: 20s
+      timeout: 10s
+      retries: 5
+      start_period: 30s
+
+  roulette-backend:
+    container_name: Roulette-backend
+    image: nilsscharein/casino-roulette:1.0
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://roulette-db:5432/roulette
+      CASINO_BANK_BASE_URL: http://banking-backend:8080/casino/bank/api
+    ports:
+      - "8081:8081"
+    depends_on:
+      roulette-db:
+        condition: service_healthy
+
+  slots-db:
+    container_name: Slots-PostgresDB
+    image: postgres:17
+    environment:
+      - POSTGRES_DB=slots
+      - POSTGRES_USER=postgresUser
+      - POSTGRES_PASSWORD=postgresPW
+    ports:
+      - "15434:5432"
+    restart: unless-stopped
+    volumes:
+      - slots-db-data:/var/lib/postgresql/data
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U postgresUser -d slots" ]
+      interval: 20s
+      timeout: 10s
+      retries: 5
+      start_period: 30s
+
+  slots-backend:
+    container_name: Slots-backend
+    image: nilsscharein/casino-slots:1.0
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://slots-db:5432/slots
+      CASINO_BANK_BASE_URL: http://banking-backend:8080/casino/bank/api
+    ports:
+      - "8082:8082"
+    depends_on:
+      slots-db:
+        condition: service_healthy
+
+volumes:
+  banking-db-data:
+  roulette-db-data:
+  slots-db-data:
