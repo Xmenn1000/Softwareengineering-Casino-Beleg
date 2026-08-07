@@ -15,9 +15,26 @@ root and a service-specific one inside each service in which decisions were made
 - [`DESIGN_DECISIONS_GLOBAL.md`](DESIGN_DECISIONS_GLOBAL.md) in the root holds the global decisions
   that apply to the whole project.
 - Each service has its own file — [`banking/DESIGN_DECISIONS_BANKING.md`](banking/DESIGN_DECISIONS_BANKING.md),
-  [`roulette/DESIGN_DECISIONS_ROULETTE.md`](roulette/DESIGN_DECISIONS_ROULETTE.md),
+  [`roulette/rouletteServiceREADME.md`](roulette/DESIGN_DECISIONS_ROULETTE.md),
   [`slots/DESIGN_DECISIONS_SLOTS.md`](slots/DESIGN_DECISIONS_SLOTS.md) — holding the decisions that
   apply only to that specific service.
+
+# KI-Nutzung im Projekt
+
+Im Rahmen dieses Projekts haben wir KI-Werkzeuge (u.a. LLM-basierte Assistenten)
+unterstützend eingesetzt. Der Einsatz beschränkte sich im Wesentlichen auf:
+
+- **Code-Review:** Prüfen von Klassen und Methoden auf Verständlichkeit, mögliche
+  Fehlerquellen und Einhaltung der SOLID-Prinzipien.
+- **Verbesserung der Code-Qualität:** Vorschläge zu Refactorings, Benennungen,
+  Vereinfachungen und dem Abbau von Redundanz.
+- **Unterstützung bei Tests und Dokumentation:** Anregungen für Testfälle und
+  sprachliche Überarbeitung der Dokumentation.
+
+Der fachliche Entwurf, die Architekturentscheidungen und die finale Umsetzung
+stammen von uns. Alle von der KI stammenden Vorschläge wurden vor der Übernahme
+geprüft, angepasst und getestet. Die Verantwortung für den abgegebenen Code liegt
+vollständig bei den Autoren.
 
 ## Prerequisites
 - Docker Desktop (Windows/macOS) or Docker Engine + Docker Compose (Linux)
@@ -25,28 +42,10 @@ root and a service-specific one inside each service in which decisions were made
 - Maven 3.9+ (only required if you want to build outside Docker)
 - IntelliJ IDEA (recommended for local development)
 
-## Conventions
-Commit messages:
-**Format:** `<type>(<scope>): <description>`
+## Lizenz
 
-**Types:**
-- `feat` – new feature
-- `fix` – bug fix
-- `chore` – tooling, dependencies, build config
-- `refactor` – code change that neither fixes a bug nor adds a feature
-- `docs` – documentation only
-- `test` – adding or adjusting tests
-- `style` – formatting, no code change
-
-**Scopes:** `banking`, `roulette`, `slots`, `root` (repo-wide)
-
-**Examples:**
-```
-feat(banking): add withdrawal endpoint
-fix(roulette): correct payout for split bets
-refactor(root): extract shared SpinHandler
-chore(root): update docker-compose
-```
+Dieses Projekt steht unter der **GNU General Public License v3.0 (GPL-3.0)**.
+Der vollständige Lizenztext befindet sich in der gesonderten Datei [`LICENSE`](LICENSE).
 
 ## Getting started
 
@@ -172,3 +171,31 @@ If someone gives you copied IntelliJ database settings, you can paste them direc
 <data-source source="LOCAL" name="slots@localhost " uuid="ae30f66b-c6df-4881-ae5a-9c6c87a33799"><database-info product="PostgreSQL" version="17.10 (Debian 17.10-1.pgdg13+1)" jdbc-version="4.2" driver-name="PostgreSQL JDBC Driver" driver-version="42.7.3" dbms="POSTGRES" exact-version="17.10" exact-driver-version="42.7"><identifier-quote-string>&quot;</identifier-quote-string></database-info><case-sensitivity plain-identifiers="lower" quoted-identifiers="exact"/><driver-ref>postgresql</driver-ref><synchronize>true</synchronize><jdbc-driver>org.postgresql.Driver</jdbc-driver><jdbc-url>jdbc:postgresql://localhost:15434/slots</jdbc-url><jdbc-additional-properties><property name="com.intellij.clouds.kubernetes.db.host.port"/><property name="com.intellij.clouds.kubernetes.db.enabled" value="false"/><property name="com.intellij.clouds.kubernetes.db.container.port"/></jdbc-additional-properties><secret-storage>master_key</secret-storage><user-name>postgresUser</user-name><schema-mapping><introspection-scope><node kind="database" qname="@"><node kind="schema" qname="@"/></node></introspection-scope></schema-mapping><working-dir>$ProjectFileDir$</working-dir></data-source>
 #END#
 
+
+## Conventions
+Commit messages:
+**Format:** `<type>(<scope>): <description>`
+
+**Types:**
+- `feat` – new feature
+- `fix` – bug fix
+- `chore` – tooling, dependencies, build config
+- `refactor` – code change that neither fixes a bug nor adds a feature
+- `docs` – documentation only
+- `test` – adding or adjusting tests
+- `style` – formatting, no code change
+
+**Scopes:** `banking`, `roulette`, `slots`, `root` (repo-wide)
+
+**Examples:**
+```
+feat(banking): add withdrawal endpoint
+fix(roulette): correct payout for split bets
+refactor(root): extract shared SpinHandler
+chore(root): update docker-compose
+```
+
+## Lizenz
+
+Dieses Projekt steht unter der **GNU General Public License v3.0 (GPL-3.0)**.
+Der vollständige Lizenztext befindet sich in der gesonderten Datei [`LICENSE`](LICENSE).

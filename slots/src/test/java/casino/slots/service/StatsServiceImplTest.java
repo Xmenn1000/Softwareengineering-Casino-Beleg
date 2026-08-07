@@ -73,7 +73,7 @@ class StatsServiceImplTest {
         assertEquals(3L, result.getTotalGamesCount());
 
         assertBigDecimalEquals(
-                "−5.00".replace("−", "-"),
+                "-5.00",
                 result.getTotalProfit()
         );
 
