@@ -80,6 +80,7 @@ public class TransactionServiceImpl implements TransactionService {
 
     @Override
     public List<TransactionDTO> findByUserId(Long userId) {
+        userRestClient.findById(userId);
         return transactionRepository.findByUserId(userId).stream().map(TransactionMapper::toDto).toList();
     }
 }
